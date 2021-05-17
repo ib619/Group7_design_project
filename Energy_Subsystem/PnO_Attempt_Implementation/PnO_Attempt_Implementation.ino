@@ -1,10 +1,6 @@
-'''
-ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
-
-V/I Limit: 5V, 230mA
-Perturb and Observe Algorithm
-
-'''
+// ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
+// V/I Limit: 5V, 230mA
+// Perturb and Observe Algorithm
 
 //Packages
 #include <Wire.h>
@@ -39,7 +35,7 @@ float uv_max=4, uv_min=0; //anti-windup limitation
 float vref = 2500;
 float v0, v1; // current and previous voltage values
 float p0, p1; // current and previous power values
-float i0, i1 // current and previous current values
+float i0, i1; // current and previous current values
 float p_diff, v_diff;
 
 // Current PID Controller Stuff
@@ -51,6 +47,7 @@ float Ts = 0.001; //1 kHz control frequency.
 float current_measure; // obtained from ina219 (inductor current)
 float current_ref = 0, error_amps; // Current Control
 float pwm_out;
+float closed_pwm;
 float V_pv; // voltage at terminal VB
 boolean input_switch; // OLCL switch. 0 means back to IDLE
 
@@ -131,9 +128,9 @@ void loop() {
       ev = (vref - V_pv)/1000;  //voltage error at this time
       cv = pidv(ev);  //voltage pid
       cv = saturation(cv, current_limit, 0); //current demand saturation
-      ei = (cv - current_measure)/1000; ; //current error
+      ei = (cv - current_measure)/1000; //current error
       closed_pwm = pidi(ei);  //current pid
-      closed_pwm = saturation (closed_pwm, 0.99, 0.01);  //duty_cycle saturation
+      closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
       analogWrite(6, (int)(255 - closed_pwm * 255)); // write it out (inverting for the Buck here) //Not TODO: PWM Modulate Function
 
       // Update Flags
@@ -152,7 +149,6 @@ void loop() {
           v1 = V_pv;
           i1 = current_measure;
           p1 = v1*i1;
-        }
           next_state = 1;
           digitalWrite(8,true);
         } else { // otherwise stay put

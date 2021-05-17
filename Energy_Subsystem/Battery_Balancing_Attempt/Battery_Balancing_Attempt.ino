@@ -1,6 +1,4 @@
-'''
-This file still assumes charging with constant current. It also assumes 3 battery cells in parallel
-'''
+// This file still assumes charging with constant current. It also assumes 3 battery cells in parallel
 
 #include <Wire.h>
 #include <INA219_WE.h>
@@ -114,7 +112,7 @@ void loop() {
   // Only switch on relay 1 time per second
   if (int_count == 500) { // Relay switching is 10ms. Double for safety
       digitalWrite(10,true);
-  else if (int_count == 520) { //Read Battery Voltages     
+  } else if (int_count == 520) { //Read Battery Voltages     
       V_1 = analogRead(A1)*4.096/1.03;
       V_2 = analogRead(A2)*4.096/1.03;
       V_3 = analogRead(A3)*4.096/1.03;
