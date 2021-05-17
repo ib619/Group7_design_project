@@ -1,4 +1,4 @@
-//icluding necessary libraries
+//including necessary libraries
 
 #include "SPI.h"
 #include <Wire.h>
