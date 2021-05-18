@@ -1,6 +1,13 @@
-// ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
+// ATTEMPT TO IMPLEMENT Incremental Conductance Algorithm for MPPT
 // V/I Limit: 5V, 230mA
 // Perturb and Observe Algorithm
+
+// Increase vref if
+  // if V_Pv changes, and incremental conductance is greater than instantaneous conductance
+  // if change in V_pv is 0, and change in current is greater than zero
+// Decrease vref if
+  // if V_Pv changes, and incremental conductance is less than instantaneous conductance
+  // if change in V_pv is 0, and change in current is less than zero
 
 //Packages
 #include <Wire.h>
@@ -23,7 +30,7 @@ unsigned int loop_trigger;
 unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging. 
 
 // Voltage PID Controller Stuff
-float ev=0,cv=0,ei=0; //internal signals // FIXME:
+float ev=0,cv=0,ei=0; //internal signals FIXME:
   // ev: difference between V_ref and V_b
   // cv: current obtained from voltage PID controller. need to saturate it
   // ei: difference between desired and inductor current. error_amps in this case? FIXME:
@@ -31,12 +38,12 @@ float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
 
-// PnO Algorithm (only updates in slow loop)
+// Incremental Conductance Algorithm (only updates in slow loop)
 float vref = 2500;
 float v0, v1; // current and previous voltage values
-float p0, p1; // current and previous power values
 float i0, i1; // current and previous current values
-float p_diff, v_diff;
+float i_diff, v_diff;
+float pwr;
 
 // Current PID Controller Stuff
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
@@ -67,7 +74,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  //Check for the SD Card - Initiate a "MPPT_PnO.csv" upon reset
+  //Check for the SD Card - Initiate a "MPPT_IC.csv" upon reset
   Serial.println("\nInitializing SD card...");
   if (!SD.begin(chipSelect)) {
     Serial.println("* is a card inserted?");
@@ -75,8 +82,8 @@ void setup() {
   } else {
     Serial.println("Wiring is correct and a card is present.");
   }
-  if (SD.exists("MPPT_PnO.csv")) { // Wipe the datalog when starting
-    SD.remove("MPPT_PnO.csv");
+  if (SD.exists("MPPT_IC.csv")) { // Wipe the datalog when starting
+    SD.remove("MPPT_IC.csv");
   }
   
   noInterrupts(); //disable all interrupts
@@ -87,7 +94,7 @@ void setup() {
 
   // TODO: Reassign these pins
   pinMode(2, INPUT_PULLUP); // Pin 2 is the input from the CL/OL switch
-  pinMode(6, OUTPUT); // This is the PWM Pin
+  pinMode(6, OUTPUT); // PWM Pin
 
   //LEDs on pin 7 and 8
   pinMode(7, OUTPUT); // Error: Red Light
@@ -148,7 +155,6 @@ void loop() {
           // First time, so reset voltage panel values
           v1 = V_pv;
           i1 = current_measure;
-          p1 = v1*i1;
           next_state = 1;
           digitalWrite(8,true);
         } else { // otherwise stay put
@@ -159,13 +165,15 @@ void loop() {
         break;
       }
       case 1:{ // Running state (a green LED)
-        p0 = V_pv * current_measure;
-        p_diff = p0-p1;
         v0 = V_pv;
+        i0 = current_measure;
+        v_diff = v0-v1;
+        i_diff = i0-i1;
+        pwr = v0*i0;
 
-        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1)) && (vref<V_limit)) {
+        if (((v_diff > 100) && (i_diff/v_diff > -i0/v0) || (v_diff < 100) && (i_diff > 50)) && (vref + 100 < V_limit)) {
           vref = vref + 100;
-        } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
+        } else if ((v_diff > 100) && (i_diff/v_diff < -i0/v0) || (v_diff < 100) && (i_diff < 50)) {
           vref = vref - 100;
         } else {
           Serial.println("Not incrementing or decrementing");
@@ -174,7 +182,7 @@ void loop() {
         // Reset Flags for next iteration
         next_state = 1;
         digitalWrite(8,true); 
-        p1 = p0;
+        i1 = i0;
         v1 = v0;
 
         if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
@@ -203,11 +211,11 @@ void loop() {
     }
     
     // Print values to serial monitor and csv
-    // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(vref/1000) + "," + String(V_pv/1000) + "," + String(p0/100000); //build a datastring for the CSV file
+    // State number, PV Voltage Reference(V), PV Voltage(V), PV Current, dV, dI, PV Power(W)
+    dataString = String(state_num) + "," + String(vref/1000) + "," + String(V_pv/1000) + "," + String(current_measure/1000) + "," + String(v_diff/1000) + "," + String(i_diff/1000) + "," + String(pwr/100000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
-    File dataFile = SD.open("MPPT_PnO.csv", FILE_WRITE); // open our CSV file
+    File dataFile = SD.open("MPPT_IC.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
       dataFile.println(dataString); // print the data
     } else {
