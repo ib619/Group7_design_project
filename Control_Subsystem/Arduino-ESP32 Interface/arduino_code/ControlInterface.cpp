@@ -7,7 +7,6 @@ ControlInterface::ControlInterface(HardwareSerial *ser)    {
 int ControlInterface::begin()   {
     serial->begin(baudrate);
     serial->setTimeout(serial_timeout);
-    ctrl_size=control_packet_size/2;
     return 1;
 }
 
@@ -17,6 +16,12 @@ void ControlInterface::setBaudrate(long brate)  {
 
 void ControlInterface::setTimeout(long tm)   {
     serial_timeout=tm;
+}
+
+void ControlInterface::flushReadBuffer()    {
+    while(serial->available()>0)    {
+        char c=serial->read();
+    }
 }
 
 int ControlInterface::fetchData()  {
@@ -46,6 +51,8 @@ void ControlInterface::sendUpdates()    {
     send_integer(rover_range);
     send_integer(obstacle_detected);
     send_integer(alert);
+    send_integer(x_axis);
+    send_integer(y_axis);
 }
 
 int ControlInterface::getDriveMode() const  {
@@ -78,6 +85,14 @@ void ControlInterface::writeObstacle(int obs)   {
 
 void ControlInterface::writeAlert(int alrt) {
     alert=alrt;
+}
+
+void ControlInterface::writeAxisX(int x)    {
+    x_axis=x;
+}
+
+void ControlInterface::writeAxisY(int y)    {
+    y_axis=y;
 }
 
 void ControlInterface::send_integer(int d)  {   // send integer MSB first
