@@ -13,3 +13,8 @@ Tools needed to configure final rover:
 Known problems with rover setup:
 1. Arduino will not accept sketch uploads if connected to an unpowered rover
   - Either power rover or unattach arduino to upload script
+
+
+ESP32 Settings for Arduino IDE:
+  - Requires Arduino ESP32 API to work
+  - Board Name/Type: DOIT ESP32 DEVKIT V1
