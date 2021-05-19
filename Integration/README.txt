@@ -8,3 +8,8 @@ List of additional libraries needed for final rover:
 
 Tools needed to configure final rover:
 1. ESP32 Uploader (https://github.com/me-no-dev/arduino-esp32fs-plugin)
+
+
+Known problems with rover setup:
+1. Arduino will not accept sketch uploads if connected to an unpowered rover
+  - Either power rover or unattach arduino to upload script
