@@ -3,13 +3,13 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="335" />
+   <connections preferredWidth="351" />
    <irq preferredWidth="34" />
    <name preferredWidth="201" />
    <export preferredWidth="267" />
   </columns>
  </systemtable>
  <library
-   expandedCategories="Library,Project/Interface Protocols/Serial,Library/Processors and Peripherals/Peripherals,Library/Processors and Peripherals,Library/Basic Functions,Library/Interface Protocols/Serial,Library/Basic Functions/On Chip Memory,Library/Interface Protocols,Project/Interface Protocols,Project" />
+   expandedCategories="Library/Basic Functions/On Chip Memory,Project,Library,Library/Basic Functions" />
  <window width="1920" height="1030" x="0" y="0" />
 </preferences>

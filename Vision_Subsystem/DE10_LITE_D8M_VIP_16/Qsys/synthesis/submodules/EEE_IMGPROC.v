@@ -39,53 +39,88 @@ input	reset_n;
 input							s_chipselect;
 input							s_read;
 input							s_write;
-output	reg	[31:0]	s_readdata;
-input	[31:0]				s_writedata;
+output	reg	[31:0]	            s_readdata;
+input	[31:0]				    s_writedata;
 input	[2:0]					s_address;
 
 
 // streaming sink
-input	[23:0]            	sink_data;
-input								sink_valid;
+input	[23:0]            	    sink_data;
+input							sink_valid;
 output							sink_ready;
-input								sink_sop;
-input								sink_eop;
+input							sink_sop;
+input							sink_eop;
 
 // streaming source
-output	[23:0]			  	   source_data;
-output								source_valid;
-input									source_ready;
-output								source_sop;
-output								source_eop;
+output	[23:0]			  	    source_data;
+output						    source_valid;
+input							source_ready;
+output							source_sop;
+output							source_eop;
 
 // conduit export
-input                         mode;
+input                           mode;
 
 ////////////////////////////////////////////////////////////////////////
 //
 parameter IMAGE_W = 11'd640;
 parameter IMAGE_H = 11'd480;
 parameter MESSAGE_BUF_MAX = 256;
-parameter MSG_INTERVAL = 6;
+parameter MSG_INTERVAL = 20;
 parameter BB_COL_DEFAULT = 24'h00ff00;
 
 
-wire [7:0]   red, green, blue, grey;
-wire [7:0]   red_out, green_out, blue_out;
-wire 			 red_detect,green_detect, blue_detect,grey_detect, yellow_detect;
-wire         sop, eop, in_valid, out_ready;
+wire [7:0]   red_inter_in, green_inter_in, blue_inter_in;
+wire [7:0]   red_inter_out,green_inter_out,blue_inter_out;
+wire [7:0]   red_out1, green_out1, blue_out1;
+wire [7:0]   red_out2, green_out2, blue_out2;
+wire [7:0]   grey;
+wire 	       red_detect, green_detect, blue_detect, grey_detect, yellow_detect;
+wire         in_valid, out_ready, sop_inter_in, eop_inter_in, inter_valid, inter_ready, sop_inter_out,eop_inter_out;
 wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
 ////////////////////////////////////////////////////////////////////////
+//Streaming registers to buffer video signal
+STREAM_REG #(.DATA_WIDTH(26)) in_reg (
+	.clk(clk),
+	.rst_n(reset_n),
+	.ready_out(sink_ready),
+	.valid_out(in_valid),
+	.data_out({red_out1,green_out1,blue_out1,sop_inter_in,eop_inter_in}),
+	.ready_in(inter_ready),
+	.valid_in(sink_valid),
+	.data_in({sink_data,sink_sop,sink_eop})
+);
+
+///////////////////////////////////////////////////////////////////////
 //RGB to HSV
 
 rgb_to_hsv rgb_hsv(
-	.rgb_r(red),
-	.rgb_g(green),
-	.rgb_b(blue),	
+	.clk(clk),
+	.rst_n(reset_n),
+	.rgb_r(red_out1),
+	.rgb_g(green_out1),
+	.rgb_b(blue_out1),	
 	.hsv_h(hue),//  0 - 360
 	.hsv_s(saturation),// 0- 255
-	.hsv_v(value_b), // 0- 255
+	.hsv_v(value_b) // 0- 255
+);
+
+///////////////////////////////////////////////////////////////////////
+// Intermediate Stream Reg
+assign red_inter_in = red_out1;
+assign green_inter_in = green_out1;
+assign blue_inter_in = blue_out1;
+
+STREAM_REG #(.DATA_WIDTH(26)) intermediate_reg (
+	.clk(clk),
+	.rst_n(reset_n),
+	.ready_out(inter_ready),
+	.valid_out(inter_valid),
+	.data_out({red_out2, green_out2, blue_out2, sop_inter_out, eop_inter_out}),
+	.ready_in(out_ready),
+	.valid_in(in_valid),
+	.data_in({red_inter_in, green_inter_in, blue_inter_in, sop_inter_in, eop_inter_in})
 );
 
 ///////////////////////////////////////////////////////////////////////
@@ -104,39 +139,50 @@ colour_threshold c_th (
 // Find boundary of cursor box
 
 // Highlight detected areas
-wire [4:0] detect_bus = {red_detect, green_detect, blue_detect, grey_detect, yellow_detect};
-wire detect = (detect_bus > 0) ? 1: 0;
 wire [23:0] obstacle_high;
-assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign obstacle_high  =  red_detect ? {8'hff, 8'h0, 8'h0} : 
-								 blue_detect ? {8'h0, 8'h0, 8'h80} :
-								 green_detect ? {8'h0, 8'hff, 8'h0} :
-								 grey_detect ? {8'h0, 8'h0, 8'hff} :
-								 yellow_detect ? {8'hff, 8'hff, 8'h0} :
-								 {grey, grey, grey};
+assign grey = green_out2[7:1] + red_out2[7:2] + blue_out2[7:2]; //Grey = green/2 + red/4 + blue/4
+assign obstacle_high  = red_detect ? {8'hff, 8'h0, 8'h0} : 
+                        blue_detect ? {8'hCC, 8'hff, 8'hff} :
+                        green_detect ? {8'h0, 8'hff, 8'h0} :
+                        grey_detect ? {8'h0, 8'h33, 8'h66} :
+                        yellow_detect ? {8'hff, 8'hff, 8'h0} :
+                        {grey, grey, grey};
 
 // Show bounding box
 wire [23:0] new_image;
-wire bb_active;
-assign bb_active = (x == left) | (x == right) | (y == top) | (y == bottom);
-assign new_image = bb_active ? bb_col : obstacle_high;
-
+wire r_bb_active;
+wire g_bb_active;
+wire b_bb_active;
+wire gr_bb_active;
+wire y_bb_active;
+assign r_bb_active = (x == r_left) | (x == r_right) | (y == r_top) | (y == r_bottom);
+assign g_bb_active = (x == g_left) | (x == g_right) | (y == g_top) | (y == g_bottom);
+assign b_bb_active = (x == b_left) | (x == b_right) | (y == b_top) | (y == b_bottom);
+assign gr_bb_active = (x == gr_left) | (x == gr_right) | (y == gr_top) | (y == gr_bottom);
+assign y_bb_active = (x == y_left) | (x == y_right) | (y == y_top) | (y == y_bottom);
+assign new_image = r_bb_active? {8'hff, 8'h0, 8'h0} : 
+						b_bb_active ? {8'hCC, 8'hff, 8'hff} :
+						g_bb_active ? {8'h0, 8'hff, 8'h0} :
+						gr_bb_active ? {8'h0, 8'h33, 8'h66} :
+						y_bb_active ? {8'hff, 8'hff, 8'h0} :
+						obstacle_high;
 
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image : {red,green,blue};
+assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_inter_out & packet_video) ? new_image : {red_out2,green_out2,blue_out2};
+
 
 //Count valid pixels to tget the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
 reg packet_video;
 always@(posedge clk) begin
-	if (sop) begin
+	if (sop_inter_out) begin
 		x <= 11'h0;
 		y <= 11'h0;
-		packet_video <= (blue[3:0] == 3'h0);
+		packet_video <= (blue_out2[3:0] == 3'h0);
 	end
-	else if (in_valid) begin
+	else if (inter_valid) begin
 		if (x == IMAGE_W-1) begin
 			x <= 11'h0;
 			y <= y + 11'h1;
@@ -148,53 +194,107 @@ always@(posedge clk) begin
 end
 
 //Find first and last red pixels
-reg [10:0] x_min, y_min, x_max, y_max;
-// reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
-// reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
-// reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
-// reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
-// reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
+reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
+reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
+reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
+reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
+reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 always@(posedge clk) begin
-	if (red_detect & in_valid) begin	//Update bounds when the pixel is red
-		if (x < x_min) x_min <= x;
-		if (x > x_max) x_max <= x;
-		if (y < y_min) y_min <= y;
-		y_max <= y;
-	end
-	if (sop & in_valid) begin	//Reset bounds on start of packet
-		x_min <= IMAGE_W-11'h1;
-		x_max <= 0;
-		y_min <= IMAGE_H-11'h1;
-		y_max <= 0;
+	if (inter_valid) begin
+
+        if (red_detect & inter_valid) begin	//Update bounds when the pixel is red
+            if (x < r_x_min) r_x_min <= x;
+            if (x > r_x_max) r_x_max <= x;
+            if (y < r_y_min) r_y_min <= y;
+            r_y_max <= y;
+        end
+        else if (blue_detect & inter_valid) begin	//Update bounds when the pixel is red
+            if (x < b_x_min) b_x_min <= x;
+            if (x > b_x_max) b_x_max <= x;
+            if (y < b_y_min) b_y_min <= y;
+            b_y_max <= y;
+        end 
+        else if (green_detect ) begin	//Update bounds when the pixel is red
+            if (x < g_x_min) g_x_min <= x;
+            if (x > g_x_max) g_x_max <= x;
+            if (y < g_y_min) g_y_min <= y;
+            g_y_max <= y;
+        end
+        else if (grey_detect) begin	//Update bounds when the pixel is red
+            if (x < gr_x_min) gr_x_min <= x;
+            if (x > gr_x_max) gr_x_max <= x;
+            if (y < gr_y_min) gr_y_min <= y;
+            gr_y_max <= y;
+        end
+        else if (yellow_detect) begin	//Update bounds when the pixel is red
+            if (x < y_x_min) y_x_min <= x;
+            if (x > y_x_max) y_x_max <= x;
+            if (y < y_y_min) y_y_min <= y;
+            y_y_max <= y;
+        end
+        if (sop_inter_out) begin	//Reset bounds on start of packet
+            r_x_min <= IMAGE_W-11'h1;b_x_min <= IMAGE_W-11'h1;g_x_min <= IMAGE_W-11'h1;gr_x_min <= IMAGE_W-11'h1;y_x_min <= IMAGE_W-11'h1;
+            r_x_max <= 0;b_x_max <= 0;g_x_max <= 0;gr_x_max <= 0;y_x_max <= 0;
+            r_y_min <= IMAGE_H-11'h1;b_y_min <= IMAGE_H-11'h1;g_y_min <= IMAGE_H-11'h1;gr_y_min <= IMAGE_H-11'h1;y_y_min <= IMAGE_H-11'h1;
+            r_y_max <= 0;b_y_max <= 0;g_y_max <= 0;gr_y_max <= 0;y_y_max <= 0;
+            
+        end
 	end
 end
 
 //Process bounding box at the end of the frame.
-reg [1:0] msg_state;
-reg [10:0] left, right, top, bottom;
+reg [3:0] msg_state;
+reg [10:0] r_left, r_right, r_top, r_bottom;
+reg [10:0] g_left, g_right, g_top, g_bottom;
+reg [10:0] b_left, b_right, b_top, b_bottom;
+reg [10:0] gr_left, gr_right, gr_top, gr_bottom;
+reg [10:0] y_left, y_right, y_top, y_bottom;
 reg [7:0] frame_count;
+
 always@(posedge clk) begin
-	if (eop & in_valid & packet_video) begin  //Ignore non-video packets
-		
-		//Latch edges for display overlay on next frame
-		left <= x_min;
-		right <= x_max;
-		top <= y_min;
-		bottom <= y_max;
-		
+    if (eop_inter_out & inter_valid & packet_video) begin  //Ignore non-video packets
+
+        //Latch edges for display overlay on next frame
+        r_left <= r_x_min;
+        r_right <= r_x_max;
+        r_top <= r_y_min;
+        r_bottom <= r_y_max;
+  
+        g_left <= g_x_min;
+        g_right <= g_x_max;
+        g_top <= g_y_min;
+        g_bottom <= g_y_max;	
+
+        b_left <= b_x_min;
+        b_right <= b_x_max;
+        b_top <= b_y_min;
+        b_bottom <= b_y_max;	
+
+        gr_left <= gr_x_min;
+        gr_right <= gr_x_max;
+        gr_top <= gr_y_min;
+        gr_bottom <= gr_y_max;	
+
+        y_left <= y_x_min;
+        y_right <= y_x_max;
+        y_top <= y_y_min;
+        y_bottom <= y_y_max;	
 		
 		//Start message writer FSM once every MSG_INTERVAL frames, if there is room in the FIFO
 		frame_count <= frame_count - 1;
 		
 		if (frame_count == 0 && msg_buf_size < MESSAGE_BUF_MAX - 3) begin
-			msg_state <= 2'b01;
+			msg_state <= 4'b0001;
 			frame_count <= MSG_INTERVAL-1;
 		end
 	end
 	
 	//Cycle through message writer states once started
-	if (msg_state != 2'b00) msg_state <= msg_state + 2'b01;
-
+	if (msg_state != 4'b0000)
+		begin
+			if (msg_state == 4'b1011)  msg_state <= 4'b0000;
+			else msg_state <= msg_state + 4'b0001;
+		end
 end
 	
 //Generate output messages for CPU
@@ -205,25 +305,61 @@ wire msg_buf_rd, msg_buf_flush;
 wire [7:0] msg_buf_size;
 wire msg_buf_empty;
 
-`define RED_BOX_MSG_ID "RBB"
+`define START_MSG_ID "RBB"
 
 always@(*) begin	//Write words to FIFO as state machine advances
 	case(msg_state)
-		2'b00: begin
+		4'b0000: begin
 			msg_buf_in = 32'b0;
 			msg_buf_wr = 1'b0;
 		end
-		2'b01: begin
-			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+		4'b0001: begin
+			msg_buf_in = `START_MSG_ID;	//Message ID
 			msg_buf_wr = 1'b1;
 		end
-		2'b10: begin
-			msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
+		4'b0010: begin
+			msg_buf_in = {5'b0, (r_x_min + r_x_max) >>1 , 5'b0, (r_y_min + r_y_max)>>1};	//Top left coordinate
 			msg_buf_wr = 1'b1;
 		end
-		2'b11: begin
-			msg_buf_in = {5'b0, x_max, 5'b0, y_max}; //Bottom right coordinate
+		4'b0011: begin
+			msg_buf_in = {5'b0, r_y_max - r_y_min, 5'b0, r_x_max - r_x_min}; //Bottom right coordinate
 			msg_buf_wr = 1'b1;
+		end
+		4'b0100: begin
+			msg_buf_in = {5'b0, (g_x_min + g_x_max) >>1 , 5'b0, (g_y_min + g_y_max)>>1};	//Top left coordinate
+			msg_buf_wr = 1'b1;
+		end
+		4'b0101: begin
+			msg_buf_in = {5'b0, g_y_max - g_y_min, 5'b0, g_x_max - g_x_min}; //Bottom right coordinate
+			msg_buf_wr = 1'b1;
+        end
+		4'b0110: begin
+			msg_buf_in = {5'b0, (b_x_min + b_x_max) >>1 , 5'b0, (b_y_min + b_y_max)>>1};	//Top left coordinate
+			msg_buf_wr = 1'b1;
+		end
+		4'b0111: begin
+			msg_buf_in = {5'b0, b_y_max - b_y_min, 5'b0, b_x_max - b_x_min}; //Bottom right coordinate
+			msg_buf_wr = 1'b1;
+        end
+		4'b1000: begin
+			msg_buf_in = {5'b0, (gr_x_min + gr_x_max) >>1 , 5'b0, (gr_y_min + gr_y_max)>>1};	//Top left coordinate
+			msg_buf_wr = 1'b1;
+		end
+		4'b1001: begin
+			msg_buf_in = {5'b0, gr_y_max - gr_y_min, 5'b0, gr_x_max - gr_x_min}; //Bottom right coordinate
+			msg_buf_wr = 1'b1;
+		end
+		4'b1010: begin
+			msg_buf_in = {5'b0, (y_x_min + y_x_max) >>1 , 5'b0, (y_y_min + y_y_max)>>1};	//Top left coordinate
+			msg_buf_wr = 1'b1;
+		end
+		4'b1011: begin
+			msg_buf_in = {5'b0, y_y_max - y_y_min, 5'b0, y_x_max - y_x_min}; //Bottom right coordinate
+			msg_buf_wr = 1'b1;
+		end
+		default: begin
+			msg_buf_in = 32'b0;
+			msg_buf_wr = 1'b0;
 		end
 	endcase
 end
@@ -242,17 +378,6 @@ MSG_FIFO	MSG_FIFO_inst (
 	);
 
 
-//Streaming registers to buffer video signal
-STREAM_REG #(.DATA_WIDTH(26)) in_reg (
-	.clk(clk),
-	.rst_n(reset_n),
-	.ready_out(sink_ready),
-	.valid_out(in_valid),
-	.data_out({red,green,blue,sop,eop}),
-	.ready_in(out_ready),
-	.valid_in(sink_valid),
-	.data_in({sink_data,sink_sop,sink_eop})
-);
 
 STREAM_REG #(.DATA_WIDTH(26)) out_reg (
 	.clk(clk),
@@ -261,8 +386,8 @@ STREAM_REG #(.DATA_WIDTH(26)) out_reg (
 	.valid_out(source_valid),
 	.data_out({source_data,source_sop,source_eop}),
 	.ready_in(source_ready),
-	.valid_in(in_valid),
-	.data_in({red_out, green_out, blue_out, sop, eop})
+	.valid_in(inter_valid),
+	.data_in({red_inter_out, green_inter_out, blue_inter_out, sop_inter_out, eop_inter_out})
 );
 
 

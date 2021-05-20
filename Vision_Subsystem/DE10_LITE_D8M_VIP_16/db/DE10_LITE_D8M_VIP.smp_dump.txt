@@ -1,5 +1,5 @@
 
-State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|Qsys_mm_interconnect_1:mm_interconnect_1|altera_merlin_burst_adapter:sdram_s1_burst_adapter|altera_merlin_burst_adapter_13_1:altera_merlin_burst_adapter_13_1.burst_adapter|state
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|Qsys_mm_interconnect_2:mm_interconnect_2|altera_merlin_burst_adapter:sdram_s1_burst_adapter|altera_merlin_burst_adapter_13_1:altera_merlin_burst_adapter_13_1.burst_adapter|state
 Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
 state.ST_IDLE 0 0 0 0 
 state.ST_COMP_TRANS 1 0 0 1 
@@ -40,6 +40,59 @@ i_state.010 0 0 0 1 0 1
 i_state.011 0 0 1 0 0 1 
 i_state.101 0 1 0 0 0 1 
 i_state.111 1 0 0 0 0 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|altera_i2cslave_to_avlmm_bridge:i2cslave_to_avlmm_bridge_0|altr_i2c_rxshifter:i_altr_i2c_rxshifter|rx_shiftfsm_state
+Name rx_shiftfsm_state.RX_DONE rx_shiftfsm_state.RX_SLV_SHIFT rx_shiftfsm_state.RX_HOLD rx_shiftfsm_state.RX_CLK_HIGH rx_shiftfsm_state.RX_CLK_LOW rx_shiftfsm_state.RX_CLK_LOAD rx_shiftfsm_state.IDLE 
+rx_shiftfsm_state.IDLE 0 0 0 0 0 0 0 
+rx_shiftfsm_state.RX_CLK_LOAD 0 0 0 0 0 1 1 
+rx_shiftfsm_state.RX_CLK_LOW 0 0 0 0 1 0 1 
+rx_shiftfsm_state.RX_CLK_HIGH 0 0 0 1 0 0 1 
+rx_shiftfsm_state.RX_HOLD 0 0 1 0 0 0 1 
+rx_shiftfsm_state.RX_SLV_SHIFT 0 1 0 0 0 0 1 
+rx_shiftfsm_state.RX_DONE 1 0 0 0 0 0 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|altera_i2cslave_to_avlmm_bridge:i2cslave_to_avlmm_bridge_0|altr_i2c_txshifter:i_altr_i2c_txshifter|tx_shiftfsm_state
+Name tx_shiftfsm_state.TX_DONE tx_shiftfsm_state.TX_SLV_SHIFT tx_shiftfsm_state.TX_CLK_HOLD tx_shiftfsm_state.TX_CLK_HIGH tx_shiftfsm_state.TX_CLK_LOW tx_shiftfsm_state.TX_CLK_LOAD tx_shiftfsm_state.TX_IDLE 
+tx_shiftfsm_state.TX_IDLE 0 0 0 0 0 0 0 
+tx_shiftfsm_state.TX_CLK_LOAD 0 0 0 0 0 1 1 
+tx_shiftfsm_state.TX_CLK_LOW 0 0 0 0 1 0 1 
+tx_shiftfsm_state.TX_CLK_HIGH 0 0 0 1 0 0 1 
+tx_shiftfsm_state.TX_CLK_HOLD 0 0 1 0 0 0 1 
+tx_shiftfsm_state.TX_SLV_SHIFT 0 1 0 0 0 0 1 
+tx_shiftfsm_state.TX_DONE 1 0 0 0 0 0 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|altera_i2cslave_to_avlmm_bridge:i2cslave_to_avlmm_bridge_0|altr_i2c_avl_mst_intf_gen:i_altr_i2c_avl_mst_intf_gen|fsm_state
+Name fsm_state.RDDATABYTE fsm_state.ISSUE_READ fsm_state.SPLIT_WRITE fsm_state.WRITE_COMPLETE fsm_state.NEXT_WRITE fsm_state.ISSUE_WRITE fsm_state.WRDATABYTE fsm_state.ASSIGN_WRADDR fsm_state.ASSIGN_RDADDR fsm_state.WORDADDRBYTE_4 fsm_state.WORDADDRBYTE_3 fsm_state.WORDADDRBYTE_2 fsm_state.WORDADDRBYTE_1 fsm_state.IDLE 
+fsm_state.IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+fsm_state.WORDADDRBYTE_1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+fsm_state.WORDADDRBYTE_2 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+fsm_state.WORDADDRBYTE_3 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+fsm_state.WORDADDRBYTE_4 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+fsm_state.ASSIGN_RDADDR 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+fsm_state.ASSIGN_WRADDR 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+fsm_state.WRDATABYTE 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+fsm_state.ISSUE_WRITE 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+fsm_state.NEXT_WRITE 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+fsm_state.WRITE_COMPLETE 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+fsm_state.SPLIT_WRITE 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+fsm_state.ISSUE_READ 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+fsm_state.RDDATABYTE 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|altera_i2cslave_to_avlmm_bridge:i2cslave_to_avlmm_bridge_0|altr_i2c_slvfsm:i_altr_i2c_slvfsm|slv_fsm_state
+Name slv_fsm_state.TX_LOOP slv_fsm_state.WAIT_DATA slv_fsm_state.RX_LOOP slv_fsm_state.RX_10BIT_2_ADDR slv_fsm_state.RX_1BYTE slv_fsm_state.IDLE 
+slv_fsm_state.IDLE 0 0 0 0 0 0 
+slv_fsm_state.RX_1BYTE 0 0 0 0 1 1 
+slv_fsm_state.RX_10BIT_2_ADDR 0 0 0 1 0 1 
+slv_fsm_state.RX_LOOP 0 0 1 0 0 1 
+slv_fsm_state.WAIT_DATA 0 1 0 0 0 1 
+slv_fsm_state.TX_LOOP 1 0 0 0 0 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|altera_i2cslave_to_avlmm_bridge:i2cslave_to_avlmm_bridge_0|altr_i2c_condt_det:i_altr_i2c_condt_det|bus_state
+Name bus_state.BUS_COUNTING bus_state.BUS_LOAD_CNT bus_state.BUS_BUSY bus_state.BUS_IDLE 
+bus_state.BUS_IDLE 0 0 0 0 
+bus_state.BUS_BUSY 0 0 1 1 
+bus_state.BUS_LOAD_CNT 0 1 0 1 
+bus_state.BUS_COUNTING 1 0 0 1 
 
 State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|i2c_opencores:i2c_opencores_mipi|i2c_master_top:i2c_master_top_inst|i2c_master_byte_ctrl:byte_controller|c_state
 Name c_state.ST_IDLE c_state.ST_STOP c_state.ST_ACK c_state.ST_WRITE c_state.ST_READ c_state.ST_START 

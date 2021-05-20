@@ -1,4 +1,4 @@
---lpm_add_sub CARRY_CHAIN="MANUAL" CARRY_CHAIN_LENGTH=48 DEVICE_FAMILY="MAX 10" LPM_PIPELINE=0 LPM_REPRESENTATION="UNSIGNED" LPM_WIDTH=11 ONE_INPUT_IS_CONSTANT="YES" dataa datab result
+--lpm_add_sub CARRY_CHAIN="MANUAL" CARRY_CHAIN_LENGTH=48 DEVICE_FAMILY="MAX 10" LPM_PIPELINE=0 LPM_REPRESENTATION="UNSIGNED" LPM_WIDTH=20 ONE_INPUT_IS_CONSTANT="YES" dataa datab result
 --VERSION_BEGIN 16.1 cbx_cycloneii 2016:10:24:15:04:16:SJ cbx_lpm_add_sub 2016:10:24:15:04:16:SJ cbx_mgl 2016:10:24:15:05:03:SJ cbx_nadder 2016:10:24:15:04:16:SJ cbx_stratix 2016:10:24:15:04:16:SJ cbx_stratixii 2016:10:24:15:04:16:SJ  VERSION_END
 
 
@@ -19,12 +19,12 @@
 
 
 
---synthesis_resources = lut 11 
+--synthesis_resources = lut 20 
 SUBDESIGN add_sub_arg
 ( 
-	dataa[10..0]	:	input;
-	datab[10..0]	:	input;
-	result[10..0]	:	output;
+	dataa[19..0]	:	input;
+	datab[19..0]	:	input;
+	result[19..0]	:	output;
 ) 
 BEGIN 
 	result[] = dataa[] + datab[];

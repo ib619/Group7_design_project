@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "I2C_core.h"
+#include "esp_link.h"
 #include "terasic_includes.h"
 #include "mipi_camera_config.h"
 #include "mipi_bridge_config.h"
@@ -80,8 +81,6 @@ void mipi_show_error_info_more(void){
     printf("CSIPktLen = %d\n",MipiBridgeRegRead(0x006E));
 }
 
-
-
 bool MIPI_Init(void){
 	bool bSuccess;
 
@@ -114,8 +113,12 @@ bool MIPI_Init(void){
 	return bSuccess;
 }
 
-
-
+alt_16 estimate_dist(){
+	return 20;
+}
+alt_8 estimate_angle(){
+	return 30;
+}
 
 int main()
 {
@@ -240,7 +243,7 @@ int main()
        alt_u8 idx = 0;
        alt_u8 color = 0;
        alt_u16 x, y;
-       alt_u32 area;
+       alt_u32 * area;
        //Read messages from the image processor and print them on the terminal
        while ((IORD(0x42000,EEE_IMGPROC_STATUS)>>8) & 0xff) { 	//Find out if there are words to read
            int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
@@ -283,7 +286,13 @@ int main()
 		   printf("Centroid: (%d,%d), ", bb[i][0], bb[i][1]);
 		   area = bb[i][2]*bb[i][3];
 		   printf("Area: %d ", area);
-		   if (area >200000) printf("Color Error");
+		   if (area >200000){
+			   printf("Color Error");
+			   updateColour(0x40000,  0, estimate_angle(), estimate_dist(), i);
+		   } else {
+			   updateColour(0x40000,  1, estimate_angle(), estimate_dist(), i);
+		   }
+
     	   printf(";\n");
        }
        printf("\n");

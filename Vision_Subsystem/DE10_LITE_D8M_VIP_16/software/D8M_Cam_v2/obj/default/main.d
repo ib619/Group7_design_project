@@ -20,8 +20,8 @@ obj/default/main.o: main.c I2C_core.h \
  ../D8M_Camera_Test_bsp//drivers/inc/altera_avalon_timer.h \
  ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_dev.h \
  ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_warning.h \
- ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_stdio.h mipi_camera_config.h \
- mipi_bridge_config.h auto_focus.h
+ ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_stdio.h esp_link.h \
+ mipi_camera_config.h mipi_bridge_config.h auto_focus.h
 
 I2C_core.h:
 
@@ -72,6 +72,8 @@ terasic_includes.h:
 ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_warning.h:
 
 ../D8M_Camera_Test_bsp//HAL/inc/sys/alt_stdio.h:
+
+esp_link.h:
 
 mipi_camera_config.h:
 

@@ -89,7 +89,10 @@ wire  [7 :0]  mVGA_R;
 wire  [7 :0]  mVGA_G;
 wire  [7 :0]  mVGA_B; 
 
-
+wire sda_in;
+wire scl_in;
+wire sda_out;
+wire scl_out;
 
 //=======================================================
 //  Structural coding
@@ -176,7 +179,11 @@ Qsys u0 (
 		.altpll_0_locked_conduit_export            (),            				//          altpll_0_locked_conduit.export
 		.altpll_0_phasedone_conduit_export         (),         					//       altpll_0_phasedone_conduit.export		
 		
-		.eee_imgproc_0_conduit_mode_new_signal     (SW[0])
+		.eee_imgproc_0_conduit_mode_new_signal     (SW[0]),
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in (sda_in), // i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  (scl_in),  //                                       .conduit_clk_in
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe (sda_out), //                                       .conduit_data_oe
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  (scl_out)   //    
 	);
 
 FpsMonitor uFps(
@@ -186,6 +193,17 @@ FpsMonitor uFps(
 	.fps(),
 	.hex_fps_h(HEX1),
 	.hex_fps_l(HEX0)
+);
+
+i2c_adapter a1(
+    .sda(ARDUINO_IO[14]),
+    .scl(ARDUINO_IO[15]),
+
+    .mg_sda_in(sda_in),
+    .mg_scl_in(scl_in),
+
+    .mg_sda_oe(sda_out),
+    .mg_scl_oe(scl_out)
 );
 
 assign  HEX2 = 7'h7F;
