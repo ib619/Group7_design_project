@@ -21,7 +21,7 @@ void Orientation::updatePosition(int x, int y) {
     //find travel distance
     int travel_distance = sqrt(pow(x-currentPosition.x, 2) + pow(y-currentPosition.y, 2));
 
-    if (travel_distance >= 8) {
+    if (travel_distance >= 5) {
 
         lastPosition = currentPosition;
         currentPosition.x = x; currentPosition.y = y;
@@ -148,3 +148,8 @@ void Orientation::getDisplacement() {
          break;
      }
 }
+
+ float Orientation::getTravelDistance() {
+     if (position_changed) { return displacement.getMagnitude(); }
+     else { return 0; }
+ }

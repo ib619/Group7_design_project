@@ -23,6 +23,7 @@ public:
     void logOrientation(); //logs Orientation data to Serial for debug
     void enableLog(); //enables logging for debug 
     void disableLog(); //disables logging gor debug
+    float getTravelDistance();
     bool position_changed = 0; //indicates if there was a position change since last loop cycle
 
 private:
