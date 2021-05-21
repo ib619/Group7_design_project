@@ -1,9 +1,11 @@
 List of additional libraries needed for final rover:
 1. INA219_WE (Download from Arduino library manager)
-2. Arduino -> ESP32 API (https://github.com/espressif/arduino-esp32)
+2. Arduino -> ESP32 API (https://github.com/espressif/arduino-esp32) 
 3. ESP32 -> Arduino API
 4. AsyncTCP (https://github.com/me-no-dev/AsyncTCP)
 5. ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
+6. Orientation API (drive_subsystem)
+7. Drive API (drive_subsystem)
 
 
 Tools needed to configure final rover:
