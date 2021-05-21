@@ -24,6 +24,7 @@ public:
     void enableLog(); //enables logging for debug 
     void disableLog(); //disables logging gor debug
     float getTravelDistance();
+    float getDirectionChangeAngle();
     bool position_changed = 0; //indicates if there was a position change since last loop cycle
 
 private:

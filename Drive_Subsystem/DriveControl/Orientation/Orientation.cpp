@@ -153,3 +153,17 @@ void Orientation::getDisplacement() {
      if (position_changed) { return displacement.getMagnitude(); }
      else { return 0; }
  }
+
+ float Orientation::getDirectionChangeAngle() {
+
+     float dotprod = lastDirection.x * currentDirection.x + lastDirection.y * currentDirection.y;
+     float absLastDir = lastDirection.getMagnitude();
+     float absCurDir = currentDirection.getMagnitude();
+
+     float cosine = dotprod / (absLastDir * absCurDir);
+
+     float angle = acos(cosine);
+
+     if (position_changed) { return angle * (180 / 3.14159); }
+     else { return 0; }
+ }
