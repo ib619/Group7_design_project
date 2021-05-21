@@ -1,4 +1,4 @@
-# rover-command
+# Command Subsystem
 
 # Setting up ESP32 on Arduino IDE
 1. Need to download ESP32 board onto Arduino IDE
@@ -23,9 +23,11 @@ allow_anonymous true
 2. To start the web app `npm start`
     - This will start the development build for both the server and the client
     - use `npm run server/client` if you only want to run one of them
-3. To run the backend server, run `mqtt_server.py` in the `server` directory
+3. To run the backend server, run `python3 mqtt_server.py` in the `server` directory
+4. To create the `.db` file, run `python3 database.py` in the `server` directory
+5. Can also run the script `./start_server.sh` in the `server` directory to set up the database and server
 
-# TODO
+# Details
 1. Things to send back to ESP32
     - Direction vector (angle from current facing direction)
     - Speed
@@ -40,6 +42,5 @@ allow_anonymous true
     - State of rover (returning back or exploring)
 
 3. Backend/Database:
-    - Display top 5 newest obstacle coordinates in different transparency
     - Backend database using sql hosted on AWS using Docker containers
     - MQTT protocol for communication between esp32, backend and frontend

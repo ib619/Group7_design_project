@@ -7,7 +7,7 @@ def create_connection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print("DB created")
+        print("DB connected")
     except Error as e:
         print(e)
 
@@ -60,7 +60,8 @@ if __name__ == "__main__":
                                          ); """
 
     conn = create_connection(database)
-
+    print("DB created")
+    
     if conn is not None:
         create_table(conn, sql_create_obstacle_history_table)
     else:

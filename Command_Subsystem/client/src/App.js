@@ -24,7 +24,7 @@ const App = () => {
           brokerUrl="ws://localhost:8080"
           options={{
             keepalive: 0,
-            clientId: "siting",
+            clientId: "react",
             username: "siting",
             password: "password",
           }}
