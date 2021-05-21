@@ -13,13 +13,16 @@ int battery_level=100;
 int rover_range=100;
 int obstacle_detected=0;
 int alert=0;
+int x_axis=0;
+int y_axis=0;
 
 void setup() {
   // setup and start control interface
-  ci.setBaudrate(115200);
+  ci.setBaudrate(38400);
   ci.setTimeout(5);
   ci.begin();
-
+  delay(3000);
+  ci.flushReadBuffer();
 }
 
 void loop() {
@@ -35,6 +38,8 @@ void loop() {
   ci.writeRange(rover_range);
   ci.writeObstacle(obstacle_detected);
   ci.writeAlert(alert);
+  ci.writeAxisX(x_axis);
+  ci.writeAxisY(y_axis);
   ci.sendUpdates(); //send new values to ESP32
 
 }
