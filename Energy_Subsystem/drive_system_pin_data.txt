@@ -1,0 +1,25 @@
+Motors:
+    Pin D20: Right Motor direction pin 
+    Pin D9: Right Motor PWM pin 
+    Pin D21: Left Motor direction pin
+    Pin D5: Left Motor PWM pin
+
+Optical Sensor:
+    Pin D10: SS pin
+    Pin D12: MISO pin
+    Pin D11: MOSI pin
+    Pin D13: SCK pin
+    Pin D8: RST pin
+    Pin D7: CS pin
+
+SMPS:
+    Pin A0: Vout_measure pin
+    Pin A1: Iout_measure pin
+    Pin A2: Vref pin
+    Pin A3: Vin_measure pin
+    Pin A4: current sensor SDA pin
+    Pin A5: current sensor SCL pin
+    Pin D2: Buck/Boost switch
+    Pin D3: OL/CL switch
+    Pin D6: PWM pin
+    
