@@ -20,6 +20,10 @@
 			i2c_opencores_camera_export_sda_pad_io                 : inout std_logic                     := 'X';             -- sda_pad_io
 			i2c_opencores_mipi_export_scl_pad_io                   : inout std_logic                     := 'X';             -- scl_pad_io
 			i2c_opencores_mipi_export_sda_pad_io                   : inout std_logic                     := 'X';             -- sda_pad_io
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in : in    std_logic                     := 'X';             -- conduit_data_in
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  : in    std_logic                     := 'X';             -- conduit_clk_in
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe : out   std_logic;                                        -- conduit_data_oe
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  : out   std_logic;                                        -- conduit_clk_oe
 			key_external_connection_export                         : in    std_logic_vector(1 downto 0)  := (others => 'X'); -- export
 			led_external_connection_export                         : out   std_logic_vector(9 downto 0);                     -- export
 			mipi_pwdn_n_external_connection_export                 : out   std_logic;                                        -- export
@@ -41,11 +45,7 @@
 			terasic_camera_0_conduit_end_D                         : in    std_logic_vector(11 downto 0) := (others => 'X'); -- D
 			terasic_camera_0_conduit_end_FVAL                      : in    std_logic                     := 'X';             -- FVAL
 			terasic_camera_0_conduit_end_LVAL                      : in    std_logic                     := 'X';             -- LVAL
-			terasic_camera_0_conduit_end_PIXCLK                    : in    std_logic                     := 'X';             -- PIXCLK
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in : in    std_logic                     := 'X';             -- conduit_data_in
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  : in    std_logic                     := 'X';             -- conduit_clk_in
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe : out   std_logic;                                        -- conduit_data_oe
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  : out   std_logic                                         -- conduit_clk_oe
+			terasic_camera_0_conduit_end_PIXCLK                    : in    std_logic                     := 'X'              -- PIXCLK
 		);
 	end component Qsys;
 
@@ -71,6 +71,10 @@
 			i2c_opencores_camera_export_sda_pad_io                 => CONNECTED_TO_i2c_opencores_camera_export_sda_pad_io,                 --                                       .sda_pad_io
 			i2c_opencores_mipi_export_scl_pad_io                   => CONNECTED_TO_i2c_opencores_mipi_export_scl_pad_io,                   --              i2c_opencores_mipi_export.scl_pad_io
 			i2c_opencores_mipi_export_sda_pad_io                   => CONNECTED_TO_i2c_opencores_mipi_export_sda_pad_io,                   --                                       .sda_pad_io
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in, -- i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in,  --                                       .conduit_clk_in
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe, --                                       .conduit_data_oe
+			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe,  --                                       .conduit_clk_oe
 			key_external_connection_export                         => CONNECTED_TO_key_external_connection_export,                         --                key_external_connection.export
 			led_external_connection_export                         => CONNECTED_TO_led_external_connection_export,                         --                led_external_connection.export
 			mipi_pwdn_n_external_connection_export                 => CONNECTED_TO_mipi_pwdn_n_external_connection_export,                 --        mipi_pwdn_n_external_connection.export
@@ -92,10 +96,6 @@
 			terasic_camera_0_conduit_end_D                         => CONNECTED_TO_terasic_camera_0_conduit_end_D,                         --           terasic_camera_0_conduit_end.D
 			terasic_camera_0_conduit_end_FVAL                      => CONNECTED_TO_terasic_camera_0_conduit_end_FVAL,                      --                                       .FVAL
 			terasic_camera_0_conduit_end_LVAL                      => CONNECTED_TO_terasic_camera_0_conduit_end_LVAL,                      --                                       .LVAL
-			terasic_camera_0_conduit_end_PIXCLK                    => CONNECTED_TO_terasic_camera_0_conduit_end_PIXCLK,                    --                                       .PIXCLK
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in, -- i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in,  --                                       .conduit_clk_in
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe, --                                       .conduit_data_oe
-			i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  => CONNECTED_TO_i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe   --                                       .conduit_clk_oe
+			terasic_camera_0_conduit_end_PIXCLK                    => CONNECTED_TO_terasic_camera_0_conduit_end_PIXCLK                     --                                       .PIXCLK
 		);
 

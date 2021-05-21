@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="Qsys" kind="Qsys" version="1.0" fabric="QSYS">
  <!-- Format version 16.1 196 (Future versions may contain additional information.) -->
- <!-- 2021.05.20.21:55:19 -->
+ <!-- 2021.05.21.22:05:42 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1621518919</value>
+  <value>1621605942</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -2411,7 +2411,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="FIXED_COEFF_FILE">
    <type>java.lang.String</type>
-   <value>C:\Users\tansi\Documents\Imperial_College_London\Year2_Project\New\EEE2Rover\DE10_LITE_D8M_VIP_16\gaussiancoeffs_5.txt</value>
+   <value>C:\Users\tansi\Documents\Imperial_College_London\Year2_Project\Group7_design_project\Vision_Subsystem\DE10_LITE_D8M_VIP_16\gaussiancoeffs_5.txt</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -20225,7 +20225,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1621518919</value>
+   <value>1621605942</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -20245,7 +20245,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1621518919</value>
+   <value>1621605942</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -20261,7 +20261,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1621518919</value>
+   <value>1621605942</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>

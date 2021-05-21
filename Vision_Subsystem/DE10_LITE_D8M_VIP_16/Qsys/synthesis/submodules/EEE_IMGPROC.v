@@ -70,13 +70,11 @@ parameter MSG_INTERVAL = 20;
 parameter BB_COL_DEFAULT = 24'h00ff00;
 
 
-wire [7:0]   red_inter_in, green_inter_in, blue_inter_in;
 wire [7:0]   red_inter_out,green_inter_out,blue_inter_out;
 wire [7:0]   red_out1, green_out1, blue_out1;
-wire [7:0]   red_out2, green_out2, blue_out2;
 wire [7:0]   grey;
 wire 	       red_detect, green_detect, blue_detect, grey_detect, yellow_detect;
-wire         in_valid, out_ready, sop_inter_in, eop_inter_in, inter_valid, inter_ready, sop_inter_out,eop_inter_out;
+wire         in_valid, out_ready, sop_inter_in, eop_inter_in;
 wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
 ////////////////////////////////////////////////////////////////////////
@@ -87,7 +85,7 @@ STREAM_REG #(.DATA_WIDTH(26)) in_reg (
 	.ready_out(sink_ready),
 	.valid_out(in_valid),
 	.data_out({red_out1,green_out1,blue_out1,sop_inter_in,eop_inter_in}),
-	.ready_in(inter_ready),
+	.ready_in(out_ready),
 	.valid_in(sink_valid),
 	.data_in({sink_data,sink_sop,sink_eop})
 );
@@ -106,22 +104,7 @@ rgb_to_hsv rgb_hsv(
 	.hsv_v(value_b) // 0- 255
 );
 
-///////////////////////////////////////////////////////////////////////
-// Intermediate Stream Reg
-assign red_inter_in = red_out1;
-assign green_inter_in = green_out1;
-assign blue_inter_in = blue_out1;
 
-STREAM_REG #(.DATA_WIDTH(26)) intermediate_reg (
-	.clk(clk),
-	.rst_n(reset_n),
-	.ready_out(inter_ready),
-	.valid_out(inter_valid),
-	.data_out({red_out2, green_out2, blue_out2, sop_inter_out, eop_inter_out}),
-	.ready_in(out_ready),
-	.valid_in(in_valid),
-	.data_in({red_inter_in, green_inter_in, blue_inter_in, sop_inter_in, eop_inter_in})
-);
 
 ///////////////////////////////////////////////////////////////////////
 // Color Threshold
@@ -140,7 +123,7 @@ colour_threshold c_th (
 
 // Highlight detected areas
 wire [23:0] obstacle_high;
-assign grey = green_out2[7:1] + red_out2[7:2] + blue_out2[7:2]; //Grey = green/2 + red/4 + blue/4
+assign grey = green_out1[7:1] + red_out1[7:2] + blue_out1[7:2]; //Grey = green/2 + red/4 + blue/4
 assign obstacle_high  = red_detect ? {8'hff, 8'h0, 8'h0} : 
                         blue_detect ? {8'hCC, 8'hff, 8'hff} :
                         green_detect ? {8'h0, 8'hff, 8'h0} :
@@ -170,19 +153,19 @@ assign new_image = r_bb_active? {8'hff, 8'h0, 8'h0} :
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_inter_out & packet_video) ? new_image : {red_out2,green_out2,blue_out2};
+assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_inter_in & packet_video) ? new_image : {red_out1,green_out1,blue_out1};
 
 
 //Count valid pixels to tget the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
 reg packet_video;
 always@(posedge clk) begin
-	if (sop_inter_out) begin
+	if (sop_inter_in) begin
 		x <= 11'h0;
 		y <= 11'h0;
-		packet_video <= (blue_out2[3:0] == 3'h0);
+		packet_video <= (blue_out1[3:0] == 3'h0);
 	end
-	else if (inter_valid) begin
+	else if (in_valid) begin
 		if (x == IMAGE_W-1) begin
 			x <= 11'h0;
 			y <= y + 11'h1;
@@ -200,15 +183,15 @@ reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
 reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 always@(posedge clk) begin
-	if (inter_valid) begin
+	if (in_valid) begin
 
-        if (red_detect & inter_valid) begin	//Update bounds when the pixel is red
+        if (red_detect & in_valid) begin	//Update bounds when the pixel is red
             if (x < r_x_min) r_x_min <= x;
             if (x > r_x_max) r_x_max <= x;
             if (y < r_y_min) r_y_min <= y;
             r_y_max <= y;
         end
-        else if (blue_detect & inter_valid) begin	//Update bounds when the pixel is red
+        else if (blue_detect & in_valid) begin	//Update bounds when the pixel is red
             if (x < b_x_min) b_x_min <= x;
             if (x > b_x_max) b_x_max <= x;
             if (y < b_y_min) b_y_min <= y;
@@ -232,7 +215,7 @@ always@(posedge clk) begin
             if (y < y_y_min) y_y_min <= y;
             y_y_max <= y;
         end
-        if (sop_inter_out) begin	//Reset bounds on start of packet
+        if (sop_inter_in) begin	//Reset bounds on start of packet
             r_x_min <= IMAGE_W-11'h1;b_x_min <= IMAGE_W-11'h1;g_x_min <= IMAGE_W-11'h1;gr_x_min <= IMAGE_W-11'h1;y_x_min <= IMAGE_W-11'h1;
             r_x_max <= 0;b_x_max <= 0;g_x_max <= 0;gr_x_max <= 0;y_x_max <= 0;
             r_y_min <= IMAGE_H-11'h1;b_y_min <= IMAGE_H-11'h1;g_y_min <= IMAGE_H-11'h1;gr_y_min <= IMAGE_H-11'h1;y_y_min <= IMAGE_H-11'h1;
@@ -252,7 +235,7 @@ reg [10:0] y_left, y_right, y_top, y_bottom;
 reg [7:0] frame_count;
 
 always@(posedge clk) begin
-    if (eop_inter_out & inter_valid & packet_video) begin  //Ignore non-video packets
+    if (eop_inter_in & in_valid & packet_video) begin  //Ignore non-video packets
 
         //Latch edges for display overlay on next frame
         r_left <= r_x_min;
@@ -386,8 +369,8 @@ STREAM_REG #(.DATA_WIDTH(26)) out_reg (
 	.valid_out(source_valid),
 	.data_out({source_data,source_sop,source_eop}),
 	.ready_in(source_ready),
-	.valid_in(inter_valid),
-	.data_in({red_inter_out, green_inter_out, blue_inter_out, sop_inter_out, eop_inter_out})
+	.valid_in(in_valid),
+	.data_in({red_inter_out, green_inter_out, blue_inter_out, sop_inter_in, eop_inter_in})
 );
 
 

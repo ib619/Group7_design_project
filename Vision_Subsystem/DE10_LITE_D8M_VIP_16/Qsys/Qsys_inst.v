@@ -19,6 +19,10 @@
 		.i2c_opencores_camera_export_sda_pad_io                 (<connected-to-i2c_opencores_camera_export_sda_pad_io>),                 //                                       .sda_pad_io
 		.i2c_opencores_mipi_export_scl_pad_io                   (<connected-to-i2c_opencores_mipi_export_scl_pad_io>),                   //              i2c_opencores_mipi_export.scl_pad_io
 		.i2c_opencores_mipi_export_sda_pad_io                   (<connected-to-i2c_opencores_mipi_export_sda_pad_io>),                   //                                       .sda_pad_io
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in>), // i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in>),  //                                       .conduit_clk_in
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe>), //                                       .conduit_data_oe
+		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe>),  //                                       .conduit_clk_oe
 		.key_external_connection_export                         (<connected-to-key_external_connection_export>),                         //                key_external_connection.export
 		.led_external_connection_export                         (<connected-to-led_external_connection_export>),                         //                led_external_connection.export
 		.mipi_pwdn_n_external_connection_export                 (<connected-to-mipi_pwdn_n_external_connection_export>),                 //        mipi_pwdn_n_external_connection.export
@@ -40,10 +44,6 @@
 		.terasic_camera_0_conduit_end_D                         (<connected-to-terasic_camera_0_conduit_end_D>),                         //           terasic_camera_0_conduit_end.D
 		.terasic_camera_0_conduit_end_FVAL                      (<connected-to-terasic_camera_0_conduit_end_FVAL>),                      //                                       .FVAL
 		.terasic_camera_0_conduit_end_LVAL                      (<connected-to-terasic_camera_0_conduit_end_LVAL>),                      //                                       .LVAL
-		.terasic_camera_0_conduit_end_PIXCLK                    (<connected-to-terasic_camera_0_conduit_end_PIXCLK>),                    //                                       .PIXCLK
-		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in>), // i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
-		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in>),  //                                       .conduit_clk_in
-		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe>), //                                       .conduit_data_oe
-		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe  (<connected-to-i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe>)   //                                       .conduit_clk_oe
+		.terasic_camera_0_conduit_end_PIXCLK                    (<connected-to-terasic_camera_0_conduit_end_PIXCLK>)                     //                                       .PIXCLK
 	);
 

@@ -20,6 +20,10 @@ module Qsys (
 	i2c_opencores_camera_export_sda_pad_io,
 	i2c_opencores_mipi_export_scl_pad_io,
 	i2c_opencores_mipi_export_sda_pad_io,
+	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in,
+	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in,
+	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe,
+	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe,
 	key_external_connection_export,
 	led_external_connection_export,
 	mipi_pwdn_n_external_connection_export,
@@ -41,11 +45,7 @@ module Qsys (
 	terasic_camera_0_conduit_end_D,
 	terasic_camera_0_conduit_end_FVAL,
 	terasic_camera_0_conduit_end_LVAL,
-	terasic_camera_0_conduit_end_PIXCLK,
-	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in,
-	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in,
-	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe,
-	i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe);	
+	terasic_camera_0_conduit_end_PIXCLK);	
 
 	input		alt_vip_itc_0_clocked_video_vid_clk;
 	output	[23:0]	alt_vip_itc_0_clocked_video_vid_data;
@@ -67,6 +67,10 @@ module Qsys (
 	inout		i2c_opencores_camera_export_sda_pad_io;
 	inout		i2c_opencores_mipi_export_scl_pad_io;
 	inout		i2c_opencores_mipi_export_sda_pad_io;
+	input		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in;
+	input		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in;
+	output		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe;
+	output		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe;
 	input	[1:0]	key_external_connection_export;
 	output	[9:0]	led_external_connection_export;
 	output		mipi_pwdn_n_external_connection_export;
@@ -89,8 +93,4 @@ module Qsys (
 	input		terasic_camera_0_conduit_end_FVAL;
 	input		terasic_camera_0_conduit_end_LVAL;
 	input		terasic_camera_0_conduit_end_PIXCLK;
-	input		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in;
-	input		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in;
-	output		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe;
-	output		i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_oe;
 endmodule

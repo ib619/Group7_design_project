@@ -113,12 +113,17 @@ bool MIPI_Init(void){
 	return bSuccess;
 }
 
-alt_16 estimate_dist(){
-	return 20;
+alt_16 estimate_dist(alt_u16 y_coord){
+	alt_16 y_interm = y_coord - 300;
+	if( y_interm <0) return 200;
+	if(y_interm > 100) return 50;
+	return (((y_interm - 100) * (y_interm - 100)) >>6) + 50;
 }
-alt_8 estimate_angle(){
-	return 30;
+alt_8 estimate_angle(alt_u16 x_coord){
+	// Max Range +- 20, so each pixel will be a shift in 0.0625 degree
+	return x_coord - 320 >> 4;
 }
+
 
 int main()
 {
@@ -243,7 +248,9 @@ int main()
        alt_u8 idx = 0;
        alt_u8 color = 0;
        alt_u16 x, y;
-       alt_u32 * area;
+       alt_u32 area;
+       alt_8 angle;
+       alt_16 dist;
        //Read messages from the image processor and print them on the terminal
        while ((IORD(0x42000,EEE_IMGPROC_STATUS)>>8) & 0xff) { 	//Find out if there are words to read
            int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
@@ -268,31 +275,26 @@ int main()
     	   }
     	   idx += 1;
        }
-//       while ((IORD(0x42000,EEE_IMGPROC_STATUS)>>8) & 0xff) { 	//Find out if there are words to read
-//           int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
-//    	   if (word == EEE_IMGPROC_MSG_START){ 					//Newline on message identifier
-//    		   printf("\n");
-//    		   printf("RBB MSG ID: ");
-//			   printf("%08x ",word);
-//    	   } else {
 
-//    		   printf("%d\n",x);
-//    		   printf("%d\n",y);
 
-//    	   }
-//       }
        for (alt_u8 i = 0; i < 5; i++){
-    	   printf("Color %d: ", i);
+    	   if (i == 0) printf("Color Red: ");
+    	   if (i == 1) printf("Color Green: ");
+    	   if (i == 2) printf("Color Blue: ");
+    	   if (i == 3) printf("Color Grey: ");
+    	   if (i == 4) printf("Color Yellow: ");
 		   printf("Centroid: (%d,%d), ", bb[i][0], bb[i][1]);
 		   area = bb[i][2]*bb[i][3];
-		   printf("Area: %d ", area);
+//		   printf("Area: %d ", area);
 		   if (area >200000){
-			   printf("Color Error");
-			   updateColour(0x40000,  0, estimate_angle(), estimate_dist(), i);
+			   printf("Not Detected/Error");
+			   updateColour(0x40000,  0, estimate_angle(bb[i][0]), estimate_dist(bb[i][1]), i);
 		   } else {
-			   updateColour(0x40000,  1, estimate_angle(), estimate_dist(), i);
+			   angle = estimate_angle(bb[i][0]);
+			   dist = estimate_dist(bb[i][1]);
+			   printf("Dist: %d, Angle: %d", dist, angle);
+			   updateColour(0x40000,  1, angle, dist, i);
 		   }
-
     	   printf(";\n");
        }
        printf("\n");

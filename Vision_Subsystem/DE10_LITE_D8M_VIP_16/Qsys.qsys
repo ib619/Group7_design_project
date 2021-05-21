@@ -515,7 +515,7 @@
   <parameter name="ENABLE_WIDE_BLUR_SHARPEN" value="1" />
   <parameter name="EXTRA_PIPELINING" value="0" />
   <parameter name="FAMILY" value="MAX 10" />
-  <parameter name="FIXED_COEFF_FILE">C:\Users\tansi\Documents\Imperial_College_London\Year2_Project\New\EEE2Rover\DE10_LITE_D8M_VIP_16\gaussiancoeffs_5.txt</parameter>
+  <parameter name="FIXED_COEFF_FILE">C:\Users\tansi\Documents\Imperial_College_London\Year2_Project\Group7_design_project\Vision_Subsystem\DE10_LITE_D8M_VIP_16\gaussiancoeffs_5.txt</parameter>
   <parameter name="H_SYMMETRIC" value="1" />
   <parameter name="H_TAPS" value="5" />
   <parameter name="INPUT_GUARD_BANDS_ENABLE" value="0" />
