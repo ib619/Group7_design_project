@@ -1,31 +1,38 @@
 import React, { useState, useEffect } from "react";
 import Map from "../components/Map";
-import axios from "axios";
+import { useMqttState } from "mqtt-react-hooks";
 
-const InputPage = () => {
+const InputPage = (props) => {
   // for the game
   const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [target, setTarget] = useState("");
+  const { client } = useMqttState();
 
-  const getPosition = () => {
-    axios
-      .get("/obstacles")
-      .then((res) => setPos(res.data[0]))
-      .catch((err) => console.log(err));
+  const handleChange = (e) => {
+    setTarget(e.target.value);
   };
 
-  useEffect(() => {
-    getPosition();
-  }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(target);
+    setTarget("");
+    client.publish("testingg", target);
+  };
 
   return (
     <>
       <Map data={pos} />
-      <form>
+      <form onSubmit={handleSubmit}>
         <label>
           Target Coordinates:
-          <input type="text" name="name" />
+          <input
+            type="text"
+            name="target"
+            value={target}
+            onChange={handleChange}
+          />
         </label>
-        <button type="submit">Add</button>
+        <input type="submit" />
       </form>
     </>
   );
