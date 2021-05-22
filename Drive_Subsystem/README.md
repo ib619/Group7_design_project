@@ -29,7 +29,7 @@ Setup your Rover as shown in test_setup.png
 3. **Speed:** integer with range [0,255] corresponding to the motor speed
 4. **Direction:** integer with range [-180:180] where:
     - [-180:1] is anticlockwise rotation by specified angle in degrees
-    - 0 is forward motion for the earlier specified distance
+    - 0 is straight motion for the earlier specified distance
     - [1:180] is clockwise rotation by specified angle in degrees
 
 ## Further Objectives
