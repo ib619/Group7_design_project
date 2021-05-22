@@ -31,15 +31,14 @@ public:
 	Rover();
 	void init(LeftMotor *left, RightMotor *right);
 	void setDirection(bool dir);
-	void moveForward(float travelDist);
-	void turnCW(float angle);
-	void turnACW(float angle);
-	void decodeCommand(int dist, int spd, int dir);
+	void decodeCommand(int dm, int dist, int spd, int dir);
+	void action(float travelDist, float angle);
 	bool command_running = 0;
 
 private:
-	LeftMotor *LM;
 	RightMotor *RM;
+	LeftMotor* LM;
+	int drive_mode = 0;
 	int distance_setpoint = 0;
 	int speed_setpoint = 0;
 	int direction_setpoint = 0;
@@ -49,6 +48,9 @@ private:
 	bool move_flag = 0;
 
 	void stop();
+	void moveForward(float travelDist);
+	void turnCW(float angle);
+	void turnACW(float angle);
 };
 
 #endif

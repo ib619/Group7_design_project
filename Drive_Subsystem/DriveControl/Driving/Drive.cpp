@@ -89,7 +89,8 @@ void Rover::turnACW(float angle) {
 	}
 }
 
-void Rover::decodeCommand(int dist, int spd, int dir) {
+void Rover::decodeCommand(int dm, int dist, int spd, int dir) {
+	drive_mode = dm;
 	distance_setpoint = dist;
 	speed_setpoint = spd;
 	direction_setpoint = abs(dir);
@@ -102,4 +103,15 @@ void Rover::decodeCommand(int dist, int spd, int dir) {
 void Rover::stop() {
 	analogWrite(LM->pwmPin, 0);
 	analogWrite(RM->pwmPin, 0);
+}
+
+void Rover::action(float travelDist, float angle) {
+	if (drive_mode == 0) {
+		stop();
+	}
+	else {
+		moveForward(travelDist);
+		turnCW(angle);
+		turnACW(angle);
+	}
 }
