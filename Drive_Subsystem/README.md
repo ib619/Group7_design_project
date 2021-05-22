@@ -23,7 +23,9 @@ Setup your Rover as shown in test_setup.png
 #### Command structure
 ##### DriveMode,Distance,Speed,Direction
 1. **DriveMode:** 0 for emergency stop, 1 for discrete driving mode
-2. **Distance:** any positive integer corresponding to desired distance in millimeters
+2. **Distance:** any integer corresponding to desired distance in millimeters:
+    - for positive distance Rover moves forward
+    - for negative distance Rover moves backwards
 3. **Speed:** integer with range [0,255] corresponding to the motor speed
 4. **Direction:** integer with range [-180:180] where:
     - [-180:1] is anticlockwise rotation by specified angle in degrees

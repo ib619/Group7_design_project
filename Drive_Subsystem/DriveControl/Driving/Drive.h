@@ -30,9 +30,14 @@ class Rover {
 public:
 	Rover();
 	void init(LeftMotor *left, RightMotor *right);
-	void setDirection(bool dir);
 	void decodeCommand(int dm, int dist, int spd, int dir);
 	void action(float travelDist, float angle);
+
+	int exportPositionX();
+	int exportPositionY();
+	float exportDirectionX();
+	float exportDirectionY();
+
 	bool command_running = 0;
 
 private:
@@ -45,10 +50,13 @@ private:
 
 	bool turnCW_flag = 0;
 	bool turnACW_flag = 0;
-	bool move_flag = 0;
+	bool moveForward_flag = 0;
+	bool moveBack_flag = 0;
 
 	void stop();
+	void setDirection(bool dir);
 	void moveForward(float travelDist);
+	void moveBack(float travelDist);
 	void turnCW(float angle);
 	void turnACW(float angle);
 };
