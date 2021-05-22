@@ -3,10 +3,12 @@
   // No discharging (state 3 and 4)
   // When charging is complete, both LEDs on
 
+// Note: File name cannot exceed 3 chars, extension cannot exceed 3 chars
+
 // Intended Flowchart: 0 > 1 > 6 > 2
   // 0 IDLE
   // 1 CONSTANT CURRENT CHARGE (yellow LED)
-  // 6 COMPLETE (blinking yellow LED)
+  // 6 CONSTANT VOLTAGE CHARGE (blinking yellow LED)
   // 2 CHARGE REST/ COMPLETE (both LEDs ON)
   
 #include <Wire.h>
@@ -70,8 +72,8 @@ void setup() {
     Serial.println("Wiring is correct and a card is present.");
   }
 
-  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
-    SD.remove("BatCycle.csv");
+  if (SD.exists("BatFull.csv")) { // Wipe the datalog when starting
+    SD.remove("BatFull.csv");
   }
 
   
@@ -209,7 +211,7 @@ void loop() {
       
     dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
-    File dataFile = SD.open("BatCycle.csv", FILE_WRITE); // open our CSV file
+    File dataFile = SD.open("BatFull.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
       dataFile.println(dataString); // print the data
     } else {

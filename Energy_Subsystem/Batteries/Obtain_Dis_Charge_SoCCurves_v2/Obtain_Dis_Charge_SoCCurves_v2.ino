@@ -2,22 +2,27 @@
 #include <SPI.h>
 #include <SD.h>
 #include <String.h>
-// #include <LinkedList.h>
+//#include <LinkedList.h>
 
-// Aim:
-    // From the discharge and charge curves, obtain the SoC lookup table
-    // And save it in the files "dv_SoC_1.csv" "cv_SoC_1.csv"
+/*
+Aim:
+    From the discharge and charge curves, obtain the SoC lookup table
+    And save it in the files "dvSoc1.csv" "cvSoc1.csv"
 
-// Intended flow chart:
-    // 1. Access discharge voltage table and save in an array
-    // 2. Using the discharge voltage table and the array size, save it in a new file alongside the SoC
-    // 3. Repeat for charge voltage table
+Intended flow chart:
+    1. Access discharge voltage table and save in an array
+    2. Using the discharge voltage table and the array size, save it in a new file alongside the SoC
+    3. Repeat for charge voltage table
 
-// WARNING
-  // Sketch uses 20331 bytes (41%) of program storage space. Maximum is 49152 bytes.
-  // Global variables use 4945 bytes (80%) of dynamic memory, leaving 1199 bytes for local variables. Maximum is 6144 bytes.
-  // Low memory available, stability problems may occur.
-  // I STILL CANT INSTALL LINKEDLIST!!
+WARNING
+  Sketch uses 20331 bytes (41%) of program storage space. Maximum is 49152 bytes.
+  Global variables use 4945 bytes (80%) of dynamic memory, leaving 1199 bytes for local variables. Maximum is 6144 bytes.
+  Low memory available, stability problems may occur.
+  I STILL CANT INSTALL LINKEDLIST!!
+
+  Although arguably linkedlist might not be the best solution since we need to access values in the middle of the array
+
+*/
 
 // Which cell are you characterising?
 int CELL = 1;
@@ -35,7 +40,29 @@ File myFile;
 float d_v[500] = {};
 float c_v[500] = {}; 
 float d_SoC = 1; 
-float c_SoC = 0; 
+float c_SoC = 0;
+
+//to generate an average of past 20 values (not moving average)
+float v1 = 0;
+float v2 = 0;
+float v3 = 0;
+float v4 = 0;
+float v5 = 0;
+float v6 = 0;
+float v7 = 0;
+float v8 = 0;
+float v9 = 0;
+float v10 = 0;
+float v11 = 0;
+float v12 = 0;
+float v13 = 0;
+float v14 = 0;
+float v15 = 0;
+float v16 = 0;
+float v17 = 0;
+float v18 = 0;
+float v19 = 0;
+float v20 = 0;
 
 int arrpointer = 0;       //array pointer
 int column = 1;           //column to parse
@@ -45,10 +72,10 @@ int rowcount = 1;         //start at row 1 not 0
 String datatemp;          //temp to store datapoint
 
 // File names (Placeholder)
-String discharge_filename = "DischargeSoC1.csv";
-String charge_filename = "ChargeSoC1.csv";
-String discharge_SoC_filename = "dv_SoC_1.csv";
-String charge_SoC_filename = "cv_SoC_1.csv";
+String discharge_filename = "dv1.csv";
+String charge_filename = "cv1.csv";
+String discharge_SoC_filename = "dvSoc1.csv";
+String charge_SoC_filename = "cvSoc1.csv";
 
 String dataString;
 
@@ -67,20 +94,20 @@ void setup(){
 
     // Batcurves stores the discharge and charge curves of the battery and compares it to the SoC
     if (CELL == 1) {
-        discharge_filename = "DischargeV_1.csv";
-        charge_filename = "ChargeV_1.csv";
-        discharge_SoC_filename = "dv_SoC_1.csv";
-        charge_SoC_filename = "cv_SoC_1.csv";
+        discharge_filename = "dv1.csv";
+        charge_filename = "cv1.csv";
+        discharge_SoC_filename = "dvSoc1.csv";
+        charge_SoC_filename = "cvSoc1.csv";
     } else if (CELL == 2) {
-        discharge_filename = "DischargeV_2.csv";
-        charge_filename = "ChargeV_2.csv";
-        discharge_SoC_filename = "dv_SoC_2.csv";
-        charge_SoC_filename = "cv_SoC_2.csv";
+        discharge_filename = "dv2.csv";
+        charge_filename = "cv2.csv";
+        discharge_SoC_filename = "dvSoC2.csv";
+        charge_SoC_filename = "cvSoC2.csv";
     }  else if (CELL == 3) {
-        discharge_filename = "DischargeV_3.csv";
-        charge_filename = "ChargeV_3.csv";
-        discharge_SoC_filename = "dv_SoC_3.csv";
-        charge_SoC_filename = "cv_SoC_3.csv";
+        discharge_filename = "dv3.csv";
+        charge_filename = "cv3.csv";
+        discharge_SoC_filename = "dvSoC3.csv";
+        charge_SoC_filename = "cvSoC3.csv";
     } else {
         Serial.println("\nWe only have 3 cells...");
     }
@@ -95,12 +122,70 @@ void setup(){
         while (myFile.available()) {     
             float filedata = myFile.read();      
             ////////// START PARSE //////////     
-            if((filedata != ',')&&(filedata != ' ')){ //read data vals into string       
+            if((filedata != ',')&&(filedata != ' ')){ //read data vals into string
+                datatemp = datatemp += (filedata -'0');
+                if (rowcount % rowincrement == 1) {
+                    v1 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 2) {
+                    v2 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 3) {
+                    v3 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 4) {
+                    v4 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 5) {
+                    v5 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 6) {
+                    v6 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 7) {
+                    v7 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 8) {
+                    v8 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 9) {
+                    v9 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 10) {
+                    v10 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 11) {
+                    v11 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 12) {
+                    v12 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 13) {
+                    v13 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 14) {
+                    v14 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 15) {
+                    v15 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 16) {
+                    v16 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 17) {
+                    v17 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 18) {
+                    v18 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 19) {
+                    v19 = datatemp.toFloat();
+                }       
                 if(rowcount % rowincrement == 0){ // to be fair we don't need all values to form a voltage lookup table
                     // Column 1 is Voltage, Column 2 is current measured (not neccessary)             
                     if(columncount == column){ //push datapoint to array  
-                        datatemp = datatemp += (filedata -'0');
-                        d_v[arrpointer] = datatemp.toFloat();
+                        v20 = datatemp.toFloat();
+                        d_v[arrpointer] = (v1+v2+v3+v4+v5+v6+v7+v8+v9+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20)/20;
                     }
                 }        
             }          
@@ -147,12 +232,70 @@ void setup(){
         while (myFile.available()) {     
             float filedata = myFile.read();      
             ////////// START PARSE //////////     
-            if((filedata != ',')&&(filedata != ' ')){ //read data vals into string       
+            if((filedata != ',')&&(filedata != ' ')){ //read data vals into string
+                datatemp = datatemp += (filedata -'0');
+                if (rowcount % rowincrement == 1) {
+                    v1 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 2) {
+                    v2 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 3) {
+                    v3 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 4) {
+                    v4 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 5) {
+                    v5 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 6) {
+                    v6 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 7) {
+                    v7 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 8) {
+                    v8 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 9) {
+                    v9 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 10) {
+                    v10 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 11) {
+                    v11 = datatemp.toFloat();
+                }
+                if (rowcount % rowincrement == 12) {
+                    v12 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 13) {
+                    v13 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 14) {
+                    v14 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 15) {
+                    v15 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 16) {
+                    v16 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 17) {
+                    v17 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 18) {
+                    v18 = datatemp.toFloat();
+                } 
+                if (rowcount % rowincrement == 19) {
+                    v19 = datatemp.toFloat();
+                }       
                 if(rowcount % rowincrement == 0){ // to be fair we don't need all values to form a voltage lookup table
                     // Column 1 is Voltage, Column 2 is current measured (not neccessary)             
                     if(columncount == column){ //push datapoint to array  
-                        datatemp = datatemp += (filedata -'0');
-                        c_v[arrpointer] = datatemp.toFloat();
+                        v20 = datatemp.toFloat();
+                        c_v[arrpointer] = (v1+v2+v3+v4+v5+v6+v7+v8+v9+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20)/20;
                     }
                 }        
             }             
@@ -192,4 +335,5 @@ void setup(){
 
 
 void loop(void) {
+  // nothing repeats
 }
