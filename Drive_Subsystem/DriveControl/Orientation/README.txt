@@ -1,6 +1,6 @@
 VERSION CONTROL:
 
-Current version: 1.2
+Current version: 1.3
 
 Features:
     1) Position tracking(Cartesian coordinates)

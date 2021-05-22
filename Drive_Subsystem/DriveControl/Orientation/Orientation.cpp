@@ -167,3 +167,19 @@ void Orientation::getDisplacement() {
      if (position_changed) { return angle * (180 / 3.14159); }
      else { return 0; }
  }
+
+ int Orientation::exportPositionX() {
+     return currentPosition.x;
+ }
+
+ int Orientation::exportPositionY() {
+     return currentPosition.y;
+ }
+
+ float Orientation::exportDirectionX() {
+     return currentDirection.x;
+ }
+
+ float Orientation::exportDirectionY() {
+     return currentDirection.y;
+ }
