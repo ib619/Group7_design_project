@@ -13,7 +13,7 @@
 // Compare new discharge coulomb count to original value
 
 // Intended flow chart:
-// 0 > 1 > 2 > 3 > 4 > 1 > 2 > 6
+// 0 > 1 > 2 > 3 > 4 > 1 > 2 > 7
 // 0 IDLE
 // 1 CHARGE (yellow LED)
 // 2 CHARGE REST (note: only records charge data after first discharge)
@@ -56,9 +56,9 @@ double current_cap = 0;
 double SoH = 0;
 
 // File namesL Files have same format as diagnostic file
-String discharge_filename = "DischargeSoC1.csv";
-String charge_filename = "ChargeSoC1.csv";
-String SoH_filename = "SoHStats1.csv";
+String discharge_filename = "dv1.csv";
+String charge_filename = "cv1.csv";
+String SoH_filename = "SoH1.csv";
 
 // Only start collecting charge data when cell has been discharged.
 boolean discharged = 0;
@@ -89,19 +89,19 @@ void setup() {
 
   // Batcurves stores the discharge and charge curves of the battery and compares it to the SoC
   if (CELL == 1) {
-    discharge_filename = "DischargeV_1.csv";
-    charge_filename = "ChargeV_1.csv";
-    SoH_filename = "SoHStats1.csv";
+    discharge_filename = "dv1.csv";
+    charge_filename = "cv1.csv";
+    SoH_filename = "SoH1.csv";
     nominal_cap = c1_0;
   } else if (CELL == 2) {
-    discharge_filename = "DischargeV_2.csv";
-    charge_filename = "ChargeV_2.csv";
-    SoH_filename = "SoHStats2.csv";
+    discharge_filename = "dv2.csv";
+    charge_filename = "cv2.csv";
+    SoH_filename = "SoH2.csv";
     nominal_cap = c2_0;
   }  else if (CELL == 3) {
-    discharge_filename = "DischargeV_3.csv";
-    charge_filename = "ChargeV_3.csv";
-    SoH_filename = "SoHStats3.csv";
+    discharge_filename = "dv3.csv";
+    charge_filename = "cv3.csv";
+    SoH_filename = "SoH3.csv";
     nominal_cap = c3_0;
   } else {
     Serial.println("\nWe only have 3 cells...");
@@ -114,7 +114,7 @@ void setup() {
     SD.remove(charge_filename);
   }
 
-  // Create a new SoHStats.csv if doesn't exist (do nothing)
+  // Create a new SoH.csv if doesn't exist (do nothing)
   // Column 1    | Column 2
   // Cell_Charge | Cell_SoH
 
