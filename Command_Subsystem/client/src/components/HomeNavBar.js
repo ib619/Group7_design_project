@@ -10,7 +10,8 @@ const HomeNavBar = (props) => {
           <Navbar.Brand href="/">Rover</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/input">Input</Nav.Link>
+            <Nav.Link href="/target">Target</Nav.Link>
+            <Nav.Link href="/discrete">Discrete</Nav.Link>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
             <Toggle theme={props.theme} toggleTheme={props.toggleTheme} />

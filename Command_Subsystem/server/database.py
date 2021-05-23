@@ -29,15 +29,15 @@ def create_obstacle_record(conn, obstacle_record):
     conn.commit()
     return cur.lastrowid
 
-# Get recent 5 obstacle
-def select_top_obstacle(conn):
+# Get recent num obstacles
+def select_top_obstacle(conn, num):
     sql_query = """SELECT * FROM (
         SELECT colour, 
                x_coord,
                y_coord, 
                row_number() over (partition by colour order by date desc) as date_rank
         FROM obstacle_record) 
-        WHERE date_rank <=5;"""
+        WHERE date_rank <="""+num+";"
     cur = conn.cursor()
     cur.execute(sql_query)
     return cur.fetchall()
