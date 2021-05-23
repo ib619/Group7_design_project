@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define CONTROL_PACKET_SIZE 8
+#define CONTROL_PACKET_SIZE 12
 
 class ControlInterface {
     public:
@@ -19,6 +19,8 @@ class ControlInterface {
         int getDirection() const;
         int getSpeed() const;
         int getDistance() const;
+        int getTargetX() const;
+        int getTargetY() const;
 
         void writeBatterylevel(int batt);
         void writeRange(int rng);
@@ -26,6 +28,8 @@ class ControlInterface {
         void writeAlert(int alrt);
         void writeAxisX(int x);
         void writeAxisY(int y);
+        void writeRoverHeading(int heading);
+        void writeBatterySOH(int soh);
     
     private:
         void send_integer(int data);
@@ -42,6 +46,8 @@ class ControlInterface {
         int direction=0;
         int speed=0;
         int distance=0;
+        int target_x=0;
+        int target_y=0;
 
         // data values
         int battery_level=0;
@@ -50,6 +56,8 @@ class ControlInterface {
         int alert=0;
         int x_axis=0;
         int y_axis=0;
+        int rover_heading=0;
+        int battery_SOH=0;
 };
 
 #endif

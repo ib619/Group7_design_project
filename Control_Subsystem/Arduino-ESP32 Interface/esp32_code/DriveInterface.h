@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define DATA_PACKET_SIZE 12
+#define DATA_PACKET_SIZE 16
 
 class DriveInterface {
     public:
@@ -18,6 +18,8 @@ class DriveInterface {
         void writeDirection(int dir);
         void writeSpeed(int spd);
         void writeDistance(int dist);
+        void writeTargetX(int x);
+        void writeTargetY(int y);
 
         int getBatteryLevel() const;
         int getRange() const;
@@ -25,12 +27,14 @@ class DriveInterface {
         int getAlert() const;
         int getAxisX() const;
         int getAxisY() const;
+        int getRoverHeading() const;
+        int getBatterySOH() const;
 
     private:
         void send_integer(int d);
 
         HardwareSerial *serial;
-        long baudrate=115200;
+        long baudrate=38400;
         long timeout=5;
 
         int data_size=DATA_PACKET_SIZE/2;
@@ -40,6 +44,8 @@ class DriveInterface {
         int direction=0;
         int speed=0;
         int distance=0;
+        int target_x=0;
+        int target_y=0;
 
         // data values
         int battery_level=0;
@@ -48,6 +54,8 @@ class DriveInterface {
         int alert=0;
         int x_axis=0;
         int y_axis=0;
+        int rover_heading=0;
+        int battery_SOH=0;
 };
 
 #endif
