@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import Controller from "../components/Controller";
 import Map from "../components/Map";
 
-const ArrowPage = () => {
-  // for the game
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-
+const ArrowPage = (props) => {
   return (
     <>
-      <Map data={pos} />
-      <Controller data={pos} setData={setPos} />
+      <Map pos={props.pos} />
+      <Controller data={props.pos} setData={props.setPos} />
     </>
   );
 };
