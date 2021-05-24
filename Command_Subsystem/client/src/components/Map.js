@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useSubscription } from "mqtt-react-hooks";
 
 const Map = (props) => {
+  const { message } = useSubscription("obstacle/result");
+  const [obstacles, setObstacles] = useState([]);
+
+  // on refresh
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("obstacles"));
+    setObstacles(data);
+  }, []);
+
+  // when message arrived
+  useEffect(() => {
+    if (message) {
+      setObstacles(JSON.parse(message.message));
+      localStorage.setItem("obstacles", JSON.stringify(obstacles));
+    }
+  }, [message, obstacles]);
+
   return (
     <>
       <Border>
-        <Block coords={props.data}></Block>
+        <Block pos={props.pos} />
+        {obstacles &&
+          obstacles.map((data, index) => (
+            <Obstacle key={index} coords={data} />
+          ))}
       </Border>
       <Coords>
-        x: {props.data.x}, y: {props.data.y}
+        x: {props.pos.x}, y: {props.pos.y}
       </Coords>
     </>
   );
@@ -27,12 +49,26 @@ const Border = styled.div`
 
 const Block = styled.div.attrs((props) => ({
   style: {
-    left: props.coords.x,
-    top: props.coords.y,
+    left: props.pos.x,
+    top: props.pos.y,
   },
 }))`
   background: ${({ theme }) => theme.background};
   color: black;
+  padding: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+`;
+
+const Obstacle = styled.div.attrs((props) => ({
+  style: {
+    left: props.coords[1],
+    top: props.coords[2],
+    opacity: 1 / props.coords[3],
+    background: props.coords[0],
+  },
+}))`
   padding: 0.5rem;
   width: 1rem;
   height: 1rem;

@@ -181,6 +181,31 @@ mSetup_ST.0000 0 0 0
 mSetup_ST.0001 1 0 1 
 mSetup_ST.0010 1 1 0 
 
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|EEE_IMGPROC:eee_imgproc_0|colour_threshold:c_th|morph_filter:ero_y|control:control1|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|EEE_IMGPROC:eee_imgproc_0|colour_threshold:c_th|morph_filter:ero_gr|control:control1|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|EEE_IMGPROC:eee_imgproc_0|colour_threshold:c_th|morph_filter:ero_b|control:control1|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|EEE_IMGPROC:eee_imgproc_0|colour_threshold:c_th|morph_filter:ero_g|control:control1|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 
+
+State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|EEE_IMGPROC:eee_imgproc_0|colour_threshold:c_th|morph_filter:ero_r|control:control1|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 
+
 State Machine - |DE10_LITE_D8M_VIP|Qsys:u0|Qsys_alt_vip_cl_2dfir_0:alt_vip_cl_2dfir_0|Qsys_alt_vip_cl_2dfir_0_alg_core:alg_core|alt_vip_fir_alg_core:fir_core_inst|alt_vip_fir_alg_core_controller:controller_inst|state
 Name state.IDLE state.FLUSH state.RUN 
 state.IDLE 0 0 0 

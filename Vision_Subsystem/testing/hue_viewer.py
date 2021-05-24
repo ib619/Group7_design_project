@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from skimage import io
 from skimage.color import rgb2hsv
-filename = "images/yellow_gain380.jpg"
+filename = "images/tuning_grey.jpg"
 name = (filename.split(".")[0]).split("/")[1]
 rgb_img = io.imread(filename)
 hsv_img = rgb2hsv(rgb_img)
