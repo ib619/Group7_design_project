@@ -427,4 +427,10 @@ set_global_assignment -name CDF_FILE Chain.cdf
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/rgb_to_hsv.v
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/colour_threshold.v
 set_global_assignment -name VERILOG_FILE ip/i2c_adapter.v
+set_global_assignment -name VERILOG_CONSTANT_LOOP_LIMIT 400000
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filter.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/line_buffer.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/erosion.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/control.v
+set_global_assignment -name QIP_FILE shiftreg.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

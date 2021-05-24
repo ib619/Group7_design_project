@@ -308,7 +308,7 @@ int main()
        	   case 'e': {
        		   exposureTime += EXPOSURE_STEP;
        		   OV8865SetExposure(exposureTime);
-       		   printf("\nExposure = %x ", exposureTime);
+       		   printf("\nExposure = %x\n", exposureTime);
        	   	   break;}
        	   case 'd': {
        		   exposureTime -= EXPOSURE_STEP;
@@ -318,26 +318,26 @@ int main()
        	   case 't': {
        		   gain += GAIN_STEP;
        		   OV8865SetGain(gain);
-       		   printf("\nGain = %x ", gain);
+       		   printf("\nGain = %x\n", gain);
        	   	   break;}
        	   case 'g': {
        		   gain -= GAIN_STEP;
        		   OV8865SetGain(gain);
-       		   printf("\nGain = %x ", gain);
+       		   printf("\nGain = %x\n", gain);
        	   	   break;}
        	   case 'r': {
         	   current_focus += manual_focus_step;
         	   if(current_focus >1023) current_focus = 1023;
         	   OV8865_FOCUS_Move_to(current_focus);
-        	   printf("\nFocus = %x ",current_focus);
+        	   printf("\nFocus = %x\n",current_focus);
        	   	   break;}
        	   case 'f': {
         	   if(current_focus > manual_focus_step) current_focus -= manual_focus_step;
         	   OV8865_FOCUS_Move_to(current_focus);
-        	   printf("\nFocus = %x ",current_focus);
+        	   printf("\nFocus = %x\n ",current_focus);
        	   	   break;}
        }
-       // printf("After Getting Char\n");
+//        printf("After Getting Char\n");
 
 
 	   //Main loop delay
