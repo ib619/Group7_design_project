@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('images/test_img780.jpg')
+img = cv2.imread('images/exposure2000_gain780.jpg')
 img = cv2.resize(img, (640, 480)) 
 img = cv2.GaussianBlur(img, (5, 5), 0)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -41,8 +41,8 @@ upper_yellow = np.array([25,255,255])
 
 # define range of grey color in hsv
 # Works for 780 Gain
-lower_grey = np.array([30,50,50])
-upper_grey = np.array([70,127,90])
+lower_grey = np.array([0,0,10])
+upper_grey = np.array([90,32,70])
 # Works for 380 Gain
 # lower_grey = np.array([20,0,30])
 # upper_grey = np.array([80,63,47])
@@ -71,7 +71,7 @@ while(1):
     cv2.imshow('frame',img)
     cv2.imshow('mask',mask)
     # cv2.imshow('res',res)
-    # cv2.imshow('erosion',erosion)
+    cv2.imshow('erosion',erosion)
     # cv2.imshow('dilation',dilation)
     # cv2.imshow('edge',edges)
     k = cv2.waitKey(5) & 0xFF
