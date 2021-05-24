@@ -121,8 +121,8 @@ void Orientation::getDisplacement() {
     //calculate sine between vectors
     float sine = crossprod / (absDir * absDisp);
 
-    if (sine >= 0.1) { rotation = 1; }
-    else if (sine <= -0.1) { rotation = 2; }
+    if (sine > 0) { rotation = 1; }
+    else if (sine < 0) { rotation = 2; }
     else { rotation =  0; }
 
 }
@@ -182,4 +182,26 @@ void Orientation::getDisplacement() {
 
  float Orientation::exportDirectionY() {
      return currentDirection.y;
+ }
+
+ int Orientation::exportDirectionAngle() {
+     //calculate cross product between initial and current directions
+     float crossprod = currentDirection.x * initial.y - initial.x * currentDirection.y;
+     float dotprod = currentDirection.x * currentDirection.y + initial.x * initial.y;
+     float absDisp = currentDirection.getMagnitude();
+     float absDir = initial.getMagnitude();
+
+     //calculate sine and cosine of angle between vectors
+     float sine = crossprod / (absDir * absDisp);
+     float cosine = dotprod / (absDir * absDisp);
+
+     float angle = asin(sine);
+     float output;
+
+     if (cosine < 0 && sine >= 0) { output = angle * (180 / 3.14159); }
+     else if (cosine >= 0 && sine >= 0) { output =  180 - angle * (180 / 3.14159); }
+     else if (cosine < 0 && sine < 0) { output = -180 - angle * (180 / 3.14159); }
+     else if (cosine >= 0 && sine < 0) { output = angle * (180 / 3.14159); }
+
+     return (int)output;
  }
