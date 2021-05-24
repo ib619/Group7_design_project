@@ -21,19 +21,24 @@ Setup your Rover as shown in test_setup.png
 3. Enter a command into the Serial port
 
 #### Command structure
-##### DriveMode,Distance,Speed,Direction
+##### DriveMode,Distance,Speed,Direction,TargetX,TargetY
 1. **DriveMode:** 0 for emergency stop, 1 for discrete driving mode
 2. **Distance:** any integer corresponding to desired distance in millimeters:
     - for positive distance Rover moves forward
     - for negative distance Rover moves backwards
+    - BUG: distance of 0 causes an error, therefore must never be set so 
 3. **Speed:** integer with range [0,255] corresponding to the motor speed
 4. **Direction:** integer with range [-180:180] where:
     - [-180:1] is anticlockwise rotation by specified angle in degrees
     - 0 is straight motion for the earlier specified distance
     - [1:180] is clockwise rotation by specified angle in degrees
+5. **TargetX:** must be 0, T2C is not yet implemented
+6. **TargetY:** must be 0, T2C is not yet implemented
+
+**IMPORTANT:**When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
 
 ## Further Objectives
 1. Implement a travel-to-coordinate(T2C) algorithm for Drive API
 2. Decode DriveMode = 2 as T2C command.
 3. Design an Anti-Drift algorithm, for preventing side drifting when moving straight
-4. Experiment with alternative turning methods
+4. Attempt to fix the bug causing 0 distance leading to an error
