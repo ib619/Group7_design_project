@@ -23,6 +23,7 @@ public:
     void logOrientation(); //logs Orientation data to Serial for debug
     void enableLog(); //enables logging for debug 
     void disableLog(); //disables logging gor debug
+    void logRotation(); // logs the type of motion performed by the rover for debug
     float getTravelDistance();
     float getDirectionChangeAngle();
 
@@ -47,7 +48,7 @@ private:
     Direction initial;
     void detectRotation(); //detects which type of motion has been performed by rover
     void getDisplacement(); //calculates displacement since last loop cycle
-    void logRotation(); // logs the type of motion performed by the rover for debug
+     
 
 };
 
