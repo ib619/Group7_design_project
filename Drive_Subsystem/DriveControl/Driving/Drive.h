@@ -37,7 +37,7 @@ public:
 private:
 	RightMotor *RM;
 	LeftMotor* LM;
-	int radius = 0;
+	int radius = 168;
 	int drive_mode = 0;
 	float distance_setpoint = 0;
 	int speed_setpoint = 0;

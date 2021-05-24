@@ -125,32 +125,33 @@ void Rover::decodeCommand(int dm, int dist, int spd, int dir, int targetX, int t
 	}
 	else if (drive_mode == 2) {
 		
-		//calculate the coordinates of A_dash
-		float A_dash_x = myPosX - myDirX * radius;
-		float A_dash_y = myPosY - myDirY * radius;
+		//calculate the coordinate of M
+		float mX = myPosX + radius * myDirX; float mY = myPosY + radius * myDirX;
 
-		//calculate new direction vector
-		float newDirX = targetX - A_dash_x;
-		float newDirY = targetY - A_dash_y;
+		//calculate vector MT
+		float mtX = targetX - mX; float mtY = targetY - mY;
 
-		//calculate the turn angle via cross product
-		float crossprod = myDirX * newDirY - myDirY * newDirX;
-		float absMyDir = sqrt(pow(myDirX,2) + pow(myDirY,2));
-		float absNewDir = sqrt(pow(newDirX,2) + pow(newDirY,2));
-		float sine = crossprod / (absMyDir * absNewDir);
-		float angle_rad = asin(sine);
+		//dotproduct of current direction with MT
+		float dotprod = mtX * myDirX + mtY * myDirY;
+		float absMyDir = sqrt(pow(myDirX,2)+pow(myDirY,2));
+		float absNewDir = sqrt(pow(mtX, 2) + pow(mtY, 2));
 
-		if (sine > 0.2) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 1; moveBack_flag = 0; }
-		if (sine < -0.2) { turnACW_flag = 1; turnCW_flag = 0; moveForward_flag = 1; moveBack_flag = 0; }
-		else { turnACW_flag = 0; turnCW_flag = 0; moveForward_flag = 1; moveBack_flag = 0; }
+		//find the turn angle
+		float cosine = dotprod/ (absMyDir * absNewDir);
+		float angle = acos(cosine);
 
-		if (angle_rad > 0) { float angle = angle_rad * (180 / 3.14159); }
-		if (angle_rad < 0) { float angle = -angle_rad * (180 / 3.14159); }
-		if (angle_rad = 0) { float angle = 0; }
+		//find the required travel distance
+		float travelDistance = radius + absNewDir;
 
-		//calculate AB
-		float abX = targetX - myPosX; float abY = targetY - myPosY;
-		float abMag = sqrt(pow(abX, 2) + pow(abY, 2));
+		//determine the required rotation direction
+		float crossprod = myDirX * mtY - mtX * myDirY;
+
+		if (crossprod > 0) { turnACW_flag = 1; turnCW_flag = 0; moveForward_flag = 1; moveBack_flag = 0; }
+		if (crossprod < 0) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 1; moveBack_flag = 0; }
+
+		distance_setpoint = travelDistance;
+		speed_setpoint = spd;
+		direction_setpoint = angle * (180 / 3.14159);
 
 	}
 }
