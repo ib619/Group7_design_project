@@ -35,7 +35,7 @@ Setup your Rover as shown in test_setup.png
 5. **TargetX:** must be 0, T2C is not yet implemented
 6. **TargetY:** must be 0, T2C is not yet implemented
 
-**IMPORTANT:**When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
+**IMPORTANT:** When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
 
 ## Further Objectives
 1. Implement a travel-to-coordinate(T2C) algorithm for Drive API
