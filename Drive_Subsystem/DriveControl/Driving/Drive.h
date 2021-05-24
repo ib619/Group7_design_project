@@ -30,23 +30,20 @@ class Rover {
 public:
 	Rover();
 	void init(LeftMotor *left, RightMotor *right);
-	void decodeCommand(int dm, int dist, int spd, int dir);
+	void decodeCommand(int dm, int dist, int spd, int dir, int targetX, int targetY, float myDirX, float myDirY, int myPosX, int myPosY);
 	void action(float travelDist, float angle);
-
-	int exportPositionX();
-	int exportPositionY();
-	float exportDirectionX();
-	float exportDirectionY();
-
 	bool command_running = 0;
 
 private:
 	RightMotor *RM;
 	LeftMotor* LM;
+	int radius = 0;
 	int drive_mode = 0;
-	int distance_setpoint = 0;
+	float distance_setpoint = 0;
 	int speed_setpoint = 0;
-	int direction_setpoint = 0;
+	float direction_setpoint = 0;
+	int x_setpoint = 0;
+	int y_setpoint = 0;
 
 	bool turnCW_flag = 0;
 	bool turnACW_flag = 0;

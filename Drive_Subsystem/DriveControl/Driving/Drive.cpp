@@ -73,10 +73,10 @@ void Rover::moveBack(float travelDist) {
 void Rover::turnCW(float angle) {
 	if (turnCW_flag) {
 		LM->setDirection(HIGH);
-		RM->setDirection(HIGH);
-		if (direction_setpoint > 0) {
+		RM->setDirection(LOW);
+		if (direction_setpoint >= 0) {
 			LM->move(speed_setpoint);
-			RM->move(50);
+			RM->move(speed_setpoint);
 			direction_setpoint = direction_setpoint - angle;
 			command_running = 1;
 		}
@@ -90,10 +90,10 @@ void Rover::turnCW(float angle) {
 
 void Rover::turnACW(float angle) {
 	if (turnACW_flag) {
-		LM->setDirection(HIGH);
+		LM->setDirection(LOW);
 		RM->setDirection(HIGH);
-		if (direction_setpoint > 0) {
-			LM->move(50);
+		if (direction_setpoint >= 0) {
+			LM->move(speed_setpoint);
 			RM->move(speed_setpoint);
 			direction_setpoint = direction_setpoint - angle;
 			command_running = 1;
@@ -106,16 +106,32 @@ void Rover::turnACW(float angle) {
 	}
 }
 
-void Rover::decodeCommand(int dm, int dist, int spd, int dir) {
+void Rover::decodeCommand(int dm, int dist, int spd, int dir, int targetX, int targetY, float myDirX, float myDirY, int myPosX, int myPosY) {
 	drive_mode = dm;
-	distance_setpoint = abs(dist);
-	speed_setpoint = spd;
-	direction_setpoint = abs(dir);
 
-	if (dir > 0) { turnACW_flag = 1; turnCW_flag = 0; moveForward_flag = 0; moveBack_flag = 0; }
-	if (dir < 0) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 0; moveBack_flag = 0; }
-	if (dir == 0 && dist > 0) { turnACW_flag = 0; turnCW_flag = 0; moveForward_flag = 1; moveBack_flag = 0; }
-	if (dir == 0 && dist < 0) { turnACW_flag = 0; turnCW_flag = 0; moveForward_flag = 0; moveBack_flag = 1; }
+	if (drive_mode == 0 || drive_mode == 1) {
+		distance_setpoint = abs(dist);
+		speed_setpoint = spd;
+		float dir_setpoint = abs(dir);
+
+		//small error correction
+		direction_setpoint = dir_setpoint + 10;
+
+		if (dir > 0) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 0; moveBack_flag = 0; }
+		if (dir < 0) { turnACW_flag = 1; turnCW_flag = 0; moveForward_flag = 0; moveBack_flag = 0; }
+		if (dir == 0 && dist > 0) { turnACW_flag = 0; turnCW_flag = 0; moveForward_flag = 1; moveBack_flag = 0; }
+		if (dir == 0 && dist < 0) { turnACW_flag = 0; turnCW_flag = 0; moveForward_flag = 0; moveBack_flag = 1; }
+	}
+	else if (drive_mode == 2) {
+		
+		//calculate the coordinates of A_dash
+		float A_dash_x = myPosX - myDirX * radius;
+		float A_dash_y = myPosY - myDirY * radius;
+
+		//calculate new direction vector
+		float newDirX = targetX - A_dash_x;
+		float newDirY = targetY - A_dash_y;
+	}
 }
 
 void Rover::stop() {
@@ -127,10 +143,19 @@ void Rover::action(float travelDist, float angle) {
 	if (drive_mode == 0) {
 		stop();
 	}
-	else {
+	else if (drive_mode == 1) {
 		moveForward(travelDist);
 		moveBack(travelDist);
 		turnCW(angle);
 		turnACW(angle);
+	}
+	else if (drive_mode == 2) {
+		if (direction_setpoint > 0) {
+			turnCW(angle);
+			turnACW(angle);
+		}
+		else {
+			moveForward(travelDist);
+		}
 	}
 }
