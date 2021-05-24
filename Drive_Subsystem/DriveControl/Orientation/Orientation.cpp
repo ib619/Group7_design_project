@@ -13,7 +13,7 @@ Orientation::Orientation() {
     lastDirection.x = 0; lastDirection.y = 0;
     currentDirection.x = 0; currentDirection.y = -1;
 
-    initial.x = 0; initial.y = -1;
+    initial.x = 0; initial.y = 1;
 }
 
 void Orientation::updatePosition(int x, int y) {
@@ -21,7 +21,7 @@ void Orientation::updatePosition(int x, int y) {
     //find travel distance
     int travel_distance = sqrt(pow(x-currentPosition.x, 2) + pow(y-currentPosition.y, 2));
 
-    if (travel_distance >= 5) {
+    if (travel_distance >= 2) {
 
         lastPosition = currentPosition;
         currentPosition.x = x; currentPosition.y = y;
@@ -121,8 +121,8 @@ void Orientation::getDisplacement() {
     //calculate sine between vectors
     float sine = crossprod / (absDir * absDisp);
 
-    if (sine > 0.4) { rotation = 1; }
-    else if (sine < -0.4) { rotation = 2; }
+    if (sine >= 0.1) { rotation = 1; }
+    else if (sine <= -0.1) { rotation = 2; }
     else { rotation =  0; }
 
 }

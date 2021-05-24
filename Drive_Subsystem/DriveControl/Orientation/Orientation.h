@@ -34,7 +34,7 @@ public:
     bool position_changed = 0; //indicates if there was a position change since last loop cycle
 
 private:
-    int radius = 176;
+    int radius = 150;
     int rotation;
     bool log_enable = 0;
     bool enable_direction_update = 0;
