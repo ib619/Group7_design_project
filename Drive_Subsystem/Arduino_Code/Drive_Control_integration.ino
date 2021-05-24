@@ -70,6 +70,8 @@ int direction_value=0;
 int speed_value=0;
 int distance_value=0;
 int drive_mode = 0;
+int targetX = 0;
+int targetY = 0;
 
 //initialising motor sketch variables
 
@@ -263,8 +265,8 @@ char asciiart(int k)
 void setup() {
 //motor sketch setup routine
 
-  myRightMotor.init(20, 9);
-  myLeftMotor.init(21, 5);
+  myLeftMotor.init(20, 9);
+  myRightMotor.init(21, 5);
   marsRover.init(&myLeftMotor, &myRightMotor);
 
 
@@ -330,12 +332,16 @@ void loop() {
     speed_value=ci.getSpeed();  //fetch new speed value
     distance_value=ci.getDistance();  // fetch new distance value
     drive_mode = ci.getDriveMode(); //fetch new drive mode value
+    targetX = ci.getTargetX();
+    targetY = ci.getTargetY();
 
-    marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value);
+    marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value, targetX, targetY, myOrientation.exportDirectionX(), myOrientation.exportDirectionY(), myOrientation.exportPositionX(), myOrientation.exportPositionY());
     Serial.println("Drive_mode: " + String(drive_mode));
     Serial.println("Distance: " + String(distance_value));
     Serial.println("Speed: " + String(speed_value));
     Serial.println("Direction: " + String(direction_value));
+    Serial.println("Target X: " + String(targetX));
+    Serial.println("Target Y: " + String(targetY));
     Serial.println(" ");
   }
   
@@ -405,6 +411,10 @@ total_y = 10*total_y1/157; //Conversion from counts per inch to mm (400 counts p
 myOrientation.enableLog();
 myOrientation.updatePosition(total_x, total_y);
 myOrientation.updateDirection();
+
+if (myOrientation.position_changed){
+  myOrientation.logOrientation();
+}
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
 
