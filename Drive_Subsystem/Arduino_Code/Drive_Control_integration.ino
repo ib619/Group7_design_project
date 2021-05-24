@@ -413,7 +413,7 @@ myOrientation.updatePosition(total_x, total_y);
 myOrientation.updateDirection();
 
 if (myOrientation.position_changed){
-  myOrientation.logOrientation();
+  Serial.println(myOrientation.exportDirectionAngle());
 }
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
