@@ -3,7 +3,6 @@ import time
 import json 
 import threading
 import logging
-import random
 from database import create_obstacle_record, create_connection, select_all_obstacles, select_top_obstacle
 
 logging.basicConfig(level=logging.DEBUG,
@@ -17,6 +16,7 @@ class MqttServer:
         self.obstacle_server = paho.Client("ObstacleHandler")
         self.obstacle_server.on_connect = self.on_connect_obstacle
         self.obstacle_server.on_message = self.on_message_obstacle
+        self.obstacle_server.on_publish = self.on_publish_obstacle
         # self.drive_server = paho.Client("DriveHandler")
         # self.drive_server.on_connect = self.on_connect_drive
         # self.drive_server.on_message = self.on_message_drive
@@ -51,15 +51,20 @@ class MqttServer:
         else:
             logging.debug("Obstacle failed to connect")
 
+    def on_publish_obstacle(self, client, userdata, mid):
+        logging.debug("Obstacle data published")
+
     # callback for getting a messsage on opstacle topics
     def on_message_obstacle(self, client, userdata, msg):
+        db = create_connection('db/marsrover.db')
         if msg.topic == 'obstacle/update':
             # new obstacle data from esp 
-            pass
-            
+            data = str(msg.payload.decode("utf-8", "ignore"))
+            data = json.loads(data) # decode string into json format
+            record = (data["colour"], data["x"], data["y"])
+            create_obstacle_record(db, record)
         elif msg.topic == 'obstacle/get':
             res = str(msg.payload.decode("utf-8"))
-            db = create_connection('db/marsrover.db')
             if res == "all":
                 data = select_all_obstacles(db)
             else:
@@ -69,7 +74,7 @@ class MqttServer:
             client.publish("obstacle/result", json_data, qos=1)
 
     # Drive Stuff
-    
+
 
     # Event Handlers
     def start_server_handler(self):
@@ -82,7 +87,7 @@ class MqttServer:
             # publish recent 5 obstacles every 5s
             time.sleep(5)
             db = create_connection('db/marsrover.db')
-            data = select_top_obstacle(db, 5)
+            data = select_top_obstacle(db, str(5))
             json_data = json.dumps(data)
             self.obstacle_server.publish("obstacle/result", json_data, qos=1)
 

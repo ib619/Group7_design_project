@@ -1,6 +1,8 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import Toggle from "./Toggler";
+import Battery from "./Battery";
+import SignalStrength from "./SignalStrength";
 
 const HomeNavBar = (props) => {
   return (
@@ -14,6 +16,8 @@ const HomeNavBar = (props) => {
             <Nav.Link href="/discrete">Discrete</Nav.Link>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
+            <Battery />
+            <SignalStrength />
             <Toggle theme={props.theme} toggleTheme={props.toggleTheme} />
           </Navbar.Collapse>
         </Container>
