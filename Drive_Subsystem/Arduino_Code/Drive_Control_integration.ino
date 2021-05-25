@@ -335,7 +335,7 @@ void loop() {
     targetX = ci.getTargetX();
     targetY = ci.getTargetY();
 
-    marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value, targetX, targetY, myOrientation.exportDirectionX(), myOrientation.exportDirectionY(), myOrientation.exportPositionX(), myOrientation.exportPositionY());
+    marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value);
     Serial.println("Drive_mode: " + String(drive_mode));
     Serial.println("Distance: " + String(distance_value));
     Serial.println("Speed: " + String(speed_value));
@@ -413,7 +413,9 @@ myOrientation.updatePosition(total_x, total_y);
 myOrientation.updateDirection();
 
 if (myOrientation.position_changed){
-  Serial.println(myOrientation.exportDirectionAngle());
+  //Serial.println(myOrientation.exportDirectionAngle());
+  myOrientation.logOrientation();
+  //myOrientation.logRotation();
 }
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
