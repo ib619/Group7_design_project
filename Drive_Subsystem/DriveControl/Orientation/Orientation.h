@@ -29,17 +29,18 @@ public:
 
     int exportPositionX(); //export current X coordinate for control subsystem
     int exportPositionY(); //export current Y coordinate for control subsystem
-    float exportDirectionX(); //export X component of the current direction vector
-    float exportDirectionY(); //export Y component of the current direction vector
-    int exportDirectionAngle(); 
+    int exportDirectionAngle(); //export the angle between initial and current rover direction
+    int exportTotalRun(); //export total distance travelled since the start of the rover
 
     bool position_changed = 0; //indicates if there was a position change since last loop cycle
 
 private:
     int radius = 168;
     int rotation;
+    int total_distance_travelled = 0;
     bool log_enable = 0;
     bool enable_direction_update = 0;
+    Position truePosition;
     Position lastPosition; 
     Position currentPosition;
     Direction lastDirection;

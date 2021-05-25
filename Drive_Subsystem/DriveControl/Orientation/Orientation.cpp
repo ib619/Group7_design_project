@@ -9,8 +9,9 @@ Orientation::Orientation() {
 
     lastPosition.x = 0; lastPosition.y = 0;
     currentPosition.x = 0; currentPosition.y = 0;
+    truePosition.x = 0; truePosition.y = 0;
 
-    lastDirection.x = 0; lastDirection.y = 0;
+    lastDirection.x = 0; lastDirection.y = 1;
     currentDirection.x = 0; currentDirection.y = 1;
 
     initial.x = 0; initial.y = 1;
@@ -23,17 +24,36 @@ void Orientation::updatePosition(int x, int y) {
 
     if (travel_distance >= 2) {
 
+        total_distance_travelled += travel_distance;
+
         lastPosition = currentPosition;
         currentPosition.x = x; currentPosition.y = y;
+
         enable_direction_update = 1;
         position_changed = 1;
         getDisplacement();
         detectRotation();
+
+        bool forward_condition = currentPosition.x > lastPosition.x || currentPosition.y > lastPosition.y;
+        bool backward_condition = currentPosition.x < lastPosition.x || currentPosition.y < lastPosition.y;
+
+        if (rotation == 0 && forward_condition) {
+            truePosition.x = truePosition.x + currentDirection.x * travel_distance;
+            truePosition.y = truePosition.y + currentDirection.y * travel_distance;
+        }
+        else if (rotation == 0 && backward_condition) {
+            truePosition.x = truePosition.x - currentDirection.x * travel_distance;
+            truePosition.y = truePosition.y - currentDirection.y * travel_distance;
+        }
+        else {
+            truePosition = truePosition;
+        }
     }
 
     else {
         lastPosition = lastPosition;
         currentPosition = currentPosition;
+        truePosition = truePosition;
         enable_direction_update = 0;
         position_changed = 0;
     }
@@ -48,8 +68,6 @@ void Orientation::updateDirection() {
     //find cosine and sine of direction change angle
     float cosine = 1 - pow(absDisp, 2) / (2 * pow(radius, 2));
     float sine = sqrt(1 - pow(cosine, 2));
-
-    
 
     //calculate new direction
     Direction newDir;
@@ -92,7 +110,7 @@ void Orientation::updateDirection() {
 void Orientation::logOrientation() {
     if(log_enable) {
 
-        Serial.println("Rover Position: " + String(currentPosition.x) + " : " + String(currentPosition.y));
+        Serial.println("Rover Position: " + String(truePosition.x) + " : " + String(truePosition.y));
         Serial.print("Rover Direction: "); Serial.print(currentDirection.x, 5); Serial.print(" : "); Serial.println(currentDirection.y, 5);
         Serial.println(" ");
     }
@@ -169,19 +187,11 @@ void Orientation::getDisplacement() {
  }
 
  int Orientation::exportPositionX() {
-     return currentPosition.x;
+     return truePosition.x;
  }
 
  int Orientation::exportPositionY() {
-     return currentPosition.y;
- }
-
- float Orientation::exportDirectionX() {
-     return currentDirection.x;
- }
-
- float Orientation::exportDirectionY() {
-     return currentDirection.y;
+     return truePosition.y;
  }
 
  int Orientation::exportDirectionAngle() {
@@ -204,4 +214,8 @@ void Orientation::getDisplacement() {
      else if (cosine >= 0 && sine < 0) { output = -180 - angle * (180 / 3.14159); }
 
      return (int)output;
+ }
+
+ int Orientation::exportTotalRun() {
+     return total_distance_travelled;
  }
