@@ -106,7 +106,7 @@ void Rover::turnACW(float angle) {
 	}
 }
 
-void Rover::decodeCommand(int dm, int dist, int spd, int dir, int targetX, int targetY, float myDirX, float myDirY, int myPosX, int myPosY) {
+void Rover::decodeCommand(int dm, int dist, int spd, int dir) {
 	drive_mode = dm;
 	distance_setpoint = abs(dist);
 	speed_setpoint = spd;

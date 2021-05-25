@@ -36,6 +36,5 @@ Setup your Rover as shown in test_setup.png
 **IMPORTANT:** When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
 
 ## Further Objectives
-1. Design true position tracking algorithm for Orientation API
-2. Design an Anti-Drift algorithm, for preventing side drifting when moving straight
-3. Attempt to fix the bug causing 0 distance leading to an error
+1. Design an Anti-Drift algorithm, for preventing side drifting when moving straight
+2. Attempt to fix the bug causing 0 distance leading to an error

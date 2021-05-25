@@ -30,7 +30,7 @@ class Rover {
 public:
 	Rover();
 	void init(LeftMotor *left, RightMotor *right);
-	void decodeCommand(int dm, int dist, int spd, int dir, int targetX, int targetY, float myDirX, float myDirY, int myPosX, int myPosY);
+	void decodeCommand(int dm, int dist, int spd, int dir);
 	void action(float travelDist, float angle);
 	bool command_running = 0;
 
