@@ -36,6 +36,7 @@ int DriveInterface::fetchData() {
         y_axis=tmp[5];
         rover_heading=tmp[6];
         battery_SOH=tmp[7];
+        battery_state=tmp[8];
         return 1;
     }
     else    {
@@ -50,6 +51,8 @@ void DriveInterface::sendUpdates()  {
     send_integer(distance);
     send_integer(target_x);
     send_integer(target_y);
+    send_integer(system_time>>16);      // system_time higher 2 bytes
+    send_integer(system_time&65535);    // system_time lower 2 bytes
 }
 
 void DriveInterface::writeDriveMode(int dm) {
@@ -74,6 +77,10 @@ void DriveInterface::writeTargetX(int x)    {
 
 void DriveInterface::writeTargetY(int y)    {
     target_y=y;
+}
+
+void DriveInterface::writeSystemTime(unsigned long time)    {
+    system_time=time;
 }
 
 int DriveInterface::getBatteryLevel() const {
@@ -106,6 +113,10 @@ int DriveInterface::getRoverHeading() const {
 
 int DriveInterface::getBatterySOH() const   {
     return battery_SOH;
+}
+
+int DriveInterface::getBatteryState() const {
+    return battery_state;
 }
 
 void DriveInterface::send_integer(int d)    {

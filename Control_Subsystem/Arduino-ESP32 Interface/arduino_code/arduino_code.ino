@@ -7,6 +7,7 @@ ControlInterface ci(&Serial);
 int direction_value=0;
 int speed_value=0;
 int distance_value=0;
+unsigned long sys_time=0;
 
 // variable for data to send to ESP32
 int battery_level=100;
@@ -31,6 +32,7 @@ void loop() {
     direction_value=ci.getDirection();  //fetch new direction value
     speed_value=ci.getSpeed();  //fetch new speed value
     distance_value=ci.getDistance();  // fetch new distance value
+    sys_time=ci.getSystemTime();
   }
 
   // write new values to interface module

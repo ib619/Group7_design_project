@@ -41,6 +41,7 @@ int ControlInterface::fetchData()  {
         distance=tmp[3];
         target_x=tmp[4];
         target_y=tmp[5];
+        system_time=(tmp[6]<<16)+tmp[7];
         return 1;
     }
     else    {
@@ -57,6 +58,7 @@ void ControlInterface::sendUpdates()    {
     send_integer(y_axis);
     send_integer(rover_heading);
     send_integer(battery_SOH);
+    send_integer(battery_state);
 }
 
 int ControlInterface::getDriveMode() const  {
@@ -81,6 +83,10 @@ int ControlInterface::getTargetX() const    {
 
 int ControlInterface::getTargetY() const    {
     return target_y;
+}
+
+unsigned long ControlInterface::getSystemTime() const   {
+    return system_time;
 }
 
 void ControlInterface::writeBatterylevel(int batt) {
@@ -113,6 +119,10 @@ void ControlInterface::writeRoverHeading(int heading)   {
 
 void ControlInterface::writeBatterySOH(int soh) {
     battery_SOH=soh;
+}
+
+void ControlInterface::writeBatteryState(int state) {
+    battery_state=state;
 }
 
 void ControlInterface::send_integer(int d)  {   // send integer MSB first
