@@ -12,7 +12,7 @@ const SignalStrength = () => {
   const [strength, setStrength] = useState(-20);
 
   useEffect(() => {
-    if (message) {
+    if (message && message.topic === "rssi") {
       setStrength(JSON.parse(message.message));
     }
   }, [message, strength]);

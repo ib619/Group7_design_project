@@ -14,10 +14,10 @@ const Battery = () => {
   const [battery, setBattery] = useState(100);
 
   useEffect(() => {
-    if (message) {
+    if (message && message.topic === "battery/status") {
       setBattery(JSON.parse(message.message));
     }
-  }, [message, battery]);
+  }, [message]);
 
   return (
     <>

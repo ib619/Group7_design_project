@@ -1,6 +1,6 @@
 import sqlite3
 from sqlite3 import Error
-from datetime import datetime
+import time
 
 def create_connection(db_file):
     """create a database connection to a SQLite database"""
@@ -22,6 +22,7 @@ def create_table(conn, create_table_sql):
 
 # Insert Data to Distance Table
 def create_obstacle_record(conn, obstacle_record):
+    obstacle_record.append(time.time())
     sql_query = """INSERT INTO obstacle_record (colour, x_coord, y_coord, date)
                    VALUES(?,?,?,?)"""
     cur = conn.cursor()

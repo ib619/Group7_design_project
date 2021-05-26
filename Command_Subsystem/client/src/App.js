@@ -25,7 +25,7 @@ const App = () => {
 
   // on position update
   useEffect(() => {
-    if (message) {
+    if (message && message.topic === "position/update") {
       setPos(JSON.parse(message.message));
       localStorage.setItem("position", JSON.stringify(pos));
     }

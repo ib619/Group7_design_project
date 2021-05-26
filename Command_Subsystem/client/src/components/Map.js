@@ -14,7 +14,7 @@ const Map = (props) => {
 
   // when message arrived
   useEffect(() => {
-    if (message) {
+    if (message && message.topic === "obstacle/result") {
       setObstacles(JSON.parse(message.message));
       localStorage.setItem("obstacles", JSON.stringify(obstacles));
     }
