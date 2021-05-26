@@ -340,8 +340,6 @@ void loop() {
     Serial.println("Distance: " + String(distance_value));
     Serial.println("Speed: " + String(speed_value));
     Serial.println("Direction: " + String(direction_value));
-    Serial.println("Target X: " + String(targetX));
-    Serial.println("Target Y: " + String(targetY));
     Serial.println(" ");
   }
   
@@ -409,13 +407,14 @@ total_x = 10*total_x1/157; //Conversion from counts per inch to mm (400 counts p
 total_y = 10*total_y1/157; //Conversion from counts per inch to mm (400 counts per inch)
 
 myOrientation.enableLog();
-myOrientation.updatePosition(total_x, total_y);
+myOrientation.updatePosition(total_x, total_y,  marsRover.moveForward_flag, marsRover.moveBack_flag, marsRover.turnCW_flag, marsRover.turnACW_flag);
 myOrientation.updateDirection();
 
 if (myOrientation.position_changed){
   //Serial.println(myOrientation.exportDirectionAngle());
-  myOrientation.logOrientation();
+  //myOrientation.logOrientation();
   //myOrientation.logRotation();
+  Serial.println("Rover position: " + String(myOrientation.exportPositionX()) + ": " + String(myOrientation.exportPositionY()) + "\n");
 }
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
