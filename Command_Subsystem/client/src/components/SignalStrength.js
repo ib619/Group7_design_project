@@ -9,7 +9,7 @@ import Level3 from "../assets/signal-level-3.svg";
 
 const SignalStrength = () => {
   const { message } = useSubscription("rssi");
-  const [strength, setStrength] = useState(-50);
+  const [strength, setStrength] = useState(-20);
 
   useEffect(() => {
     if (message) {

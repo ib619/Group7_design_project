@@ -12,32 +12,77 @@ const DiscretePage = (props) => {
     speed: "",
     distance: "",
   });
+  const [valid, setValid] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { client } = useMqttState();
+
+  const handleValidation = () => {
+    let formIsValid = true;
+    let error = {};
+    let data = target;
+
+    // Distance
+    if (!data["distance"]) {
+      formIsValid = false;
+      error["distance"] = "Distance field is empty!";
+    } else if (data["distance"] === 0) {
+      formIsValid = false;
+      error["distance"] = "Distance cannot be 0!";
+    }
+
+    // Speed
+    if (!data["speed"]) {
+      formIsValid = false;
+      error["speed"] = "Speed field is empty!";
+    } else if (data["speed"] < 0 || data["speed"] > 255) {
+      formIsValid = false;
+      error["speed"] = "Speed must be between 0 and 255";
+    }
+
+    // Direction
+    if (!data["direction"]) {
+      formIsValid = false;
+      error["direction"] = "Direction field is empty!";
+    } else if (data["direction"] < -180 || data["direction"] > 180) {
+      formIsValid = false;
+      error["direction"] = "Direction must be between -180˚ and 180˚";
+    }
+
+    setErrors(error);
+    setValid(formIsValid);
+    return formIsValid;
+  };
 
   const handleChange = (e) => {
     setTarget({ ...target, [e.target.name]: e.target.value });
   };
 
+  // TODO: error checking for values
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      target.direction === "" ||
-      target.speed === "" ||
-      target.distance === ""
-    ) {
-      console.log("No target coordinate set");
-    } else {
+
+    // if valid
+    if (handleValidation()) {
       client.publish("drive/discrete", JSON.stringify(target));
-      setShow(true);
-      console.log(target);
     }
+
+    // distance: any not equal 0
+    // speed: 0 to 255
+    // angle: -180 to 180
     setTarget({ direction: "", speed: "", distance: "" });
+    setShow(true);
   };
 
   return (
     <>
-      <FormAlert show={show} setShow={setShow} />
+      <FormAlert
+        show={show}
+        setShow={setShow}
+        valid={valid}
+        errors={errors}
+        setErrors={setErrors}
+      />
       <Map pos={props.pos} />
       <Form onSubmit={handleSubmit} className="mx-4">
         <Row>
@@ -67,7 +112,7 @@ const DiscretePage = (props) => {
                 onChange={handleChange}
               />
               <InputGroup.Append>
-                <InputGroup.Text>cm/s</InputGroup.Text>
+                <InputGroup.Text>pwm</InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>
           </Col>
@@ -82,7 +127,7 @@ const DiscretePage = (props) => {
                 onChange={handleChange}
               />
               <InputGroup.Append>
-                <InputGroup.Text>cm</InputGroup.Text>
+                <InputGroup.Text>mm</InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>
           </Col>

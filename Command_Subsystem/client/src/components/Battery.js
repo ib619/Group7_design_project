@@ -11,7 +11,7 @@ import Level4 from "../assets/battery-level-4.svg";
 
 const Battery = () => {
   const { message } = useSubscription("battery/status");
-  const [battery, setBattery] = useState(60);
+  const [battery, setBattery] = useState(100);
 
   useEffect(() => {
     if (message) {
