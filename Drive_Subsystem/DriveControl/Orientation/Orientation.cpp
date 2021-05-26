@@ -17,7 +17,7 @@ Orientation::Orientation() {
     initial.x = 0; initial.y = 1;
 }
 
-void Orientation::updatePosition(int x, int y) {
+void Orientation::updatePosition(int x, int y, bool FW, bool BW, bool CW, bool ACW) {
 
     //find travel distance
     int travel_distance = sqrt(pow(x-currentPosition.x, 2) + pow(y-currentPosition.y, 2));
@@ -37,13 +37,17 @@ void Orientation::updatePosition(int x, int y) {
         bool forward_condition = currentPosition.x > lastPosition.x || currentPosition.y > lastPosition.y;
         bool backward_condition = currentPosition.x < lastPosition.x || currentPosition.y < lastPosition.y;
 
-        if (rotation == 0 && forward_condition) {
-            truePosition.x = truePosition.x + currentDirection.x * travel_distance;
-            truePosition.y = truePosition.y + currentDirection.y * travel_distance;
+        bool enable_change = (!ACW && !CW) && (FW || BW);
+
+        Serial.println(enable_change);
+
+        if (enable_change && forward_condition) {
+            truePosition.x = truePosition.x + currentDirection.x * displacement.getMagnitude();
+            truePosition.y = truePosition.y + currentDirection.y * displacement.getMagnitude();
         }
-        else if (rotation == 0 && backward_condition) {
-            truePosition.x = truePosition.x - currentDirection.x * travel_distance;
-            truePosition.y = truePosition.y - currentDirection.y * travel_distance;
+        else if (enable_change && backward_condition) {
+            truePosition.x = truePosition.x - currentDirection.x * displacement.getMagnitude();
+            truePosition.y = truePosition.y - currentDirection.y * displacement.getMagnitude();
         }
         else {
             truePosition = truePosition;
@@ -110,7 +114,7 @@ void Orientation::updateDirection() {
 void Orientation::logOrientation() {
     if(log_enable) {
 
-        Serial.println("Rover Position: " + String(truePosition.x) + " : " + String(truePosition.y));
+        Serial.println("Rover Position: " + String(truePosition.x,5) + " : " + String(truePosition.y,5));
         Serial.print("Rover Direction: "); Serial.print(currentDirection.x, 5); Serial.print(" : "); Serial.println(currentDirection.y, 5);
         Serial.println(" ");
     }
@@ -187,11 +191,11 @@ void Orientation::getDisplacement() {
  }
 
  int Orientation::exportPositionX() {
-     return truePosition.x;
+     return (int)truePosition.x;
  }
 
  int Orientation::exportPositionY() {
-     return truePosition.y;
+     return (int)truePosition.y;
  }
 
  int Orientation::exportDirectionAngle() {

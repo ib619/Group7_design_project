@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 struct Position {
-    int x;
-    int y;
+    float x;
+    float y;
 };
 
 class Direction {
@@ -18,7 +18,7 @@ class Direction {
 class Orientation {
 public:
     Orientation();
-    void updatePosition(int x, int y); //updates the position of the rover
+    void updatePosition(int x, int y, bool FW, bool BW, bool CW, bool ACW); //updates the position of the rover
     void updateDirection(); //updates the direction of the rover, needs to be called after updatePosition()
     void logOrientation(); //logs Orientation data to Serial for debug
     void enableLog(); //enables logging for debug 
