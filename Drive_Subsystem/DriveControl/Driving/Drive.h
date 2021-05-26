@@ -33,6 +33,10 @@ public:
 	void decodeCommand(int dm, int dist, int spd, int dir);
 	void action(float travelDist, float angle);
 	bool command_running = 0;
+	bool turnCW_flag = 0;
+	bool turnACW_flag = 0;
+	bool moveForward_flag = 0;
+	bool moveBack_flag = 0;
 
 private:
 	RightMotor *RM;
@@ -45,10 +49,7 @@ private:
 	int x_setpoint = 0;
 	int y_setpoint = 0;
 
-	bool turnCW_flag = 0;
-	bool turnACW_flag = 0;
-	bool moveForward_flag = 0;
-	bool moveBack_flag = 0;
+	
 
 	void stop();
 	void setDirection(bool dir);

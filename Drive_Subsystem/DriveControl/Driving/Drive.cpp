@@ -46,7 +46,6 @@ void Rover::moveForward(float travelDist) {
 			command_running = 1;
 		}
 		else {
-			moveForward_flag = 0;
 			command_running = 0;
 			stop();
 		}
@@ -63,7 +62,6 @@ void Rover::moveBack(float travelDist) {
 			command_running = 1;
 		}
 		else {
-			moveBack_flag = 0;
 			command_running = 0;
 			stop();
 		}
@@ -137,6 +135,7 @@ void Rover::action(float travelDist, float angle) {
 			turnACW(angle);
 		}
 		else {
+			turnCW_flag = 0; turnACW_flag = 0;
 			moveForward(travelDist);
 			moveBack(travelDist);
 		}
