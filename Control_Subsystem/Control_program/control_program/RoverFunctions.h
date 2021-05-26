@@ -1,5 +1,5 @@
-#ifndef ROVER_FUNCTIONS_H
-#define ROVER_FUNCTIONS_H
+#ifndef ROVER_FUNCTIONS_API_H
+#define ROVER_FUNCTIONS_API_H
 
 #include "Arduino.h"
 #include "WiFi.h"

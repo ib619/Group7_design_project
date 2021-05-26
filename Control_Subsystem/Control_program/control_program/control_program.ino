@@ -4,6 +4,7 @@
 #include "RoverFunctions.h"
 #include "DriveInterface.h"
 #include "FPGAInterface.h"
+#include "config.h"
 
 #define BASE_ADDRESS 0x40000
 #define FPGA_I2C_ADDRESS 0x55
@@ -13,14 +14,14 @@
 #define RSSI_UPDATE_INTERVAL 100
 
 // WiFi stuff
-const char *ssid="Rover7";
-const char *password="abcde12345";
+const char *ssid = WIFI_SSID;
+const char *password = WIFI_PASSWORD;
 
 // mqtt settings
-const char* mqttServer = "172.16.12.101"; // my private ip
-const char* mqttUser = "siting";
-const char* mqttPassword = "password";
-const int mqttPort = 1883;
+const char* mqttServer = MQTT_SERVER; // MQTT server IP
+const char* mqttUser = MQTT_USER;
+const char* mqttPassword = MQTT_PASSWORD;
+const int mqttPort = MQTT_PORT;
 
 // some objects and data structures
 WiFiClient espClient;
