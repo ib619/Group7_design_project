@@ -16,7 +16,7 @@ const Status = () => {
   // TODO: make pretty
   return (
     <>
-      <h1>{`Status: ${connectionStatus}`}</h1>
+      <h3>MQTT Status: {connectionStatus}</h3>
     </>
   );
 };

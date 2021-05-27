@@ -3,7 +3,7 @@ import Map from "../components/Map";
 import { useMqttState } from "mqtt-react-hooks";
 import { Form, Button, Row, Col } from "react-bootstrap";
 
-const TargetPage = (props) => {
+const TargetPage = () => {
   const [target, setTarget] = useState({ x: "", y: "" });
   const { client } = useMqttState();
 
@@ -24,7 +24,7 @@ const TargetPage = (props) => {
 
   return (
     <>
-      <Map pos={props.pos} />
+      <Map />
       <Form onSubmit={handleSubmit} className="mx-4">
         <Row>
           <Col>

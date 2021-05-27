@@ -40,4 +40,5 @@ const ImgContainer = styled.img`
   height: 45px;
   width: 45px;
   margin: 5px;
+  transition: all 0.6s ease-out;
 `;
