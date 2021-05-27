@@ -43,10 +43,8 @@ void Rover::moveForward(float travelDist) {
 			LM->move(speed_setpoint);
 			RM->move(speed_setpoint);
 			distance_setpoint = distance_setpoint - travelDist;
-			command_running = 1;
 		}
 		else {
-			command_running = 0;
 			stop();
 		}
 	}
@@ -109,6 +107,7 @@ void Rover::decodeCommand(int dm, int dist, int spd, int dir) {
 	distance_setpoint = abs(dist);
 	speed_setpoint = spd;
 	direction_setpoint = abs(dir);
+	command_running = 1;
 
 	if (dir > 0 && dist > 0) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 1; moveBack_flag = 0; }
 	if (dir > 0 && dist < 0) { turnACW_flag = 0; turnCW_flag = 1; moveForward_flag = 0; moveBack_flag = 1; }
@@ -128,6 +127,7 @@ void Rover::stop() {
 void Rover::action(float travelDist, float angle) {
 	if (drive_mode == 0) {
 		stop();
+		command_running = 0;
 	}
 	else if (drive_mode == 1) {
 		if (direction_setpoint > 0) {
@@ -138,6 +138,7 @@ void Rover::action(float travelDist, float angle) {
 			turnCW_flag = 0; turnACW_flag = 0;
 			moveForward(travelDist);
 			moveBack(travelDist);
+			if (distance_setpoint <= 0) { command_running = 0; }
 		}
 	}
 }

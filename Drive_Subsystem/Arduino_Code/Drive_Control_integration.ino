@@ -414,10 +414,18 @@ if (myOrientation.position_changed){
   //Serial.println(myOrientation.exportDirectionAngle());
   //myOrientation.logOrientation();
   //myOrientation.logRotation();
-  Serial.println("Rover position: " + String(myOrientation.exportPositionX()) + ": " + String(myOrientation.exportPositionY()) + "\n");
+  //Serial.println("Rover position: " + String(myOrientation.exportPositionX()) + ": " + String(myOrientation.exportPositionY()) + "\n");
 }
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
+
+if (myOrientation.position_changed) {
+  ci.writeRoverHeading(myOrientation.exportDirectionAngle());
+  ci.writeAlert(marsRover.command_running);
+  ci.writeAxisX(myOrientation.exportPositionX());
+  ci.writeAxisY(myOrientation.exportPositionY());
+  ci.sendUpdates(); //send new values to ESP32
+}
 
 }
 

@@ -9,6 +9,11 @@ int mDistance = 0;
 int mSpeed = 0;
 int mDirection = 0;
 
+int rover_heading = 0;
+int alert = 0;
+int axisX = 0;
+int axisY = 0;
+
 void setup() {
   di.setBaudrate(38400);
   di.begin();
@@ -47,5 +52,19 @@ void loop() {
     di.writeSpeed(mSpeed);
     di.writeDirection(mDirection);
     di.sendUpdates();
+  }
+
+  if(di.fetchData())  {
+    rover_heading = di.getRoverHeading();  //fetch new direction value
+    alert = di.getAlert();  //fetch new speed value
+    axisX = di.getAxisX();  // fetch new distance value
+    axisY = di.getAxisY(); //fetch new drive mode value
+
+    Serial.println("Heading: " + String(rover_heading));
+    Serial.println("Alert: " + String(alert));
+    Serial.println("X: " + String(axisX));
+    Serial.println("Y: " + String(axisY));
+    Serial.println(" ");
+
   }
 }
