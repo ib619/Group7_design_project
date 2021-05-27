@@ -21,7 +21,7 @@
 
 #define EXPOSURE_INIT 0x002000
 #define EXPOSURE_STEP 0x100
-#define GAIN_INIT 0x780
+#define GAIN_INIT 0x380
 #define GAIN_STEP 0x080
 #define DEFAULT_LEVEL 3
 
@@ -251,11 +251,18 @@ int main()
        alt_u32 area;
        alt_8 angle;
        alt_16 dist;
+       int bright_pix_count;
        //Read messages from the image processor and print them on the terminal
        while ((IORD(0x42000,EEE_IMGPROC_STATUS)>>8) & 0xff) { 	//Find out if there are words to read
            int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
     	   if (word == EEE_IMGPROC_MSG_START){ 					//Newline on message identifier
+    		   printf("Collecting Message\n");
     		   printf("\n");
+    	   }
+    	   if (color == 5){
+    		   bright_pix_count = word;
+    		   printf("Number of bright pixels: %d\n ",bright_pix_count);
+    		   break;
     	   }
     	   if (idx == 0){
     		   printf("RBB MSG ID: ");
@@ -298,6 +305,31 @@ int main()
     	   printf(";\n");
        }
        printf("\n");
+
+       if (bright_pix_count < 30000){
+    	    if (gain < 3000) {
+			   gain += GAIN_STEP;
+			   OV8865SetGain(gain);
+			   printf("Increasing Gain to %x\n", gain);
+		   }
+    	    if (exposureTime < 10000) {
+    	    	exposureTime += EXPOSURE_STEP;
+    	    	OV8865SetExposure(exposureTime);
+    	    	printf("Increasing Exposure to %x\n", exposureTime);
+    	    }
+       }
+       if (bright_pix_count > 40000){
+    	    if (gain > 180) {
+			   gain += GAIN_STEP;
+			   OV8865SetGain(gain);
+			   printf("Decreasing Gain to %x\n", gain);
+		   }
+    	    if (exposureTime > 5000) {
+    	    	exposureTime -= EXPOSURE_STEP;
+    	    	OV8865SetExposure(exposureTime);
+    	    	printf("Decreasing Exposure to %x\n", exposureTime);
+    	    }
+       }
        //Update the bounding box colour
        boundingBoxColour = ((boundingBoxColour + 1) & 0xff);
        IOWR(0x42000, EEE_IMGPROC_BBCOL, (boundingBoxColour << 8) | (0xff - boundingBoxColour));
@@ -341,7 +373,7 @@ int main()
 
 
 	   //Main loop delay
-	   usleep(10000);
+	   usleep(100000);
 
    };
   return 0;

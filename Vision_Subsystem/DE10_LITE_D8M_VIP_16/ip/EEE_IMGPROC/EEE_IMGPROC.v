@@ -78,6 +78,7 @@ wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
 wire [21:0]  pixel_addr, pixel_addr_interm, pixel_addr_obstacle;
 wire [10:0]  prev_x, prev_y;
+reg  [19:0]  bright_pix_count;
 
 ////////////////////////////////////////////////////////////////////////
 //Streaming registers to buffer video signal
@@ -199,7 +200,7 @@ reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
 reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 always@(posedge clk) begin
-    if (in_valid) begin
+    if (valid_rgbhsv) begin
         if (red_detect) begin	//Update bounds when the pixel is red
             if (prev_x < r_x_min) r_x_min <= prev_x;
             if (prev_x > r_x_max) r_x_max <= prev_x;
@@ -230,14 +231,17 @@ always@(posedge clk) begin
             if (prev_y < y_y_min) y_y_min <= prev_y;
             y_y_max <= prev_y;
         end
-        if (sop_in) begin	//Reset bounds on start of packet
-            r_x_min <= IMAGE_W-11'h1;b_x_min <= IMAGE_W-11'h1;g_x_min <= IMAGE_W-11'h1;gr_x_min <= IMAGE_W-11'h1;y_x_min <= IMAGE_W-11'h1;
-            r_x_max <= 0;b_x_max <= 0;g_x_max <= 0;gr_x_max <= 0;y_x_max <= 0;
-            r_y_min <= IMAGE_H-11'h1;b_y_min <= IMAGE_H-11'h1;g_y_min <= IMAGE_H-11'h1;gr_y_min <= IMAGE_H-11'h1;y_y_min <= IMAGE_H-11'h1;
-            r_y_max <= 0;b_y_max <= 0;g_y_max <= 0;gr_y_max <= 0;y_y_max <= 0;
-            
-        end
-    end
+		  if (value_b[7] == 1'b1) begin
+		      bright_pix_count <= bright_pix_count + 1;
+		  end
+	 end
+	 if (sop_in) begin	//Reset bounds on start of packet
+		 r_x_min <= IMAGE_W-11'h1;b_x_min <= IMAGE_W-11'h1;g_x_min <= IMAGE_W-11'h1;gr_x_min <= IMAGE_W-11'h1;y_x_min <= IMAGE_W-11'h1;
+		 r_x_max <= 0;b_x_max <= 0;g_x_max <= 0;gr_x_max <= 0;y_x_max <= 0;
+		 r_y_min <= IMAGE_H-11'h1;b_y_min <= IMAGE_H-11'h1;g_y_min <= IMAGE_H-11'h1;gr_y_min <= IMAGE_H-11'h1;y_y_min <= IMAGE_H-11'h1;
+		 r_y_max <= 0;b_y_max <= 0;g_y_max <= 0;gr_y_max <= 0;y_y_max <= 0;
+		 bright_pix_count <= 0;
+	 end
 end
 
 //Process bounding box at the end of the frame.
@@ -247,6 +251,7 @@ reg [10:0] g_left, g_right, g_top, g_bottom;
 reg [10:0] b_left, b_right, b_top, b_bottom;
 reg [10:0] gr_left, gr_right, gr_top, gr_bottom;
 reg [10:0] y_left, y_right, y_top, y_bottom;
+reg [19:0] bright_pix_count_reg;
 reg [7:0] frame_count;
 
 always@(posedge clk) begin
@@ -276,7 +281,8 @@ always@(posedge clk) begin
         y_right <= y_x_max;
         y_top <= y_y_min;
         y_bottom <= y_y_max;	
-        
+        bright_pix_count_reg <= bright_pix_count;
+		  
         //Start message writer FSM once every MSG_INTERVAL frames, if there is room in the FIFO
         frame_count <= frame_count - 1;
         
@@ -289,7 +295,7 @@ always@(posedge clk) begin
     //Cycle through message writer states once started
     if (msg_state != 4'b0000)
         begin
-            if (msg_state == 4'b1011)  msg_state <= 4'b0000;
+            if (msg_state == 4'b1100)  msg_state <= 4'b0000;
             else msg_state <= msg_state + 4'b0001;
         end
 end
@@ -315,43 +321,47 @@ always@(*) begin	//Write words to FIFO as state machine advances
             msg_buf_wr = 1'b1;
         end
         4'b0010: begin
-            msg_buf_in = {5'b0, (r_x_min + r_x_max) >>1 , 5'b0, (r_y_min + r_y_max)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, (r_left + r_right) >>1 , 5'b0, (r_top + r_bottom)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         4'b0011: begin
-            msg_buf_in = {5'b0, r_y_max - r_y_min, 5'b0, r_x_max - r_x_min}; //Bottom right coordinate
+            msg_buf_in = {5'b0, r_bottom - r_top, 5'b0, r_right - r_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         4'b0100: begin
-            msg_buf_in = {5'b0, (g_x_min + g_x_max) >>1 , 5'b0, (g_y_min + g_y_max)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, (g_left + g_right) >>1 , 5'b0, (g_top + g_bottom)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         4'b0101: begin
-            msg_buf_in = {5'b0, g_y_max - g_y_min, 5'b0, g_x_max - g_x_min}; //Bottom right coordinate
+            msg_buf_in = {5'b0, g_bottom - g_top, 5'b0, g_right - g_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         4'b0110: begin
-            msg_buf_in = {5'b0, (b_x_min + b_x_max) >>1 , 5'b0, (b_y_min + b_y_max)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, (b_left + b_right) >>1 , 5'b0, (b_top + b_bottom)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         4'b0111: begin
-            msg_buf_in = {5'b0, b_y_max - b_y_min, 5'b0, b_x_max - b_x_min}; //Bottom right coordinate
+            msg_buf_in = {5'b0, b_bottom - b_top, 5'b0, b_right - b_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         4'b1000: begin
-            msg_buf_in = {5'b0, (gr_x_min + gr_x_max) >>1 , 5'b0, (gr_y_min + gr_y_max)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, (gr_left + gr_right) >>1 , 5'b0, (gr_top + gr_bottom)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         4'b1001: begin
-            msg_buf_in = {5'b0, gr_y_max - gr_y_min, 5'b0, gr_x_max - gr_x_min}; //Bottom right coordinate
+            msg_buf_in = {5'b0, gr_bottom - gr_top, 5'b0, gr_right - gr_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         4'b1010: begin
-            msg_buf_in = {5'b0, (y_x_min + y_x_max) >>1 , 5'b0, (y_y_min + y_y_max)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, (y_left + y_right) >>1 , 5'b0, (y_top + y_bottom)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         4'b1011: begin
-            msg_buf_in = {5'b0, y_y_max - y_y_min, 5'b0, y_x_max - y_x_min}; //Bottom right coordinate
+            msg_buf_in = {5'b0, y_bottom - y_top, 5'b0, y_right - y_left}; //Bottom right coordinate
+            msg_buf_wr = 1'b1;
+        end
+		  4'b1100: begin
+            msg_buf_in = {12'b0, bright_pix_count_reg}; //Bright pixel count
             msg_buf_wr = 1'b1;
         end
         default: begin

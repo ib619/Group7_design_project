@@ -405,8 +405,8 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
-set_global_assignment -name ENABLE_SIGNALTAP OFF
-set_global_assignment -name USE_SIGNALTAP_FILE stp1.stp
+set_global_assignment -name ENABLE_SIGNALTAP ON
+set_global_assignment -name USE_SIGNALTAP_FILE output_files/stp1.stp
 set_global_assignment -name OPTIMIZATION_MODE BALANCED
 set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
 set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
@@ -436,4 +436,5 @@ set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/line_buffer.v
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/erosion.v
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/control.v
 set_global_assignment -name QIP_FILE shiftreg.qip
+set_global_assignment -name SIGNALTAP_FILE output_files/stp1.stp
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
