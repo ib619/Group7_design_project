@@ -26,7 +26,8 @@ module EEE_IMGPROC(
     source_eop,
 
     // conduit
-    mode
+    mode,
+	 erosion_mode
 
 );
 
@@ -58,6 +59,7 @@ output  source_eop;
 
 // conduit export
 input   mode;
+input   erosion_mode;
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -110,8 +112,8 @@ rgb_to_hsv rgb_hsv(
 );
 
 assign pixel_addr = {x ,y};
-assign prev_x = pixel_addr_obstacle[21:11];
-assign prev_y = pixel_addr_obstacle[10:0];
+assign prev_x = pixel_addr_interm[21:11];
+assign prev_y = pixel_addr_interm[10:0];
 
 ///////////////////////////////////////////////////////////////////////
 // Color Threshold
@@ -123,13 +125,14 @@ colour_threshold c_th (
     .saturation(saturation),// 0- 255
     .value_b(value_b), // 0- 255
     .valid_in(valid_rgbhsv),
-	 .pixel_addr(pixel_addr_interm),
+//	 .pixel_addr(pixel_addr_interm),
+    .erosion_mode(erosion_mode),
     .red_detect(red_detect),
     .green_detect(green_detect),
     .blue_detect(blue_detect),
     .grey_detect(grey_detect),
     .yellow_detect(yellow_detect),
-	 .pixel_addr_out(pixel_addr_obstacle)
+//	 .pixel_addr_out(pixel_addr_obstacle)
 );
 
 // Find boundary of cursor box
