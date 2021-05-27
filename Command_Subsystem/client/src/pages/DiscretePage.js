@@ -4,7 +4,7 @@ import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import Map from "../components/Map";
 import FormAlert from "../components/FormAlert";
 
-const DiscretePage = (props) => {
+const DiscretePage = () => {
   // for the game
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState({
@@ -83,7 +83,7 @@ const DiscretePage = (props) => {
         errors={errors}
         setErrors={setErrors}
       />
-      <Map pos={props.pos} />
+      <Map />
       <Form onSubmit={handleSubmit} className="mx-4">
         <Row>
           <Col>

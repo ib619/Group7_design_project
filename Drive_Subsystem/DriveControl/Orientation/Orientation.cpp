@@ -39,8 +39,6 @@ void Orientation::updatePosition(int x, int y, bool FW, bool BW, bool CW, bool A
 
         bool enable_change = (!ACW && !CW) && (FW || BW);
 
-        Serial.println(enable_change);
-
         if (enable_change && forward_condition) {
             truePosition.x = truePosition.x + currentDirection.x * displacement.getMagnitude();
             truePosition.y = truePosition.y + currentDirection.y * displacement.getMagnitude();

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubscription } from "mqtt-react-hooks";
+// import pointerblack from "../assets/pointer-black.svg";
+import pointerwhite from "../assets/pointer-white.svg";
 
-const Map = (props) => {
-  const { message } = useSubscription("obstacle/result");
+const Map = () => {
+  // for the map stuff
+  const [pos, setPos] = useState({ x: 0, y: 0, heading: 0 });
   const [obstacles, setObstacles] = useState([]);
+  const { message } = useSubscription(["obstacle/result", "position/update"]);
 
   // on refresh
   useEffect(() => {
@@ -20,17 +24,25 @@ const Map = (props) => {
     }
   }, [message, obstacles]);
 
+  // on position update
+  useEffect(() => {
+    if (message && message.topic === "position/update") {
+      console.log(message);
+      setPos(JSON.parse(message.message));
+    }
+  }, [message, pos]);
+
   return (
     <>
       <Border>
-        <Block pos={props.pos} />
+        <Pointer src={pointerwhite} pos={pos} />
         {obstacles &&
           obstacles.map((data, index) => (
             <Obstacle key={index} coords={data} />
           ))}
       </Border>
       <Coords>
-        x: {props.pos.x}, y: {props.pos.y}
+        x: {pos.x}, y: {pos.y}, direction: {pos.heading}
       </Coords>
     </>
   );
@@ -47,20 +59,6 @@ const Border = styled.div`
   border: 2px solid black;
 `;
 
-const Block = styled.div.attrs((props) => ({
-  style: {
-    left: props.pos.x,
-    top: props.pos.y,
-  },
-}))`
-  background: ${({ theme }) => theme.background};
-  color: black;
-  padding: 0.5rem;
-  width: 1rem;
-  height: 1rem;
-  position: relative;
-`;
-
 const Obstacle = styled.div.attrs((props) => ({
   style: {
     left: props.coords[1],
@@ -73,6 +71,20 @@ const Obstacle = styled.div.attrs((props) => ({
   width: 1rem;
   height: 1rem;
   position: relative;
+`;
+
+const Pointer = styled.img.attrs((props) => ({
+  style: {
+    left: props.pos.x,
+    top: props.pos.y,
+  },
+}))`
+  position: relative;
+  height: 45px;
+  width: 45px;
+  margin: 5px;
+  transform: rotate(${({ pos }) => pos.heading}deg);
+  transition: all 0.6s ease-out;
 `;
 
 const Coords = styled.p`

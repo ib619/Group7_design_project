@@ -3,7 +3,7 @@ import Arrow from "./Arrow";
 import styled from "styled-components";
 import ArrowKeysReact from "arrow-keys-react";
 
-const Controller = (props) => {
+const Controller = () => {
   // max: 384
   var maxVal = 384;
   ArrowKeysReact.config({
@@ -25,28 +25,28 @@ const Controller = (props) => {
     if (props.data.y > 0) {
       props.data.y -= 4;
     }
-    props.setData({ x: props.data.x, y: props.data.y });
+    props.setPos({ ...props.data, y: props.data.y });
   };
 
   const downFunc = () => {
     if (props.data.y < maxVal) {
       props.data.y += 4;
     }
-    props.setData({ x: props.data.x, y: props.data.y });
+    props.setPos({ ...props.data, y: props.data.y });
   };
 
   const leftFunc = () => {
     if (props.data.x > 0) {
       props.data.x -= 4;
     }
-    props.setData({ x: props.data.x, y: props.data.y });
+    props.setPos({ ...props.data, x: props.data.x });
   };
 
   const rightFunc = () => {
     if (props.data.x < maxVal) {
       props.data.x += 4;
     }
-    props.setData({ x: props.data.x, y: props.data.y });
+    props.setPos({ ...props.data, x: props.data.x });
   };
 
   // TODO: long hold effect
