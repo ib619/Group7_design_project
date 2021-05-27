@@ -127,6 +127,12 @@ void loop() {
         if(rover.speed==0)  {
           rover.drive_mode=0;
         }
+        drive.writeDriveMode(rover.drive_mode);
+        drive.writeDirection(rover.direction);
+        drive.writeSpeed(rover.speed);
+        drive.writeDistance(rover.distance);
+        drive.writeTargetX(rover.target_x);
+        drive.writeTargetY(rover.target_y);
         drive.writeSystemTime(millis());
         drive.sendUpdates();
         updateFlag=0;
