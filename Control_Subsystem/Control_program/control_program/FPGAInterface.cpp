@@ -34,7 +34,7 @@ ColourObject FPGAInterface::readByIndex(int index)  {
     i2c->requestFrom(slave_address,4);
     while(i2c->available()) {
         tmp.detected=i2c->read();
-        tmp.angle=i2c->read();
+        tmp.angle=(int8_t)i2c->read();
         d_low=i2c->read();
         d_high=i2c->read();
     }

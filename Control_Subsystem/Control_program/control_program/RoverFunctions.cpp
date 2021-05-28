@@ -1,14 +1,19 @@
 #include "RoverFunctions.h"
 
+static const char* TAG = "MyModule";
+
 void initWiFi(const char *ssid, const char *password)    {
+    ESP_LOGD(TAG, "Connecting to WiFi...");
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid,password);
     while(WiFi.status()!=WL_CONNECTED)  {
         delay(100);
     }
+    ESP_LOGD(TAG, "Connected! :D");
 }
 
 int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_password)    {
+    ESP_LOGD(TAG, "Connecting to MQTT broker...");
     while(!client->connected()) {
         if(client->connect("RoverESP32", mqtt_user, mqtt_password)) {
             client->subscribe("drive/discrete");
@@ -18,6 +23,7 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
             // do nothing?
         }
     }
+    ESP_LOGD(TAG, "MQTT broker connected!");
 }
 
 Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index) {
