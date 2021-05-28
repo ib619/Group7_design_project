@@ -55,7 +55,7 @@ int main() {
 
     }
     for (int i = 0; i < 20; i++){
-        std::cout<<edges_coords[i].x<<" "<<points_list[i].x0<<" "<< points_list[i].y0<<"\n";
+        std::cout<<edges_coords[i].x<<" "<<edges_coords[i].y<<"\n";
     }
     int rmin = 10;
     int rmax = 60;
@@ -82,23 +82,24 @@ int main() {
         std::cout<<points_list[i].r<<" "<<points_list[i].x0<<" "<< points_list[i].y0<<"\n";
     }
     std::cout<<point_idx<<" "<<edge_idx<<" "<< rmax-rmin<<"\n";
-    int acc_list [240][320][rmax-rmin]  = {0};
+    // int acc_list [240][320][40] ;
+    std::cout<<"Test\n";
     for (int i = 0; i < edge_idx; i++){
         for (int j = 0; j < point_idx; j++){
             int a = edges_coords[i].x - points_list[j].x0;
             int b = edges_coords[i].y - points_list[j].y0;
             int rad = points_list[j].r;
             std::cout<<a<<" "<<b<<" "<<rad<<"\n";
-            acc_list[a][b][rad-rmin] += 1 ; 
+            // acc_list[a][b][rad-rmin] += 1 ; 
         }
     }
     for (int i = 0; i < 240; i++){
         for (int j = 0; j < 320; j++){
             for (int r = 0; r < rmax-rmin; r++){
-                std::cout<<acc_list[i][j][r]<<"\n";
-                if (acc_list[i][j][r] > 1){
-                    std::cout<<"Circle: x: "<<i<<", y: "<<j<<", r: "<<r<<"\n";
-                }
+                // std::cout<<acc_list[i][j][r]<<"\n";
+                // if (acc_list[i][j][r] > 1){
+                    // std::cout<<"Circle: x: "<<i<<", y: "<<j<<", r: "<<r<<"\n";
+                // }
             }
         }
     }

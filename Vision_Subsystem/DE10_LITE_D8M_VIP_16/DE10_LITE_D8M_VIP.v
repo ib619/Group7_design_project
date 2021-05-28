@@ -181,7 +181,7 @@ Qsys u0 (
 		
 		.eee_imgproc_0_conduit_mode_new_signal     (SW[0]),
 		.eee_imgproc_0_conduit_mode_new_signal_1   (SW[1]),
-		
+		.eee_imgproc_0_conduit_mode_new_signal_2   (SW[2]),                //                                       .new_signal_2
 		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_in (sda_in), // i2cslave_to_avlmm_bridge_0_conduit_end.conduit_data_in
 		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_clk_in  (scl_in),  //                                       .conduit_clk_in
 		.i2cslave_to_avlmm_bridge_0_conduit_end_conduit_data_oe (sda_out), //                                       .conduit_data_oe

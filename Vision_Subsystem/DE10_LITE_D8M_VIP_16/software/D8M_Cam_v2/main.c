@@ -191,7 +191,7 @@ int main()
     int boundingBoxColour = 0;
     alt_u32 exposureTime = EXPOSURE_INIT;
     alt_u16 gain = GAIN_INIT;
-
+    alt_u8 time_delay = 0;
     OV8865SetExposure(exposureTime);
     OV8865SetGain(gain);
     Focus_Init();
@@ -261,7 +261,6 @@ int main()
     	   }
     	   if (color == 5){
     		   bright_pix_count = word;
-    		   printf("Number of bright pixels: %d\n ",bright_pix_count);
     		   break;
     	   }
     	   if (idx == 0){
@@ -283,7 +282,7 @@ int main()
     	   idx += 1;
        }
 
-
+       printf("Number of bright pixels: %d\n ",bright_pix_count);
        for (alt_u8 i = 0; i < 5; i++){
     	   if (i == 0) printf("Color Red: ");
     	   if (i == 1) printf("Color Green: ");
@@ -305,30 +304,35 @@ int main()
     	   printf(";\n");
        }
        printf("\n");
-
-       if (bright_pix_count < 30000){
-    	    if (gain < 3000) {
-			   gain += GAIN_STEP;
-			   OV8865SetGain(gain);
-			   printf("Increasing Gain to %x\n", gain);
-		   }
-    	    if (exposureTime < 10000) {
-    	    	exposureTime += EXPOSURE_STEP;
-    	    	OV8865SetExposure(exposureTime);
-    	    	printf("Increasing Exposure to %x\n", exposureTime);
-    	    }
+       if (time_delay == 0){
+           if (bright_pix_count < 30000){
+        	    if (gain < 3000) {
+    			   gain += GAIN_STEP;
+    			   OV8865SetGain(gain);
+    			   printf("Increasing Gain to %x\n", gain);
+    		   }
+    //    	    if (exposureTime < 10000) {
+    //    	    	exposureTime += EXPOSURE_STEP;
+    //    	    	OV8865SetExposure(exposureTime);
+    //    	    	printf("Increasing Exposure to %x\n", exposureTime);
+    //    	    }
+           }
+           if (bright_pix_count > 70000){
+        	    if (gain > 180) {
+    			   gain -= GAIN_STEP;
+    			   OV8865SetGain(gain);
+    			   printf("Decreasing Gain to %x\n", gain);
+    		   }
+    //    	    if (exposureTime > 5000) {
+    //    	    	exposureTime -= EXPOSURE_STEP;
+    //    	    	OV8865SetExposure(exposureTime);
+    //    	    	printf("Decreasing Exposure to %x\n", exposureTime);
+    //    	    }
+           }
        }
-       if (bright_pix_count > 40000){
-    	    if (gain > 180) {
-			   gain += GAIN_STEP;
-			   OV8865SetGain(gain);
-			   printf("Decreasing Gain to %x\n", gain);
-		   }
-    	    if (exposureTime > 5000) {
-    	    	exposureTime -= EXPOSURE_STEP;
-    	    	OV8865SetExposure(exposureTime);
-    	    	printf("Decreasing Exposure to %x\n", exposureTime);
-    	    }
+       time_delay += 1;
+       if ( time_delay == 10) {
+    	   time_delay = 0;
        }
        //Update the bounding box colour
        boundingBoxColour = ((boundingBoxColour + 1) & 0xff);
