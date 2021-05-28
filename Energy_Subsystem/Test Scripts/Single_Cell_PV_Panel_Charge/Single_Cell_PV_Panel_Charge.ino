@@ -22,21 +22,34 @@ const int chipSelect = 10;
 unsigned int rest_timer;
 unsigned int loop_trigger;
 unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging.
+
+// Current Controller Stuff
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
 float ui_max = 1, ui_min = 0; //anti-windup limitation
 float kpi = 0.02512, kii = 39.4, kdi = 0; // current pid.
 float Ts = 0.001; //1 kHz control frequency.
 float current_measure, current_ref = 0, error_amps; // Current Control
-float pwm_out, closed_PWM;
+float pwm_out, closed_pwm;
+
+// Voltage PID Controller Stuff
+float ev=0,cv=0,ei=0; //internal signals // FIXME:
+  // ev: difference between V_ref and V_b
+  // cv: current obtained from voltage PID controller. need to saturate it
+  // ei: difference between desired and inductor current. error_amps in this case? FIXME:
+float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
+float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
+float uv_max=4, uv_min=0; //anti-windup limitation
+
 float V_Bat; float V_PD;
 boolean input_switch;
 int state_num=0,next_state, prev_state;
 String dataString;
 
 // PV Panel Limits
+float vref;
 float I_in;
 float current_limit = 230;
-float voltage_limit = 5000;
+float V_limit = 5000;
 float v0, v1; // current and previous voltage values
 float p0, p1; // current and previous power values
 float i0, i1; // current and previous current values
@@ -85,21 +98,20 @@ void setup() {
   }
 
   // Initialise discharge and charge tables
-  File myFile = SD.open(discharge_SoC_filename);
+  File myFile = SD.open(charge_SoC_filename);
   String content;
-  
   if (myFile) {
-    Serial.println("Start insertion: discharge");  
+      Serial.println("Start insertion: charge");  
       for (int i = 0; i < 100; i++) {
           content = myFile.readStringUntil(',');
-          d_v_1[i] = content.toFloat();
+          c_v_1[i] = content.toFloat();
           content = myFile.readStringUntil(',');
-          // d_v_2[i] = content.toFloat();
+          // c_v_2[i] = content.toFloat();
           content = myFile.readStringUntil(',');
-          // d_v_3[i] = content.toFloat();
+          // c_v_3[i] = content.toFloat();
           content = myFile.readStringUntil('\n');
-          d_SoC[i] = content.toFloat();
-          Serial.println(String(d_v_1[i]) + "," + String(d_SoC[i]));
+          c_SoC[i] = content.toFloat();
+          Serial.println(String(c_v_1[i]) + "," + String(c_SoC[i]));
           if (content == "") {
               break;
               Serial.println("Insertion Complete");    
@@ -173,7 +185,7 @@ void loop() {
         current_ref = 0;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
-          v1 = V_pv;
+          v1 = V_PD;
           i1 = current_measure;
           p1 = v1*i1;
           next_state = 1;
@@ -187,9 +199,9 @@ void loop() {
       case 1:{ // Charge state (250mA and a green LED)
 
         // Determine reference threshold voltage for panels
-        p0 = V_pv * I_in;
+        p0 = V_PD * I_in;
         p_diff = p0-p1;
-        v0 = V_pv;
+        v0 =PD;
 
         if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1)) && (vref+100<V_limit)) {
           vref = vref + 100;

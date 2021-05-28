@@ -157,7 +157,7 @@ for i = 1:length
             movavg = (movmean([SOC(1:i-1); discharge_SOC_MA(index)], [10 0])); % moving avg
             SOC(i,1) = movavg(end);
         else
-            SOC(i,1) = SOC(i-1,1) - 0.25/nominal_charge;            
+            SOC(i,1) = SOC(i-1,1) - 0.25/nominal_charge;
             SOC_cc(i,1) = SOC(i,1);  % track the coulomb counting values
         end      
     elseif (state(i,1) == 4) % discharge rest

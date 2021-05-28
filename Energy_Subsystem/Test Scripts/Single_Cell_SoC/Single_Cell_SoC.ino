@@ -40,14 +40,14 @@ float d_v_1[100] = {};
 float c_v_1[100] = {};
 float d_SoC[100] = {};
 float c_SoC[100] = {};
+int arr_size = 0;
+bool lookup = 0;
 
 // Discharge thresholds
 float d_ocv_l_1 = 3150;
 float d_ocv_u_1 = 3250;
 float c_ocv_u_1 = 3450;
 float c_ocv_l_1 = 3300;
-
-int arr_size = 0;
 
 void setup() {
   //Some General Setup Stuff
@@ -271,8 +271,9 @@ void loop() {
     }
 
     // SoC Measurement
+    // TODO: change to greater equal sign
     temp1 = SoC_1;
-
+    lookup = 1;
     if (state_num == 0 || state_num == 5) { //IDLE
         // LOOKUP for V1, V2, V3
         for (int i=0; i < 100; i++) {
@@ -288,7 +289,7 @@ void loop() {
       // LOOKUP
       for (int i=0; i < 100; i++) {
             if (i == 99) {
-                temp1 = 0;
+                temp1 = 100;
                 break;
             } else if (V_Bat > c_v_1[i] && V_Bat < c_v_1[i+1]) {
                 temp1 = c_SoC[i];
@@ -321,6 +322,7 @@ void loop() {
             }
             
         } else { // COULOMB COUNTING
+            lookup = 0;
             temp1 = SoC_1 + dq1/q1_now * 100;
             Serial.println("Coulomb Counting");
         }
@@ -338,6 +340,7 @@ void loop() {
                 }
             }
         } else { // COULOMB COUNTING
+            lookup = 0;
             temp1 = SoC_1 + dq1/q1_now * 100;
             Serial.println("Coulomb Counting");
         }
@@ -347,24 +350,34 @@ void loop() {
         temp1 = 0;  
     }
     
-    // Moving average
-    // Should ignore first 5 values
+    // Only perform moving average when voltage lookup is used
     Serial.println(temp1);
     if (arr_size < 60) { // If Moving average filter is not full yet
       sum1 = 0;
-      if (arr_size > 5) {
+      if (arr_size > 5) { // Should ignore first 5 values
         SoC_1_arr.push(temp1);
-        for (int i = 0; i < arr_size + 1 - 5; i++) {
-            sum1 = sum1 + SoC_1_arr[i];
-        }
-        SoC_1 = sum1/(arr_size + 1 - 5);
+        if (lookup == 1) {
+          for (int i = 0; i < arr_size + 1 - 5; i++) {
+             sum1 = sum1 + SoC_1_arr[i];
+          }
+          SoC_1 = sum1/(arr_size + 1 - 5);
+        } else {
+          SoC_1 = temp1;
+          SoC_1_arr.push(temp1); // just push into FIFO, but not taking the moving average value
+          Serial.println("Not moving average");
+        }      
       } else {
         SoC_1 = temp1;
       }
-      arr_size = arr_size + 1;
-      
+      arr_size = arr_size + 1;     
     } else { // In most cases
-      SoC_1 = SoC_1_arr.push(temp1).get();    
+      if (lookup == 1) {
+        SoC_1 = SoC_1_arr.push(temp1).get();
+      } else {
+        SoC_1 = temp1;
+        SoC_1_arr.push(temp1); // just push into FIFO, but not taking the moving average value
+        Serial.println("Not moving average");
+      }       
     }
     
   

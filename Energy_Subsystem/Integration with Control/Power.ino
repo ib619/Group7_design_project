@@ -70,6 +70,8 @@ int CELL = 1;
 #define PIN_RLY2 A6
 #define PIN_RLY3 A0
 
+//#define PIN_PV A0  V_PD = analogRead(A1)*4.096/1.03 * 2.699;
+
 #define IDLE 0
 #define CHARGE 1
 #define CHARGE_REST 2
@@ -143,6 +145,8 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
+  mySMPS.init();
+
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
 
@@ -170,9 +174,9 @@ void setup() {
   pinMode(PIN_RLY2, OUTPUT);
   pinMode(PIN_RLY3, OUTPUT);
 
-  // TimerA0 initialization for 1kHz control-loop interrupt.
-  TCA0.SINGLE.PER = 999; //
-  TCA0.SINGLE.CMP1 = 999; //
+  // TimerA0 initialization for 200Hz control-loop interrupt.
+  TCA0.SINGLE.PER = 4999; //
+  TCA0.SINGLE.CMP1 = 4999; //
   TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV16_gc | TCA_SINGLE_ENABLE_bm; //16 prescaler, 1M.
   TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP1_bm;
 
@@ -211,7 +215,7 @@ void loop() {
     }
 
 //In rests state, if command was running (but not calibration), command complete
-  if (loop_trigger == 1){ // FAST LOOP (1kHZ)
+  if (loop_trigger == 1){ // FAST LOOP (currently 200HZ)
       state_num = next_state; //state transition
        
       //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
@@ -230,10 +234,10 @@ void loop() {
       // Use voltage then current PID controller for constant voltage (only in state 6)
       if (vref == 3600) { 
         ev = (vref - V_1)/1000;  //voltage error at this time
-        pwm_out = pidv(ev);  //voltage pid
-        // cv = saturation(cv, 0.25, 0); //current demand saturation
-        // ei = (cv - current_measure)/1000; ; //current error
-        // pwm_out = pidi(ei);  //current pid
+        cv = pidv(ev);  //voltage pid
+        cv = saturation(cv, 0.25, 0); //current demand saturation
+        ei = (cv - current_measure)/1000; ; //current error
+        pwm_out = pidi(ei);  //current pid
       } else if (vref == 0) { // Use Current PID controller in all other scenarios
         error_amps = (current_ref - current_measure) / 1000; //PID error calculation
         pwm_out = pidi(error_amps); //Perform the PID controller calculation       
@@ -247,28 +251,28 @@ void loop() {
   
   // Relay timer is reset every second. Like int_count, it also increments per millisecond.
   // Only switch on relay 1 time per second, and switch on them consecutively
-  if (rly_timer == 400) { // Relay switching is 10ms. Double for safety
-    digitalWrite(PIN_RLY1,true);
-  } else if (rly_timer == 420) { // Read battery 1 voltage
-    V_1 = analogRead(PIN_V1)*4.096/1.03;
-  } else if (rly_timer == 430) {
-    digitalWrite(PIN_RLY1,false);
-  } else if (rly_timer == 450) {
-    digitalWrite(PIN_RLY2,true);
-  } else if (rly_timer == 470) {
-    V_2 = analogRead(PIN_V2)*4.096/1.03;
-  } else if (rly_timer == 480) {
-    digitalWrite(PIN_RLY2,false);
-  } else if (rly_timer == 500) {
-    digitalWrite(PIN_RLY3,true);
-  } else if (rly_timer == 520) {
-    V_3 = analogRead(PIN_V3)*4.096/1.03;
-  } else if (rly_timer == 530) {
-    digitalWrite(PIN_RLY3,false);
+  if (int_count == 100) { // Relay switching is 10ms. Double for safety
+    digitalWrite(5,true);
+  } else if (int_count == 104) { // Read battery 1 voltage
+    V_1 = analogRead(A1)*4.096/1.03;
+  } else if (int_count == 106) {
+    digitalWrite(5,false);
+  } else if (int_count == 110) {
+    digitalWrite(4,true);
+  } else if (int_count == 114) {
+    V_2 = analogRead(A2)*4.096/1.03;
+  } else if (int_count == 116) {
+    digitalWrite(4,false);
+  } else if (int_count == 120) {
+    digitalWrite(9,true);
+  } else if (int_count == 124) {
+    V_3 = analogRead(A3)*4.096/1.03;
+  } else if (int_count == 126) {
+    digitalWrite(9,false);
   }
  
   // This still runs every second
-  if (int_count % 1000 == 0) { // SLOW LOOP (1Hz)
+  if (int_count == 200) { // SLOW LOOP (1Hz)
     input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
@@ -681,9 +685,12 @@ void loop() {
       }    
     }
     rly_timer = 0;
+    int_count = 0;
   }
   
   // Only deal with SOC every 2 minutes
+  //TODO: Evaluate SOC every second, send to control every second
+  //TODO: Record curve every 2 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
   if (int_count = 120000) {
       // OCV: Assume that voltage hasn't drastically changed within past 2 minutes
       // Coulomb counting: charge_diff is adding up the charge (current * time) within the 2 mins
