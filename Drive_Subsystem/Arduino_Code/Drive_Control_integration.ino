@@ -336,11 +336,6 @@ void loop() {
     targetY = ci.getTargetY();
 
     marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value);
-    Serial.println("Drive_mode: " + String(drive_mode));
-    Serial.println("Distance: " + String(distance_value));
-    Serial.println("Speed: " + String(speed_value));
-    Serial.println("Direction: " + String(direction_value));
-    Serial.println(" ");
   }
   
 //motor sketch loop

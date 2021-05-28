@@ -123,7 +123,7 @@ void loop() {
       }
 
       mqtt.loop();
-      if(updateFlag==1) {
+      if(updateFlag==1) { // send data to drive arduino
         if(rover.speed==0)  {
           rover.drive_mode=0;
         }
