@@ -8,6 +8,8 @@ int mDrive_Mode = 0;
 int mDistance = 0;
 int mSpeed = 0;
 int mDirection = 0;
+int mX = 0;
+int mY = 0;
 
 int rover_heading = 0;
 int alert = 0;
@@ -15,15 +17,15 @@ int axisX = 0;
 int axisY = 0;
 
 void setup() {
-  di.setBaudrate(38400);
+  di.setBaudrate(115200);
   di.begin();
-  Serial.begin(38400);
+  Serial.begin(115200);
   Serial.setTimeout(5);
 }
 
 void loop() {
 
-  //Command: drive_mode,distance,speed,direction
+  //Command: drive_mode,distance,speed,direction,target_x,target_y
  
  if (Serial.available())
   {
@@ -46,11 +48,15 @@ void loop() {
     mDistance = data[1];
     mSpeed = data[2];
     mDirection = data[3];
+    mX = data[4];
+    mY = data[5];
     
     di.writeDriveMode(mDrive_Mode);
     di.writeDistance(mDistance);
     di.writeSpeed(mSpeed);
     di.writeDirection(mDirection);
+    di.writeTargetX(mX);
+    di.writeTargetY(mY);
     di.sendUpdates();
   }
 

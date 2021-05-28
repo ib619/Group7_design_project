@@ -308,7 +308,7 @@ void setup() {
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
   
-  Serial.begin(38400);
+  Serial.begin(115200);
 
   if(mousecam_init()==-1)
   {
@@ -316,7 +316,7 @@ void setup() {
     while(1);
   } 
 
-  ci.setBaudrate(38400);
+  ci.setBaudrate(115200);
   ci.setTimeout(5);
   ci.begin();
   delay(3000);
@@ -335,7 +335,10 @@ void loop() {
     targetX = ci.getTargetX();
     targetY = ci.getTargetY();
 
+    Serial.println("Command Received");
+
     marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value);
+    marsRover.decodeT2C(targetX, targetY, myOrientation.passPosX(), myOrientation.passPosY(), myOrientation.passDirX(), myOrientation.passDirY());
   }
   
 //motor sketch loop
@@ -407,7 +410,7 @@ myOrientation.updateDirection();
 
 if (myOrientation.position_changed){
   //Serial.println(myOrientation.exportDirectionAngle());
-  //myOrientation.logOrientation();
+  myOrientation.logOrientation();
   //myOrientation.logRotation();
   //Serial.println("Rover position: " + String(myOrientation.exportPositionX()) + ": " + String(myOrientation.exportPositionY()) + "\n");
 }
