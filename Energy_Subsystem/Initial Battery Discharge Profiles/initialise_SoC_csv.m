@@ -1,5 +1,6 @@
 close all; clear;
 
+% Number of entries
 % Charge 1: 7028
 % Discharge 1: 7140
 % Charge 2: 7899

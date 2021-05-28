@@ -57,12 +57,12 @@ int CELL = 1;
 #define PIN_V1 A1
 #define PIN_V2 A2
 #define PIN_V3 A3
-#define PIN_DISC1 5
-#define PIN_DISC2 4
-#define PIN_DISC3 9
-#define PIN_RLY1 A7
-#define PIN_RLY2 A6
-#define PIN_RLY3 A0
+#define PIN_DISC1 A7
+#define PIN_DISC2 A6
+#define PIN_DISC3 A0
+#define PIN_RLY1 5
+#define PIN_RLY2 4
+#define PIN_RLY3 9
 
 #define IDLE 0
 #define CHARGE 1
@@ -126,17 +126,56 @@ boolean blink = 0;
 // Current Capacity: Only calculated during discharge process
 float q1 = 0, q2 = 0, q3 = 0;
 
-//TODO: Fix redundancies
+// Initial charge values
 float q1_0 = 1793;
 float q2_0 = 2000.5;
 float q3_0 = 1921.75;
 
-float q1_now =0, q2_now =0, q3_now=0;
+// Assume hundred percent SoH
+float q1_now = q1_0, q2_now = q2_0, q3_now= q3_0;
 float SoH_1, SoH_2, SoH_3, gross_SoH;
-float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0, gross_SoC;
+float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0, gross_SoC; // For this file: SOC is in percentage (100% is 100)
+float temp1 = 0, temp2 = 0, temp3 = 0;
 
 // Stores the amount of charge added/removed within the past 2 minutes. Reset after.
-float dq1 = 0, dq2 = 0, dq3 = 0; 
+float dq1 = 0, dq2 = 0, dq3 = 0;
+float sum1, sum2, sum3;
+
+// SOC Moving Averages
+MovingAverage<float> SoC_1_arr = MovingAverage<float>(5);
+MovingAverage<float> SoC_2_arr = MovingAverage<float>(5);
+MovingAverage<float> SoC_3_arr = MovingAverage<float>(5);
+
+// SoC Tables
+String discharge_SoC_filename = "dv_SoC.csv";
+String charge_SoC_filename = "cv_SoC.csv";
+        
+float d_v_1[100] = {};
+float c_v_1[100] = {};
+float d_v_2[100] = {};
+float c_v_2[100] = {};
+float d_v_3[100] = {};
+float c_v_3[100] = {};   
+float d_SoC[100] = {};
+float c_SoC[100] = {};
+
+int arr_size;
+
+// Discharge thresholds
+float d_ocv_l_1 = 3100;
+float d_ocv_u_1 = 3200;
+float c_ocv_u_1 = 3400;
+float c_ocv_l_1 = 3300;
+
+float d_ocv_l_2 = 3100;
+float d_ocv_u_2 = 3200;
+float c_ocv_u_2 = 3400;
+float c_ocv_l_2 = 3300;
+
+float d_ocv_l_3 = 3100;
+float d_ocv_u_3 = 3200;
+float c_ocv_u_3 = 3400;
+float c_ocv_l_3 = 3300;
 
 void setup() {
 
@@ -146,7 +185,72 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  Serial.println("Initialised SMPS");
+  SoC_1_arr.fill(0);
+  SoC_2_arr.fill(0);
+  SoC_3_arr.fill(0);
+
+  File myFile;
+  String content;
+
+  //Check for the SD Card
+  Serial.println("\nInitializing SD card...");
+  if (!SD.begin(chipSelect)) {
+    Serial.println("* is a card inserted?");
+    while (true) {} //It will stick here FOREVER if no SD is in on boot
+  } else {
+    Serial.println("Wiring is correct and a card is present.");
+  }
+
+  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
+    SD.remove("BatCycle.csv");
+  }
+
+  // Initialise discharge and charge tables
+  myFile = SD.open(discharge_SoC_filename);
+  if (myFile) {
+    Serial.println("Start insertion: discharge");  
+      for (int i = 0; i < 100; i++) {
+          content = myFile.readStringUntil(',');
+          d_v_1[i] = content.toFloat();
+          content = myFile.readStringUntil(',');
+          d_v_2[i] = content.toFloat();
+          content = myFile.readStringUntil(',');
+          d_v_3[i] = content.toFloat();
+          content = myFile.readStringUntil('\n');
+          d_SoC[i] = content.toFloat();
+          Serial.println(String(d_v_1[i]) + "," + String(d_v_2[i]) + "," + String(d_v_3[i]) + "," + String(d_SoC[i]));
+          if (content == "") {
+              break;
+              Serial.println("Insertion Complete");    
+          }                 
+      }
+  } else {
+      Serial.println("File not open");
+  }
+  myFile.close();
+
+  myFile = SD.open(charge_SoC_filename);
+  if (myFile) {
+      Serial.println("Start insertion: charge");  
+      for (int i = 0; i < 100; i++) {
+          content = myFile.readStringUntil(',');
+          c_v_1[i] = content.toFloat();
+          content = myFile.readStringUntil(',');
+          c_v_2[i] = content.toFloat();
+          content = myFile.readStringUntil(',');
+          c_v_3[i] = content.toFloat();
+          content = myFile.readStringUntil('\n');
+          c_SoC[i] = content.toFloat();
+          Serial.println(String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i])  + "," + String(c_SoC[i]));
+          if (content == "") {
+              break;
+              Serial.println("Insertion Complete");    
+          }                 
+      }
+  } else {
+      Serial.println("File not open");
+  }
+  myFile.close();
 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -160,7 +264,7 @@ void setup() {
   pinMode(PIN_REDLED, OUTPUT);
   pinMode(PIN_YELLED, OUTPUT);
 
-//Input for measurements of battery 1,2,3
+  //Input for measurements of battery 1,2,3
   pinMode(PIN_V1, INPUT);
   pinMode(PIN_V2, INPUT);
   pinMode(PIN_V3, INPUT);
@@ -175,9 +279,9 @@ void setup() {
   pinMode(PIN_RLY2, OUTPUT);
   pinMode(PIN_RLY3, OUTPUT);
 
-  // TimerA0 initialization for 1kHz control-loop interrupt.
-  TCA0.SINGLE.PER = 999; //
-  TCA0.SINGLE.CMP1 = 999; //
+  // TimerA0 initialization for (NOW) 0.2kHz control-loop interrupt.
+  TCA0.SINGLE.PER = 4999; //
+  TCA0.SINGLE.CMP1 = 4999; //
   TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV16_gc | TCA_SINGLE_ENABLE_bm; //16 prescaler, 1M.
   TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP1_bm;
 
@@ -192,7 +296,7 @@ void setup() {
 void loop() {
 
 //In rests state, if command was running (but not calibration), command complete
-  if (loop_trigger == 1){ // FAST LOOP (1kHZ)
+  if (loop_trigger == 1){ // FAST LOOP (0.2kHZ)
       state_num = next_state; //state transition
       
       //Checking for Error states (individual battery voltages defined)
@@ -225,28 +329,28 @@ void loop() {
   
   // Relay timer is reset every second. Like int_count, it also increments per millisecond.
   // Only switch on relay 1 time per second, and switch on them consecutively
-  if (rly_timer == 400) { // Relay switching is 10ms. Double for safety
-    analogWrite(PIN_RLY1,1);
-  } else if (rly_timer == 420) { // Read battery 1 voltage
-    V_1 = analogRead(PIN_V1)*4.096/1.03;
-  } else if (rly_timer == 430) {
-    analogWrite(PIN_RLY1,0);
-  } else if (rly_timer == 450) {
-    analogWrite(PIN_RLY2,1);
-  } else if (rly_timer == 470) {
-    V_2 = analogRead(PIN_V2)*4.096/1.03;
-  } else if (rly_timer == 480) {
-    analogWrite(PIN_RLY2,0);
-  } else if (rly_timer == 500) {
-    analogWrite(PIN_RLY3,1);
-  } else if (rly_timer == 520) {
-    V_3 = analogRead(PIN_V3)*4.096/1.03;
-  } else if (rly_timer == 530) {
-    analogWrite(PIN_RLY3,0);
+  if (int_count == 100) { // Relay switching is 10ms. Double for safety
+    digitalWrite(5,true);
+  } else if (int_count == 104) { // Read battery 1 voltage
+    V_1 = analogRead(A1)*4.096/1.03;
+  } else if (int_count == 106) {
+    digitalWrite(5,false);
+  } else if (int_count == 110) {
+    digitalWrite(4,true);
+  } else if (int_count == 114) {
+    V_2 = analogRead(A2)*4.096/1.03;
+  } else if (int_count == 116) {
+    digitalWrite(4,false);
+  } else if (int_count == 120) {
+    digitalWrite(9,true);
+  } else if (int_count == 124) {
+    V_3 = analogRead(A3)*4.096/1.03;
+  } else if (int_count == 126) {
+    digitalWrite(9,false);
   }
  
-  // This still runs every second
-  if (int_count % 1000 == 0) { // SLOW LOOP (1Hz)
+  // This still runs every 1 second
+  if (int_count == 200) { // SLOW LOOP (0.2Hz)
     input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
@@ -264,12 +368,13 @@ void loop() {
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
         current_ref = 250;
+        vref = 0;
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
             // Start balancing when above V_UPBALLIM (3300mV)
             // Rationale: Discharge current in the more higher charged cells
-            if (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
+            if (true) { // (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
                 //Connect to discharging relay if a battery is significantly lower  
                 if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
                     digitalWrite(PIN_DISC1, false);
@@ -345,6 +450,7 @@ void loop() {
       }
       case DISCHARGE_REST:{ // 4 Discharge rest, no LEDs no current
         current_ref = 0;
+        vref = 0;
         // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
         if(input_switch == 0){
           next_state = IDLE;
@@ -357,7 +463,6 @@ void loop() {
             digitalWrite(PIN_YELLED,false);
             rest_timer++;
         } else { // When thats done, move back to charging (and light the green LED)
-            send_current_cap(q1, q2, q3); // coulomb counting during discharge
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
             rest_timer = 0;
@@ -369,6 +474,7 @@ void loop() {
         // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
         if(input_switch == 0){
           next_state = IDLE;
+          digitalWrite(PIN_REDLED,false);
           digitalWrite(PIN_YELLED,false);
         } else {
           next_state = ERROR;
@@ -401,7 +507,7 @@ void loop() {
         break;
       }
       case DISCHARGE: { // 8 Normal discharge (-500mA)
-        current_ref = -500;
+        current_ref = -250;
         if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
           next_state = DISCHARGE;
           digitalWrite(PIN_YELLED,false);
@@ -457,11 +563,171 @@ void loop() {
         break;
       }  
     }
-    rly_timer = 0;
-
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_measure);
+    
+    // SoC Measurement
+    temp1 = SoC_1;
+    temp2 = SoC_2;
+    temp3 = SoC_3;
+  
+    if (state_num == 0) { //IDLE
+        // LOOKUP for V1, V2, V3
+        for (int i=0; i < 100; i++) {
+            if (i == 99) {
+                temp1 = 0;
+                break;
+            } else if (V_2 < d_v_2[i] && V_2 > d_v_2[i+1]) {
+                temp2 = d_SoC[i];
+                break;
+            }
+        }
+        for (int i=0; i < 100; i++) {
+            if (i == 99) {
+                temp2 = 1;
+                break;
+            } else if (V_2 > c_v_2[i] && V_2 < c_v_2[i+1]) {
+                temp2 = c_SoC[i];
+                break;
+            }
+        }
+        for (int i=0; i < 100; i++) {
+            if (i == 99) {
+                temp3 = 1;
+                break;
+            } else if (V_3 > c_v_3[i] && V_3 < c_v_3[i+1]) {
+                temp3 = c_SoC[i];
+                break;
+            }
+        }
+    } else if (state_num == 1 || state_num == 6 || state_num == 10) { // CHARGE
+        if (V_1 > c_ocv_u_1 || V_1 < c_ocv_l_1) { // LOOKUP        
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp1 = 1;
+                    break;
+                } else if (V_1 > c_v_1[i] && V_1 < c_v_1[i+1]) {
+                    temp1 = c_SoC[i];
+                    break;
+                }
+            }
+            
+        } else { // COULOMB COUNTING
+            temp1 = temp1 + dq1/q1_now * 100;
+        }
+        if (V_2 > c_ocv_u_2 || V_2 < c_ocv_l_2) { // LOOKUP
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp2 = 1;
+                    break;
+                } else if (V_2 > c_v_2[i] && V_2 < c_v_2[i+1]) {
+                    temp2 = c_SoC[i];
+                    break;
+                }
+            }
+            
+        } else { // COULOMB COUNTING  
+            temp2 = temp2 + dq2/q2_now * 100;
+        }
+        if (V_3 > c_ocv_u_3 || V_1 < c_ocv_l_3) { // LOOKUP  
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp3 = 1;
+                    break;
+                } else if (V_3 > c_v_3[i] && V_3 < c_v_3[i+1]) {
+                    temp3 = c_SoC[i];
+                    break;
+                }
+            }          
+        } else { // COULOMB COUNTING
+            temp3 = temp3 + dq3/q3_now * 100;
+        }
+    } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
+        if (V_1 > d_ocv_u_1 || V_1 < d_ocv_l_1) { // LOOKUP
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp1 = 0;
+                    break;
+                } else if (V_1 < d_v_1[i] && V_1 > d_v_1[i+1]) {
+                    temp1 = d_SoC[i];
+                    break;
+                }
+            }
+        } else { // COULOMB COUNTING
+            temp1 = temp1 + dq1/q1_now * 100;
+        }
+        if (V_2 > d_ocv_u_2 || V_2 < d_ocv_l_2) {
+            // LOOKUP
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp2 = 0;
+                    break;
+                } else if (V_2 < d_v_2[i] && V_2 > d_v_2[i+1]) {
+                    temp2 = d_SoC[i];
+                    break;
+                }
+            }
+        } else { // COULOMB COUNTING
+            temp2 = temp2 + dq2/q2_now * 100;
+        }
+        if (V_3 > d_ocv_u_3 || V_1 < d_ocv_l_3) { // LOOKUP
+            for (int i=0; i < 100; i++) {
+                if (i == 99) {
+                    temp3 = 0;
+                    break;
+                } else if (V_3 < d_v_3[i] && V_3 > d_v_3[i+1]) {
+                    temp3 = d_SoC[i];
+                    break;
+                }
+            }
+        } else { // COULOMB COUNTING
+            temp3 = temp3 + dq3/q3_now * 100;
+        }
+    } else if (state_num == 5 || state_num == 7) {
+        // FREEZE VALUES, do nothing
+    } else if (state_num == 2 || state_num == 4) {
+        temp1 = 1;
+        temp2 = 1;
+        temp3 = 1;
+    }
+  
+    // Moving average
+    float sum1 = 0, sum2 = 0, sum3 = 0;
+    // If Moving average filter is not full yet
+    if (arr_size < 10) {
+        SoC_1_arr.push(temp1);
+        SoC_2_arr.push(temp2);
+        SoC_3_arr.push(temp3);
+        for (int i = 0; i < arr_size + 1; i++) {
+            sum1 = sum1 + SoC_1_arr[i];
+            sum2 = sum2 + SoC_2_arr[i];
+            sum3 = sum3 + SoC_3_arr[i];
+        }
+        arr_size = arr_size + 1;
+        SoC_1 = sum1/arr_size;
+        SoC_2 = sum2/arr_size;
+        SoC_3 = sum3/arr_size;
+    } else {
+        SoC_1 = SoC_1_arr.push(temp1).get();
+        SoC_2 = SoC_2_arr.push(temp2).get();
+        SoC_3 = SoC_3_arr.push(temp3).get();
+    }
+  
+     //CALCULATE GROSS SOC
+    prev_state = state_num;
+  
+    // Now Print all values to serial and SD
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3)  + "," + String(current_measure);
     Serial.println(dataString);
+    
+    File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
+    if (dataFile){ 
+      dataFile.println(dataString);
+    } else {
+      Serial.println("File not open"); 
+    }
+    dataFile.close();
+
     int_count = 0;
+    rly_timer = 0;
     dq1 = 0; dq2 = 0; dq3 = 0;
     // Dont print to SD
   }

@@ -248,23 +248,23 @@ void loop() {
   // Relay timer is reset every second. Like int_count, it also increments per millisecond.
   // Only switch on relay 1 time per second, and switch on them consecutively
   if (rly_timer == 400) { // Relay switching is 10ms. Double for safety
-    analogWrite(PIN_RLY1,1);
+    digitalWrite(PIN_RLY1,true);
   } else if (rly_timer == 420) { // Read battery 1 voltage
     V_1 = analogRead(PIN_V1)*4.096/1.03;
   } else if (rly_timer == 430) {
-    analogWrite(PIN_RLY1,0);
+    digitalWrite(PIN_RLY1,false);
   } else if (rly_timer == 450) {
-    analogWrite(PIN_RLY2,1);
+    digitalWrite(PIN_RLY2,true);
   } else if (rly_timer == 470) {
     V_2 = analogRead(PIN_V2)*4.096/1.03;
   } else if (rly_timer == 480) {
-    analogWrite(PIN_RLY2,0);
+    digitalWrite(PIN_RLY2,false);
   } else if (rly_timer == 500) {
-    analogWrite(PIN_RLY3,1);
+    digitalWrite(PIN_RLY3,true);
   } else if (rly_timer == 520) {
     V_3 = analogRead(PIN_V3)*4.096/1.03;
   } else if (rly_timer == 530) {
-    analogWrite(PIN_RLY3,0);
+    digitalWrite(PIN_RLY3,false);
   }
  
   // This still runs every second

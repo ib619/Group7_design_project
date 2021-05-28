@@ -1,6 +1,6 @@
 clear; close all;
 
-import = readmatrix('BATCYCLE3.CSV');
+import = readmatrix('BATCYCLE1.CSV');
 
 % Arbitrary decisions
     % Charge: Calibrate SoC with voltage lookup at above 3400V;
