@@ -50,7 +50,29 @@ assign pf_grey_detect = (hue < 8'd180) & (hue > 8'd0)
 assign pf_yellow_detect = (hue < 8'd50) & (hue > 8'd36)
                         & (saturation < 8'd255) & ( saturation > 8'd150) 
                         & (value_b < 8'd255 ) & ( value_b > 8'd60);
-                            
+
+//assign pf_red_detect = (hue < 8'd40) & (hue > 8'd0)
+//                        & (saturation < 8'd220) & ( saturation > 8'd110) 
+//                        & (value_b < 8'd255 ) & ( value_b > 8'd120);
+//
+//assign pf_green_detect = (hue < 8'd140) & (hue > 8'd70)
+//                        & (saturation < 8'd230) & ( saturation > 8'd130) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd60);
+//                            
+//
+//assign pf_blue_detect = (hue < 8'd200) & (hue > 8'd100)
+//                        & (saturation < 8'd135) & ( saturation > 8'd55) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd50);
+//
+//
+//assign pf_grey_detect = (hue < 8'd100) & (hue > 8'd0)
+//                        & (saturation < 8'd130) & ( saturation > 8'd20) 
+//                        & (value_b < 8'd100) & ( value_b > 8'd20);
+//                        
+//
+//assign pf_yellow_detect = (hue < 8'd80) & (hue > 8'd20)
+//                        & (saturation < 8'd255) & ( saturation > 8'd120) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd100);
 ///////////////////////////////////////////////////////////////////////
 //Morph Erosion Filter
 morph_erosion_filter5x5 ero_r(

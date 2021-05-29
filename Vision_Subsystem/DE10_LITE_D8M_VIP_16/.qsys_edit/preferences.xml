@@ -9,7 +9,8 @@
    <export preferredWidth="267" />
   </columns>
  </systemtable>
- <library expandedCategories="Library,Project" />
+ <library
+   expandedCategories="Library,Project,Library/DSP,Library/University Program/Audio &amp; Video,Library/DSP/Video and Image Processing,Library/University Program/Audio &amp; Video/Video,Library/University Program" />
  <window width="2418" height="1318" x="-2409" y="-9" />
  <hdlexample language="VERILOG" />
 </preferences>

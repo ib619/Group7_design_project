@@ -184,7 +184,7 @@ int main()
 
 
     //////////////////////////////////////////////////////////
-    alt_u16 bb [5][4];
+    alt_u16 bb [10][4];
     alt_u16 bin_level = DEFAULT_LEVEL;
     alt_u8  manual_focus_step = 10;
     alt_u16  current_focus = 300;
@@ -259,7 +259,7 @@ int main()
     		   printf("Collecting Message\n");
     		   printf("\n");
     	   }
-    	   if (color == 5){
+    	   if (color ==  10){
     		   bright_pix_count = word;
     		   break;
     	   }
@@ -283,12 +283,17 @@ int main()
        }
 
        printf("Number of bright pixels: %d\n ",bright_pix_count);
-       for (alt_u8 i = 0; i < 5; i++){
+       for (alt_u8 i = 0; i < 10; i++){
     	   if (i == 0) printf("Color Red: ");
-    	   if (i == 1) printf("Color Green: ");
-    	   if (i == 2) printf("Color Blue: ");
-    	   if (i == 3) printf("Color Grey: ");
-    	   if (i == 4) printf("Color Yellow: ");
+    	   if (i == 1) printf("Color Red 2: ");
+    	   if (i == 2) printf("Color Green: ");
+    	   if (i == 3) printf("Color Green 2: ");
+    	   if (i == 4) printf("Color Blue: ");
+    	   if (i == 5) printf("Color Blue 2: ");
+    	   if (i == 6) printf("Color Grey: ");
+    	   if (i == 7) printf("Color Grey 2: ");
+    	   if (i == 8) printf("Color Yellow: ");
+    	   if (i == 9) printf("Color Yellow 2: ");
 		   printf("Centroid: (%d,%d), ", bb[i][0], bb[i][1]);
 		   area = bb[i][2]*bb[i][3];
 //		   printf("Area: %d ", area);

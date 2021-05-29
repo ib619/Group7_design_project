@@ -32,8 +32,8 @@ module STREAM_REG(ready_out, valid_out, data_out, ready_in, valid_in, data_in, c
 			end
 	end
 	
-	assign ready_out = (~data_valid & ~valid_in) | ready_in;
-	assign valid_out = ready_in_d & data_valid;
 
+	assign ready_out = (~data_valid & ~valid_in) | ready_in; // Send upstream ready only when downstream is ready or when nothing has been loaded into data out
+	assign valid_out = ready_in_d & data_valid; // Only assert valid out high if data is valid and ready has been asserted one cycle before
 
 endmodule
