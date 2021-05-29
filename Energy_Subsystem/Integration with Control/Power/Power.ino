@@ -48,7 +48,7 @@ Rationale for SOC
 #include <SPI.h>
 #include <SD.h>
 #include <MovingAverage.h>
-#include <Power.h>
+#include "Power.h"
 
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
 SMPS mySMPS;
@@ -185,6 +185,7 @@ void setup() {
 
   interrupts();  //enable interrupts.
   analogWrite(6, 120); //just a default state to start with
+}
 
 void loop() {
 
@@ -209,7 +210,7 @@ void loop() {
         // mSpeed = data[1];
         // mDirection = data[2];
 
-        mySMPS.decodeCommand(); //TODO: Implement decoding
+        mySMPS.decode_command(); //TODO: Implement decoding
         next_state = mySMPS.get_state();
         recalibrating = mySMPS.get_recalibrate();
     }
@@ -219,7 +220,7 @@ void loop() {
       state_num = next_state; //state transition
        
       //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
-      V_Bat = analogRead(A0)*4.096/1.03;
+      // V_Bat = analogRead(A0)*4.096/1.03;
 
       //Checking for Error states (individual battery voltages defined)
       if ((V_1 > 3700 || V_1 < 2400) || (V_2 > 3700 || V_2 < 2400) || (V_3 > 3700 || V_3 < 2400)) { 
@@ -678,7 +679,7 @@ void loop() {
       default :{ // Should not end up here ....
         Serial.println("Boop");
         current_ref = 0;
-        charge_diff = charge_diff;
+        dq1 = 0; dq2 = 0; dq3 = 0;
         next_state = ERROR; // So if we are here, we go to error
         digitalWrite(PIN_REDLED,true);
         break;

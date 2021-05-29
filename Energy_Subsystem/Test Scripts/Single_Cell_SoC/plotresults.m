@@ -2,7 +2,7 @@ close all; clear;
 
 %% Load Results
 
-import = readmatrix('CELL1TEST3.csv');
+import = readmatrix('CELL1TEST5.csv');
 
 %% Seperate into columns
 

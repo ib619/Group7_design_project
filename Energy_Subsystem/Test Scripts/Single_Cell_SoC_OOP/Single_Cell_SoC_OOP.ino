@@ -3,6 +3,9 @@
 #include <SPI.h>
 #include <SD.h>
 #include <MovingAverage.h>
+#include "Power.h"
+
+SMPS mySMPS;
 
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
 
@@ -13,8 +16,9 @@ SdFile root;
 
 const int chipSelect = 10;
 unsigned int rest_timer;
-unsigned int loop_trigger;
-unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging.
+
+
+// Current Controller
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
 float ui_max = 1, ui_min = 0; //anti-windup limitation
 float kpi = 0.02512, kii = 39.4, kdi = 0; // current pid.
@@ -22,32 +26,15 @@ float Ts = 0.001; //1 kHz control frequency.
 float current_measure, current_ref = 0, error_amps; // Current Control
 float pwm_out;
 float V_Bat; float V_PD;
+
+// State Machine
 boolean input_switch;
 int state_num=0,next_state, prev_state = -1; // -1 prev state for first cycle
+unsigned int loop_trigger;
+unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging.
+
 String dataString;
-
-float q1_now = 1793;
-float SoC_1 = 0;
-float temp1 = 0;
 float dq1 = 0;
-float sum1;
-MovingAverage<float> SoC_1_arr = MovingAverage<float>(60);
-
-// SoC Tables
-String discharge_SoC_filename = "dv_SoC.csv";
-String charge_SoC_filename = "cv_SoC.csv";
-float d_v_1[100] = {};
-float c_v_1[100] = {};
-float d_SoC[100] = {};
-float c_SoC[100] = {};
-int arr_size = 0;
-bool lookup = 0;
-
-// Discharge thresholds
-float d_ocv_l_1 = 3150;
-float d_ocv_u_1 = 3250;
-float c_ocv_u_1 = 3450;
-float c_ocv_l_1 = 3300;
 
 void setup() {
   //Some General Setup Stuff
@@ -57,69 +44,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  SoC_1_arr.fill(0);
-
-  //Check for the SD Card
-  Serial.println("\nInitializing SD card...");
-  if (!SD.begin(chipSelect)) {
-    Serial.println("* is a card inserted?");
-    while (true) {} //It will stick here FOREVER if no SD is in on boot
-  } else {
-    Serial.println("Wiring is correct and a card is present.");
-  }
-
-  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
-    SD.remove("BatCycle.csv");
-  }
-
-  // Initialise discharge and charge tables
-  File myFile = SD.open(discharge_SoC_filename);
-  String content;
-  
-  if (myFile) {
-    Serial.println("Start insertion: discharge");  
-      for (int i = 0; i < 100; i++) {
-          content = myFile.readStringUntil(',');
-          d_v_1[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // d_v_2[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // d_v_3[i] = content.toFloat();
-          content = myFile.readStringUntil('\n');
-          d_SoC[i] = content.toFloat();
-          Serial.println(String(d_v_1[i]) + "," + String(d_SoC[i]));
-          if (content == "") {
-              break;
-              Serial.println("Insertion Complete");    
-          }                 
-      }
-  } else {
-      Serial.println("File not open");
-  }
-  myFile.close();
-
-  myFile = SD.open(charge_SoC_filename);
-  if (myFile) {
-      Serial.println("Start insertion: charge");  
-      for (int i = 0; i < 100; i++) {
-          content = myFile.readStringUntil(',');
-          c_v_1[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // c_v_2[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // c_v_3[i] = content.toFloat();
-          content = myFile.readStringUntil('\n');
-          c_SoC[i] = content.toFloat();
-          Serial.println(String(c_v_1[i]) + "," + String(c_SoC[i]));
-          if (content == "") {
-              break;
-              Serial.println("Insertion Complete");    
-          }                 
-      }
-  } else {
-      Serial.println("File not open");
-  }
-  myFile.close();
+  mySMPS.init();
  
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -271,120 +196,9 @@ void loop() {
     }
 
     // SoC Measurement
-    // TODO: change to greater equal sign
-    temp1 = SoC_1;
-    lookup = 1;
-    if (state_num == 0 || state_num == 5) { //IDLE
-        // LOOKUP for V1, V2, V3
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 0;
-                break;
-            } else if (V_Bat >= c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                temp1 = c_SoC[i];
-                break;
-            }
-        }
-    } else if ((state_num == 1) && prev_state == 0) {
-      // LOOKUP
-      for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 100;
-                break;
-            } else if (V_Bat >= c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                temp1 = c_SoC[i];
-                break;
-            }
-        }
-    } else if ((state_num == 3) && prev_state == 0) {
-      for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 0; //FIXME: need to fix this
-                Serial.println("End of table");
-                break;
-            } else if (V_Bat <= d_v_1[i] && V_Bat > d_v_1[i+1]) {
-                temp1 = d_SoC[i];
-                Serial.println("Discharge Lookup");
-                break;
-            }
-        }
-    } else if (state_num == 1) { // CHARGE
-        if (V_Bat > c_ocv_u_1 || V_Bat < c_ocv_l_1) { // LOOKUP        
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp1 = 100;
-                    break;
-                } else if (V_Bat >= c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                    temp1 = c_SoC[i];
-                    Serial.println("Charge Lookup");
-                    break;
-                }
-            }
-            
-        } else { // COULOMB COUNTING
-            lookup = 0;
-            temp1 = SoC_1 + dq1/q1_now * 100;
-            Serial.println("Coulomb Counting");
-        }
-    } else if (state_num == 3) { // DISCHARGE
-        if (V_Bat > d_ocv_u_1 || V_Bat < d_ocv_l_1) { // LOOKUP
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp1 = 0; //FIXME: need to fix this
-                    Serial.println("End of table");
-                    break;
-                } else if (V_Bat <= d_v_1[i] && V_Bat > d_v_1[i+1]) {
-                    temp1 = d_SoC[i];
-                    Serial.println("Discharge Lookup");
-                    break;
-                }
-            }
-        } else { // COULOMB COUNTING
-            lookup = 0;
-            temp1 = SoC_1 + dq1/q1_now * 100;
-            Serial.println("Coulomb Counting");
-        }
-    } else if (state_num == 2) {
-        temp1 = 100;
-    } else if (state_num == 4) {
-        temp1 = 0;  
-    }
+    mySMPS.compute_SOC(state_num, V_Bat, 0, 0, dq1, 0, 0);
     
-    // Only perform moving average when voltage lookup is used
-    Serial.println(temp1);
-    if (arr_size < 60) { // If Moving average filter is not full yet
-      sum1 = 0;
-      if (arr_size > 5) { // Should ignore first 5 values
-        SoC_1_arr.push(temp1);
-        if (lookup == 1) {
-          for (int i = 0; i < arr_size + 1 - 5; i++) {
-             sum1 = sum1 + SoC_1_arr[i];
-          }
-          SoC_1 = sum1/(arr_size + 1 - 5);
-        } else {
-          SoC_1 = temp1;
-          SoC_1_arr.push(temp1); // just push into FIFO, but not taking the moving average value
-          Serial.println("Not moving average");
-        }      
-      } else {
-        SoC_1 = temp1;
-      }
-      arr_size = arr_size + 1;     
-    } else { // In most cases
-      if (lookup == 1) {
-        SoC_1 = SoC_1_arr.push(temp1).get();
-      } else {
-        SoC_1 = temp1;
-        SoC_1_arr.push(temp1); // just push into FIFO, but not taking the moving average value
-        Serial.println("Not moving average");
-      }       
-    }
-    
-  
-     //CALCULATE GROSS SOC
-    prev_state = state_num;
-    
-    dataString = String(state_num) + "," + String(V_Bat) + "," + String(SoC_1) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)

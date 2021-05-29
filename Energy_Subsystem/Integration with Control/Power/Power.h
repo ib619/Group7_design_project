@@ -16,7 +16,7 @@ struct Stats {
     float SoC_1;
     float SoC_2;
     float SoC_3;
-}
+};
 
 class SMPS {
     public:
@@ -36,7 +36,7 @@ class SMPS {
         // otherwise, SMPS will decide its state (determined by default state transitions)
         int get_state();
         
-        void decode_command(int cmd); //TODO:
+        void decode_command(); //TODO:
         float estimate_range(float disTravelled, float SoC_drop);
         float estimate_chargeTime(); //TODO:
 
@@ -62,8 +62,8 @@ class SMPS {
         void compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3);
         
         // Helper functions called by compute_SOC()
-        float lookup_c_table(int cell_num, float V_1, float V_2, float V_3)
-        float lookup_d_table(int cell_num, float V_1, float V_2, float V_3)
+        float lookup_c_table(int cell_num, float V_1, float V_2, float V_3);
+        float lookup_d_table(int cell_num, float V_1, float V_2, float V_3);
 
         bool command_running = 0; 
         // NOTE: command_running even when there is an error
@@ -133,6 +133,6 @@ class SMPS {
 
         int c_iterator = 0;
         int d_iterator = 0;
-}
+};
 
 #endif
