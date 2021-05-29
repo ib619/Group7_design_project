@@ -66,7 +66,7 @@ int ControlInterface::getDriveMode() const  {
 }
 
 int ControlInterface::getDirection() const  {
-    return direction;
+    return (int16_t)direction;
 }
 
 int ControlInterface::getSpeed() const  {
@@ -74,15 +74,15 @@ int ControlInterface::getSpeed() const  {
 }
 
 int ControlInterface::getDistance() const   {
-    return distance;
+    return (int16_t)distance;
 }
 
 int ControlInterface::getTargetX() const    {
-    return target_x;
+    return (int16_t)target_x;
 }
 
 int ControlInterface::getTargetY() const    {
-    return target_y;
+    return (int16_t)target_y;
 }
 
 unsigned long ControlInterface::getSystemTime() const   {
