@@ -221,3 +221,19 @@ void Orientation::getDisplacement() {
  int Orientation::exportTotalRun() {
      return total_distance_travelled;
  }
+
+ float Orientation::passPosX() {
+     return truePosition.x;
+ }
+
+ float Orientation::passPosY() {
+     return truePosition.y;
+ }
+
+ float Orientation::passDirX() {
+     return currentDirection.x;
+ }
+
+ float Orientation::passDirY() {
+     return currentDirection.y;
+ }

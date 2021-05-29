@@ -31,6 +31,7 @@ public:
 	Rover();
 	void init(LeftMotor *left, RightMotor *right);
 	void decodeCommand(int dm, int dist, int spd, int dir);
+	void decodeT2C(int target_x, int target_y, float myPosX, float myPosY, float myDirX, float myDirY);
 	void action(float travelDist, float angle);
 	bool command_running = 0;
 	bool turnCW_flag = 0;

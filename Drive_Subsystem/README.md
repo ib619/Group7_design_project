@@ -21,8 +21,11 @@ Setup your Rover as shown in test_setup.png
 3. Enter a command into the Serial port
 
 #### Command structure
-##### DriveMode,Distance,Speed,Direction
-1. **DriveMode:** 0 for emergency stop, 1 for discrete driving mode
+##### DriveMode,Distance,Speed,Direction,TargetX,TargetY
+1. **DriveMode:** 
+    - 0 for emergency stop
+    - 1 for discrete driving mode
+    - 2 for travel to coordinate mode
 2. **Distance:** any integer corresponding to desired distance in millimeters:
     - for positive distance Rover moves forward
     - for negative distance Rover moves backwards
@@ -32,6 +35,8 @@ Setup your Rover as shown in test_setup.png
     - [-180:1] is anticlockwise rotation by specified angle in degrees
     - 0 is straight motion for the earlier specified distance
     - [1:180] is clockwise rotation by specified angle in degrees
+5. **TargetX:** integer that specifies the x-coordinate for T2C mode
+6. **TargetY:** integer that specifies the y-coordinate for T2C mode
 
 **IMPORTANT:** When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
 

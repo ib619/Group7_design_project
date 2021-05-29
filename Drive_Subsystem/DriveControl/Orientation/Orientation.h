@@ -32,6 +32,12 @@ public:
     int exportDirectionAngle(); //export the angle between initial and current rover direction
     int exportTotalRun(); //export total distance travelled since the start of the rover
 
+    // four following methods are needed to interface Orientation and Drive APIs for T2C algorithm
+    float passPosX(); 
+    float passPosY();
+    float passDirX();
+    float passDirY();
+
     bool position_changed = 0; //indicates if there was a position change since last loop cycle
 
 private:
