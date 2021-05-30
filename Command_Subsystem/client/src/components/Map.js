@@ -42,7 +42,7 @@ const Map = () => {
           ))}
       </Border>
       <Coords>
-        x: {pos.x}, y: {pos.y}, direction: {pos.heading}
+        x: {pos.x}, y: {pos.y}, direction: {pos.heading}˚
       </Coords>
     </>
   );

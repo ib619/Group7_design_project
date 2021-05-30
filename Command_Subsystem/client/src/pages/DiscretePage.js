@@ -6,12 +6,12 @@ import FormAlert from "../components/FormAlert";
 
 const DiscretePage = () => {
   // for the game
-  const [show, setShow] = useState(false);
   const [target, setTarget] = useState({
     direction: "",
     speed: "",
     distance: "",
   });
+  const [show, setShow] = useState(false);
   const [valid, setValid] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -29,12 +29,18 @@ const DiscretePage = () => {
     } else if (data["distance"] === 0) {
       formIsValid = false;
       error["distance"] = "Distance cannot be 0!";
+    } else if (isNaN(data["distance"])) {
+      formIsValid = false;
+      error["distance"] = "Distance has to be a number!";
     }
 
     // Speed
     if (!data["speed"]) {
       formIsValid = false;
       error["speed"] = "Speed field is empty!";
+    } else if (isNaN(data["speed"])) {
+      formIsValid = false;
+      error["speed"] = "Speed has to be a number!";
     } else if (data["speed"] < 0 || data["speed"] > 255) {
       formIsValid = false;
       error["speed"] = "Speed must be between 0 and 255";
@@ -44,6 +50,9 @@ const DiscretePage = () => {
     if (!data["direction"]) {
       formIsValid = false;
       error["direction"] = "Direction field is empty!";
+    } else if (isNaN(data["direction"])) {
+      formIsValid = false;
+      error["direction"] = "Direction has to be a number!";
     } else if (data["direction"] < -180 || data["direction"] > 180) {
       formIsValid = false;
       error["direction"] = "Direction must be between -180˚ and 180˚";
@@ -65,12 +74,9 @@ const DiscretePage = () => {
     // if valid
     if (handleValidation()) {
       client.publish("drive/discrete", JSON.stringify(target));
+      setTarget({ direction: "", speed: "", distance: "" });
     }
 
-    // distance: any not equal 0
-    // speed: 0 to 255
-    // angle: -180 to 180
-    setTarget({ direction: "", speed: "", distance: "" });
     setShow(true);
   };
 
