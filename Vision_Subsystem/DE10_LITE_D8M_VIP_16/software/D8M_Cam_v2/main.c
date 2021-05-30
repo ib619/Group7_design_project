@@ -165,23 +165,6 @@ int main()
 //   }
 
 
-    #if 0  // focus sweep
-            printf("\nFocus sweep\n");
-            alt_u16 ii= 350;
-            alt_u8  dir = 0;
-            while(1){
-                if(ii< 50) dir = 1;
-                else if (ii> 1000) dir =0;
-
-                if(dir) ii += 20;
-                else    ii -= 20;
-
-                printf("%d\n",ii);
-            OV8865_FOCUS_Move_to(ii);
-            usleep(50*1000);
-            }
-    #endif
-
 
     //////////////////////////////////////////////////////////
     alt_u16 bb [10][4];
@@ -213,45 +196,14 @@ int main()
 		}
 
 
-	#if 0
-       if((IORD(KEY_BASE,0)&0x0F) == 0x0E){
-
-    	   current_focus = Focus_Window(320,240);
-       }
-
-       // touch KEY1 to trigger Manual focus  - step
-       if((IORD(KEY_BASE,0)&0x0F) == 0x0D){
-
-    	   if(current_focus > manual_focus_step) current_focus -= manual_focus_step;
-    	   else current_focus = 0;
-    	   OV8865_FOCUS_Move_to(current_focus);
-
-       }
-
-       // touch KEY2 to trigger Manual focus  + step
-       if((IORD(KEY_BASE,0)&0x0F) == 0x0B){
-    	   current_focus += manual_focus_step;
-    	   if(current_focus >1023) current_focus = 1023;
-    	   OV8865_FOCUS_Move_to(current_focus);
-       }
-
-       // touch KEY3 to ZOOM
-       if((IORD(KEY_BASE,0)&0x0F) == 0x07){
-    	   if(bin_level == 3 )bin_level = 1;
-    	   else bin_level ++;
-    	   printf("set bin level to %d\n",bin_level);
-    	   MIPI_BIN_LEVEL(bin_level);
-    	 	usleep(500000);
-
-       }
-	#endif
        alt_u8 idx = 0;
        alt_u8 color = 0;
        alt_u16 x, y;
-       alt_u32 area;
+       alt_u32 area1, area2;
        alt_8 angle;
        alt_16 dist;
        int bright_pix_count;
+       alt_u16 centroid_x1, centroid_x2, centroid_y1, centroid_y2, h1, h2, w1, w2;
        //Read messages from the image processor and print them on the terminal
        while ((IORD(0x42000,EEE_IMGPROC_STATUS)>>8) & 0xff) { 	//Find out if there are words to read
            int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
@@ -267,8 +219,10 @@ int main()
     		   printf("RBB MSG ID: ");
 			   printf("%08x\n ",word);
     	   } else {
+//    		   printf("Colour: ");
     		   x =(word & 0xffff0000)>> 16;
     		   y = (word & 0x0000ffff);
+//    		   printf("%d , %d ;", x, y);
     		   if (idx == 1){
     			   bb[color][0] = x;
     			   bb[color][1] = y;
@@ -277,34 +231,97 @@ int main()
     			   bb[color][3] = y;
     			   idx = 0;
     			   color += 1;
+    			   printf("\n");
     		   }
     	   }
     	   idx += 1;
        }
 
        printf("Number of bright pixels: %d\n ",bright_pix_count);
-       for (alt_u8 i = 0; i < 10; i++){
-    	   if (i == 0) printf("Color Red: ");
-    	   if (i == 1) printf("Color Red 2: ");
-    	   if (i == 2) printf("Color Green: ");
-    	   if (i == 3) printf("Color Green 2: ");
-    	   if (i == 4) printf("Color Blue: ");
-    	   if (i == 5) printf("Color Blue 2: ");
-    	   if (i == 6) printf("Color Grey: ");
-    	   if (i == 7) printf("Color Grey 2: ");
-    	   if (i == 8) printf("Color Yellow: ");
-    	   if (i == 9) printf("Color Yellow 2: ");
-		   printf("Centroid: (%d,%d), ", bb[i][0], bb[i][1]);
-		   area = bb[i][2]*bb[i][3];
+
+       for (alt_u8 i = 0; i < 5; i++){
+    	   centroid_x1 = bb[i*2][0];
+    	   centroid_x2 = bb[i*2 + 1][0];
+    	   centroid_y1 = bb[i*2][1];
+    	   centroid_y2 = bb[i*2 + 1][1];
+    	   h1 = bb[i*2][2];
+    	   h2 = bb[i*2 + 1][2];
+    	   w1 = bb[i*2][3];
+    	   w2 = bb[i*2 + 1][3];
+		   area1 = h1*w1;
+		   area2 = h2*w2;
+    	   if (i == 0) {
+    		   printf("Color Red: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x1, centroid_y1);
+    		   printf("Height_width: (%d,%d), ",h1, w1);
+    		   printf("Area: %d, ",area1);
+    		   printf("Color Red 2: ");
+    		   printf("Centroid: (%d,%d), ", centroid_x2, centroid_y2);
+    		   printf("Area: %d, ",area2);
+    		   printf("Height_width: (%d,%d), ",h2, w2);
+    	   }
+
+    	   if (i == 1) {
+    		   printf("Color Green: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x1, centroid_y1);
+    		   printf("Area: %d, ",area1);
+    		   printf("Height_width: (%d,%d), ",h1, w1);
+    		   printf("Color Green 2: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x2, centroid_y2);
+    		   printf("Area: %d, ",area2);
+    		   printf("Height_width: (%d,%d), ",h2, w2);
+    	   }
+    	   if (i == 2) {
+    		   printf("Color Blue: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x1, centroid_y1);
+    		   printf("Area: %d, ",area1);
+    		   printf("Height_width: (%d,%d), ",h1, w1);
+    		   printf("Color Blue 2: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x2, centroid_y2);
+    		   printf("Area: %d, ",area2);
+    		   printf("Height_width: (%d,%d), ",h2, w2);
+    	   }
+    	   if (i == 3) {
+    		   printf("Color Grey: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x1, centroid_y1);
+    		   printf("Area: %d, ",area1);
+    		   printf("Height_width: (%d,%d), ",h1, w1);
+    		   printf("Color Grey 2: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x2, centroid_y2);
+    		   printf("Area: %d, ",area2);
+    		   printf("Height_width: (%d,%d), ",h2, w2);
+
+    	   }
+    	   if (i == 4) {
+    		   printf("Color Yellow: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x1, centroid_y1);
+    		   printf("Area: %d, ",area1);
+    		   printf("Height_width: (%d,%d), ",h1, w1);
+    		   printf("Color Yellow 2: ");
+    		   printf("Centroid: (%d,%d), ",centroid_x2, centroid_y2);
+    		   printf("Area: %d, ",area2);
+    		   printf("Height_width: (%d,%d), ",h2, w2);
+    	   }
+
+
 //		   printf("Area: %d ", area);
-		   if (area >200000){
-			   printf("Not Detected/Error");
-			   updateColour(0x40000,  0, estimate_angle(bb[i][0]), estimate_dist(bb[i][1]), i);
-		   } else {
-			   angle = estimate_angle(bb[i][0]);
-			   dist = estimate_dist(bb[i][1]);
+		   // Error in detection if area is more than a 20000 or if it is too high up the image
+    	   // Check Colour 2 first because it is likely to be nearer to the camera
+		   if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
+			   printf("Decided on Colour 2: ");
+			   angle = estimate_angle(centroid_x2);
+			   dist = estimate_dist(centroid_y2);
 			   printf("Dist: %d, Angle: %d", dist, angle);
 			   updateColour(0x40000,  1, angle, dist, i);
+		   } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+			   printf("Decided on Colour 1: ");
+			   angle = estimate_angle(centroid_x1);
+			   dist = estimate_dist(centroid_y1);
+			   printf("Dist: %d, Angle: %d", dist, angle);
+			   updateColour(0x40000,  1, angle, dist, i);
+		   } else {
+			   printf("Not Detected/Error");
+			   updateColour(0x40000,  0, 0, 0, i);
 		   }
     	   printf(";\n");
        }

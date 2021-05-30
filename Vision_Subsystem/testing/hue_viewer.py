@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from skimage import io
 from skimage.color import rgb2hsv
-filename = "images/tuning_grey.jpg"
+filename = "images/other_part_grey.jpg"
 name = (filename.split(".")[0]).split("/")[1]
 rgb_img = io.imread(filename)
 hsv_img = rgb2hsv(rgb_img)
@@ -28,19 +28,19 @@ value_img = hsv_img[:, :, 2]
 
 fig, (ax0, ax1, ax2) = plt.subplots(ncols=3, figsize=(8, 3))
 
-ax0.hist(hue_img.ravel(), 512)
+ax0.hist(hue_img.ravel(), 20)
 ax0.set_title("Histogram of the Hue channel")
 ax0.set_xbound(0, 1)
-ax1.hist(sat_img.ravel(), 512)
+ax1.hist(sat_img.ravel(), 20)
 ax1.set_title("Histogram of the Sat channel")
 ax1.set_xbound(0, 1)
-ax2.hist(value_img.ravel(), 512)
+ax2.hist(value_img.ravel(), 20)
 ax2.set_title("Histogram of the Val channel")
 ax2.set_xbound(0, 1)
 
 
 fig.tight_layout()
-fig.savefig('Hsv_Hist_{}.png'.format(name))
+fig.savefig('hsv_hist/Hsv_Hist_{}.png'.format(name))
 
 
 ############################################

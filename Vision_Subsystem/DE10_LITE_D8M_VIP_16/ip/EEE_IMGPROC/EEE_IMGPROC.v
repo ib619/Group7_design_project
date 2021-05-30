@@ -186,7 +186,7 @@ assign y2_bb_active = (x == y_left2) | (x == y_right2) | (y == y_top2) | (y == y
 assign new_image = (r_bb_active|r2_bb_active) ? {8'hff, 8'h0, 8'h0} : 
                    (b_bb_active|b2_bb_active) ? {8'hCC, 8'hff, 8'hff} :
                    (g_bb_active|g2_bb_active) ? {8'h0, 8'hff, 8'h0} :
-                   (gr_bb_active|gr2_bb_active) ? {8'h0, 8'h33, 8'h66} :
+                   (gr_bb_active|gr2_bb_active) ? {8'd223, 8'd0, 8'd254}:
                    (y_bb_active|y2_bb_active) ? {8'hff, 8'hff, 8'h0} :
                    obstacle_high;
 
@@ -221,150 +221,152 @@ reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
 reg [10:0] r_x_min2, r_y_min2, r_x_max2, r_y_max2;
 wire [11:0] r_x_mid = (r_x_min + r_x_max) >>1;
 wire [11:0] r_y_mid =  (r_y_min + r_y_max)>>1;
-wire [10:0] r_x_diff1 = r_x_mid - prev_x;
-wire [10:0] r_x_diff2 = prev_x - r_x_mid;
+wire [10:0] r_x_diff1 = r_x_mid - x;
+wire [10:0] r_x_diff2 = x - r_x_mid;
 wire [10:0] r_x_diff = (r_x_diff1[10]) ? r_x_diff2 : r_x_diff1;
-wire [10:0] r_y_diff = prev_y - r_y_mid;
+wire [10:0] r_y_diff = y - r_y_mid;
 
 reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
 reg [10:0] g_x_min2, g_y_min2, g_x_max2, g_y_max2;
 wire [11:0] g_x_mid = (g_x_min + g_x_max) >>1;
 wire [11:0] g_y_mid =  (g_y_min + g_y_max)>>1;
-wire [10:0] g_x_diff1 = g_x_mid - prev_x;
-wire [10:0] g_x_diff2 = prev_x - g_x_mid;
+wire [10:0] g_x_diff1 = g_x_mid - x;
+wire [10:0] g_x_diff2 = x - g_x_mid;
 wire [10:0] g_x_diff = (g_x_diff1[10]) ? g_x_diff2 : g_x_diff1;
-wire [10:0] g_y_diff = prev_y - g_y_mid;
+wire [10:0] g_y_diff = y - g_y_mid;
 
 reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
 reg [10:0] b_x_min2, b_y_min2, b_x_max2, b_y_max2;
 wire [11:0] b_x_mid = (b_x_min + b_x_max) >>1;
 wire [11:0] b_y_mid =  (b_y_min + b_y_max)>>1;
-wire [10:0] b_x_diff1 = b_x_mid - prev_x;
-wire [10:0] b_x_diff2 = prev_x - b_x_mid;
+wire [10:0] b_x_diff1 = b_x_mid - x;
+wire [10:0] b_x_diff2 = x - b_x_mid;
 wire [10:0] b_x_diff = (b_x_diff1[10]) ? b_x_diff2 : b_x_diff1;
-wire [10:0] b_y_diff = prev_y - b_y_mid;
+wire [10:0] b_y_diff = y - b_y_mid;
 
 reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] gr_x_min2, gr_y_min2, gr_x_max2, gr_y_max2;
 wire [11:0] gr_x_mid = (gr_x_min + gr_x_max) >>1;
 wire [11:0] gr_y_mid =  (gr_y_min + gr_y_max)>>1;
-wire [10:0] gr_x_diff1 = gr_x_mid - prev_x;
-wire [10:0] gr_x_diff2 = prev_x - gr_x_mid;
+wire [10:0] gr_x_diff1 = gr_x_mid - x;
+wire [10:0] gr_x_diff2 = x - gr_x_mid;
 wire [10:0] gr_x_diff = (gr_x_diff1[10]) ? gr_x_diff2 : gr_x_diff1;
-wire [10:0] gr_y_diff = prev_y - gr_y_mid;
+wire [10:0] gr_y_diff = y - gr_y_mid;
 
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 reg [10:0] y_x_min2, y_y_min2, y_x_max2, y_y_max2;
 wire [11:0] y_x_mid = (y_x_min + y_x_max) >>1;
 wire [11:0] y_y_mid =  (y_y_min + y_y_max)>>1;
-wire [10:0] y_x_diff1 = y_x_mid - prev_x;
-wire [10:0] y_x_diff2 = prev_x - y_x_mid;
+wire [10:0] y_x_diff1 = y_x_mid - x;
+wire [10:0] y_x_diff2 = x - y_x_mid;
 wire [10:0] y_x_diff = (y_x_diff1[10]) ? y_x_diff2 : y_x_diff1;
-wire [10:0] y_y_diff = prev_y - y_y_mid;
+wire [10:0] y_y_diff = y - y_y_mid;
 
 always@(posedge clk) begin
-    if (valid_rgbhsv) begin
-        if (red_detect) begin	//Update bounds when the pixel is red
-				if ( (r_y_diff < 11'd60) |( r_x_diff < 11'd120)) begin
-					if (prev_x < r_x_min) r_x_min <= prev_x;
-					if (prev_x > r_x_max) r_x_max <= prev_x;
-					if (prev_y < r_y_min) r_y_min <= prev_y;
-					r_y_max <= prev_y;
-				end
-				else begin
-					if (prev_x < r_x_min2) r_x_min2 <= prev_x;
-					if (prev_x > r_x_max2) r_x_max2 <= prev_x;
-					if (prev_y < r_y_min2) r_y_min2 <= prev_y;
-					r_y_max2 <= prev_y;
-				end
+    if ( in_valid ) begin        
+        if (value_b[7] == 1'b1) begin
+            bright_pix_count <= bright_pix_count + 20'd1;
         end
-        else if (blue_detect ) begin	//Update bounds when the pixel is blue
-				if ( (b_y_diff < 11'd60) |( b_x_diff < 11'd120)) begin
-					if (prev_x < b_x_min) b_x_min <= prev_x;
-					if (prev_x >  b_x_max) b_x_max <= prev_x;
-					if (prev_y < b_y_min) b_y_min <= prev_y;
-					b_y_max <= prev_y;
-				end
-				else begin
-					if (prev_x < b_x_min2) b_x_min2 <= prev_x;
-					if (prev_x >  b_x_max2) b_x_max2 <= prev_x;
-					if (prev_y < b_y_min2) b_y_min2 <= prev_y;
-					b_y_max2 <= prev_y;
-				end
-        end 
-        else if (green_detect ) begin	//Update bounds when the pixel is green
-			  if ( (g_y_diff < 11'd60) |( g_x_diff < 11'd120)) begin
-					if (prev_x < g_x_min) g_x_min <= prev_x;
-					if (prev_x > g_x_max) g_x_max <= prev_x;
-					if (prev_y < g_y_min) g_y_min <= prev_y;
-					g_y_max <= prev_y;
-				end
-				else begin
-					if (prev_x < g_x_min2) g_x_min2 <= prev_x;
-					if (prev_x > g_x_max2) g_x_max2 <= prev_x;
-					if (prev_y < g_y_min2) g_y_min2 <= prev_y;
-					g_y_max2 <= prev_y;
-				end
+        if (y > 11'd100) begin
+            if (red_detect) begin	//Update bounds when the pixel is red
+					  if ( (r_y_diff < 11'd60) | (r_y_diff[10] == 1'b1)) begin
+							if (x < r_x_min) r_x_min <= x;
+							if (x > r_x_max) r_x_max <= x;
+							if (y < r_y_min) r_y_min <= y;
+							r_y_max <= y;
+					  end
+					  else begin
+							if (x < r_x_min2) r_x_min2 <= x;
+							if (x > r_x_max2) r_x_max2 <= x;
+							if (y < r_y_min2) r_y_min2 <= y;
+							r_y_max2 <= y;
+					  end
+            end
+            else if (blue_detect ) begin	//Update bounds when the pixel is blue
+					  if ( (b_y_diff < 11'd60) | (b_y_diff[10] == 1'b1)) begin //|( b_x_diff < 11'd120)
+							if (x < b_x_min) b_x_min <= x;
+							if (x >  b_x_max) b_x_max <= x;
+							if (y < b_y_min) b_y_min <= y;
+							b_y_max <= y;
+					  end
+					  else begin
+							if (x < b_x_min2) b_x_min2 <= x;
+							if (x >  b_x_max2) b_x_max2 <= x;
+							if (y < b_y_min2) b_y_min2 <= y;
+							b_y_max2 <= y;
+					  end
+            end 
+            else if (green_detect ) begin	//Update bounds when the pixel is green
+					  if ( (g_y_diff < 11'd60) | (g_y_diff[10] == 1'b1)) begin
+							if (x < g_x_min) g_x_min <= x;
+							if (x > g_x_max) g_x_max <= x;
+							if (y < g_y_min) g_y_min <= y;
+							g_y_max <= y;
+					  end
+					  else begin
+							if (x < g_x_min2) g_x_min2 <= x;
+							if (x > g_x_max2) g_x_max2 <= x;
+							if (y < g_y_min2) g_y_min2 <= y;
+							g_y_max2 <= y;
+					  end
+            end
+            else if (grey_detect) begin	//Update bounds when the pixel is grey
+					  if ( (gr_y_diff < 11'd60) | (gr_y_diff[10] == 1'b1)) begin
+							if (x < gr_x_min) gr_x_min <= x;
+							if (x > gr_x_max) gr_x_max <= x;
+							if (y < gr_y_min) gr_y_min <= y;
+							gr_y_max <= y;
+					  end
+					  else begin
+							if (x < gr_x_min2) gr_x_min2 <= x;
+							if (x >  gr_x_max2) gr_x_max2 <= x;
+							if (y < gr_y_min2) gr_y_min2 <= y;
+							gr_y_max2 <= y;
+					  end
+            end
+            else if (yellow_detect) begin	//Update bounds when the pixel is yellow
+					  if ( (y_y_diff < 11'd60) | (y_y_diff[10] == 1'b1)) begin
+							if (x < y_x_min) y_x_min <= x;
+							if (x > y_x_max) y_x_max <= x;
+							if (y < y_y_min) y_y_min <= y;
+							y_y_max <= y;
+					  end
+					  else begin
+							if (x < y_x_min2) y_x_min2 <= x;
+							if (x > y_x_max2) y_x_max2 <= x;
+							if (y < y_y_min2) y_y_min2 <= y;
+							y_y_max2 <= y;
+					  end
+            end
         end
-        else if (grey_detect) begin	//Update bounds when the pixel is grey
-				if ( (gr_y_diff < 11'd60) |( gr_x_diff < 11'd120)) begin
-					if (prev_x < gr_x_min) gr_x_min <= prev_x;
-					if (prev_x > gr_x_max) gr_x_max <= prev_x;
-					if (prev_y < gr_y_min) gr_y_min <= prev_y;
-					gr_y_max <= prev_y;
-				end
-				else begin
-					if (prev_x < gr_x_min2) gr_x_min2 <= prev_x;
-					if (prev_x >  gr_x_max2) gr_x_max2 <= prev_x;
-					if (prev_y < gr_y_min2) gr_y_min2 <= prev_y;
-					gr_y_max2 <= prev_y;
-				end
-        end
-        else if (yellow_detect) begin	//Update bounds when the pixel is yellow
-				if ( (gr_y_diff < 11'd60) |( gr_x_diff < 11'd120)) begin
-					if (prev_x < y_x_min) y_x_min <= prev_x;
-					if (prev_x > y_x_max) y_x_max <= prev_x;
-					if (prev_y < y_y_min) y_y_min <= prev_y;
-					y_y_max <= prev_y;
-				end
-				else begin
-					if (prev_x < y_x_min2) y_x_min2 <= prev_x;
-					if (prev_x > y_x_max2) y_x_max2 <= prev_x;
-					if (prev_y < y_y_min2) y_y_min2 <= prev_y;
-					y_y_max2 <= prev_y;
-				end
-        end
-		  if (value_b[7] == 1'b1) begin
-		      bright_pix_count <= bright_pix_count + 20'd1;
-		  end
-	 end
-	 if (sop_in) begin	//Reset bounds on start of packet
-		 r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1;
-		 b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1;
-		 g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
-		 gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1;
-		 y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1;
-		 
-		 r_x_max <= 0; r_x_max2 <= 0;
-		 b_x_max <= 0; b_x_max2 <= 0;
-		 g_x_max <= 0; g_x_max2 <= 0;
-		 gr_x_max <= 0;gr_x_max2 <= 0;
-		 y_x_max <= 0; y_x_max2 <= 0;
-		 
-		 r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
-		 b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
-		 g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
-		 gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1;
-		 y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1;
-		 
-		 r_y_max <= 0; r_y_max2 <= 0;
-		 b_y_max <= 0;b_y_max2 <= 0;
-		 g_y_max <= 0; g_y_max2 <= 0;
-		 gr_y_max <= 0;gr_y_max2 <= 0;
-		 y_y_max <= 0; y_y_max2 <= 0;
-		 
-		 bright_pix_count <= 20'd0;
-	 end
+    end
+    if (sop_in) begin	//Reset bounds on start of packet
+        r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1;
+        b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1;
+        g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
+        gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1;
+        y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1;
+        
+        r_x_max <= 0; r_x_max2 <= 0;
+        b_x_max <= 0; b_x_max2 <= 0;
+        g_x_max <= 0; g_x_max2 <= 0;
+        gr_x_max <= 0;gr_x_max2 <= 0;
+        y_x_max <= 0; y_x_max2 <= 0;
+        
+        r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
+        b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
+        g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
+        gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1;
+        y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1;
+        
+        r_y_max <= 0; r_y_max2 <= 0;
+        b_y_max <= 0;b_y_max2 <= 0;
+        g_y_max <= 0; g_y_max2 <= 0;
+        gr_y_max <= 0;gr_y_max2 <= 0;
+        y_y_max <= 0; y_y_max2 <= 0;
+        
+        bright_pix_count <= 20'd0;
+    end
 end
 
 //Process bounding box at the end of the frame.
@@ -416,21 +418,21 @@ always@(posedge clk) begin
         b_top <= b_y_min;
         b_bottom <= b_y_max;	
 
-		b_left2 <= b_x_min2;
+        b_left2 <= b_x_min2;
         b_right2 <= b_x_max2;
         b_top2 <= b_y_min2;
         b_bottom2 <= b_y_max2;	
-		  
+            
         gr_left <= gr_x_min;
         gr_right <= gr_x_max;
         gr_top <= gr_y_min;
         gr_bottom <= gr_y_max;	
 
-		gr_left2 <= gr_x_min2;
+        gr_left2 <= gr_x_min2;
         gr_right2 <= gr_x_max2;
         gr_top2 <= gr_y_min2;
         gr_bottom2 <= gr_y_max2;
-		  
+            
         y_left <= y_x_min;
         y_right <= y_x_max;
         y_top <= y_y_min;
@@ -442,7 +444,7 @@ always@(posedge clk) begin
         y_bottom2 <= y_y_max2;	
 
         bright_pix_count_reg <= bright_pix_count;
-		  
+            
         //Start message writer FSM once every MSG_INTERVAL frames, if there is room in the FIFO
         frame_count <= frame_count - 8'd1;
         
@@ -459,7 +461,7 @@ always@(posedge clk) begin
             else msg_state <= msg_state + 5'd1;
         end
 end
-	
+
 //Generate output messages for CPU
 reg [31:0] msg_buf_in; 
 wire [31:0] msg_buf_out;
@@ -524,7 +526,7 @@ always@(*) begin	//Write words to FIFO as state machine advances
             msg_buf_wr = 1'b1;
         end
 		  
-		5'd12: begin
+		  5'd12: begin
             msg_buf_in = {5'b0, (b_left2 + b_right2) >>1 , 5'b0, (b_top2 + b_bottom2)>>1};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
