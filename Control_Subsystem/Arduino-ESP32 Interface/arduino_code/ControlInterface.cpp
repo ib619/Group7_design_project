@@ -32,7 +32,7 @@ int ControlInterface::fetchData()  {
         for(int i=0;i<ctrl_size;i++)    {
             high_byte=serial->read();
             low_byte=serial->read();
-            tmp[i]=(high_byte<<8)+low_byte;
+            tmp[i]=(int16_t)((high_byte<<8)+low_byte);
         }
         // load received control values into respective variables
         drive_mode=tmp[0];

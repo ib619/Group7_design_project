@@ -26,7 +26,7 @@ int DriveInterface::fetchData() {
         for(int i=0;i<data_size;i++)    {
             high_byte=serial->read();
             low_byte=serial->read();
-            tmp[i]=(high_byte<<8)+low_byte;
+            tmp[i]=(int16_t)((high_byte<<8)+low_byte);
         }
         battery_level=tmp[0];
         rover_range=tmp[1];
