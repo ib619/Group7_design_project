@@ -34,6 +34,6 @@ export default Status;
 const Container = styled.div`
   display: flex;
   margin: 1rem auto;
-  padding: 0.5rem;
+  padding: 1rem;
   justify-content: space-between;
 `;

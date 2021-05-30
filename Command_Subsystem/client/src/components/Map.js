@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useSubscription } from "mqtt-react-hooks";
 // import pointerblack from "../assets/pointer-black.svg";
 import pointerwhite from "../assets/pointer-white.svg";
+import { MapInteractionCSS } from "react-map-interaction";
+import Plus from "../assets/plus-solid.svg";
 
 const Map = () => {
   // for the map stuff
@@ -20,25 +22,28 @@ const Map = () => {
   useEffect(() => {
     if (message && message.topic === "obstacle/result") {
       setObstacles(JSON.parse(message.message));
-      localStorage.setItem("obstacles", JSON.stringify(obstacles));
+      localStorage.setItem("obstacles", JSON.stringify(message.message));
     }
-  }, [message, obstacles]);
+  }, [message, setObstacles]);
 
   // on position update
   useEffect(() => {
     if (message && message.topic === "position/update") {
       setPos(JSON.parse(message.message));
     }
-  }, [message, pos]);
+  }, [message, setPos]);
 
   return (
     <>
       <Border>
-        <Pointer src={pointerwhite} pos={pos} />
-        {obstacles &&
-          obstacles.map((data, index) => (
-            <Obstacle key={index} coords={data} />
-          ))}
+        <MapInteractionCSS>
+          <Center src={Plus} />
+          <Pointer src={pointerwhite} pos={pos} />
+          {obstacles &&
+            obstacles.map((data, index) => (
+              <Obstacle key={index} coords={data} />
+            ))}
+        </MapInteractionCSS>
       </Border>
       <Coords>
         x: {pos.x}, y: {pos.y}, direction: {pos.heading}˚
@@ -52,16 +57,23 @@ export default Map;
 const Border = styled.div`
   position: relative;
   margin: 1rem auto;
-  width: 500px;
+  width: 800px;
   height: 500px;
   padding: 0.5rem;
   border: 2px solid grey;
 `;
 
+const Center = styled.img`
+  color: white;
+  position: relative;
+  left: 380px;
+  bottom: -230px;
+`;
+
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] + 230,
-    bottom: props.coords[2] - 230,
+    left: props.coords[1] + 380,
+    bottom: props.coords[2] - 200,
     opacity: 1 / props.coords[3],
     background: props.coords[0],
   },
@@ -75,8 +87,8 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Pointer = styled.img.attrs((props) => ({
   style: {
-    left: props.pos.x + 220, // hardcoded offset values :(
-    bottom: props.pos.y - 220,
+    left: props.pos.x + 380, // hardcoded offset values :(
+    bottom: props.pos.y - 180,
   },
 }))`
   position: relative;
