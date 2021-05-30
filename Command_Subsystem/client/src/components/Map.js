@@ -27,7 +27,6 @@ const Map = () => {
   // on position update
   useEffect(() => {
     if (message && message.topic === "position/update") {
-      console.log(message);
       setPos(JSON.parse(message.message));
     }
   }, [message, pos]);

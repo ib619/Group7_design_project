@@ -3,6 +3,7 @@ import { useMqttState } from "mqtt-react-hooks";
 import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import Map from "../components/Map";
 import FormAlert from "../components/FormAlert";
+// import styled from "styled-components";
 
 const DiscretePage = () => {
   // for the game
@@ -139,10 +140,19 @@ const DiscretePage = () => {
           </Col>
         </Row>
         <br />
-        <Button type="submit">Submit</Button>
+        <Button variant="light" type="submit">
+          Submit
+        </Button>
       </Form>
     </>
   );
 };
 
 export default DiscretePage;
+
+// const FormContainer = styled.div`
+//   display: flex,
+//   flex-direction: row
+//   margin: 1rem auto;
+//   padding: 0.5rem;
+// `;
