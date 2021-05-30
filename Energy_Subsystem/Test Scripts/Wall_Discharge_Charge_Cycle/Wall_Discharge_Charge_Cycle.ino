@@ -44,11 +44,9 @@ Rationale for SOC
 #include <SPI.h>
 #include <SD.h>
 #include <MovingAverage.h>
+#include "Power.h"
 
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
-
-// Which cell are we using?
-int CELL = 1;
 
 #define PIN_OLCL 2
 #define PIN_PWM 6
@@ -75,6 +73,9 @@ int CELL = 1;
 #define DISCHARGE 8
 #define RAPID_DISCHARGE 9
 #define RAPID_CHARGE 10
+
+// Setup SMPS
+SMPS mySMPS;
 
 // set up variables using the SD utility library functions:
 const int chipSelect = 10; const int SD_CS = 10;
@@ -116,7 +117,7 @@ float V_LOWLIM = 2500;
 
 // State Machine Stuff
 boolean input_switch;
-int state_num = 0,next_state, prev_state;
+int state_num = 0,next_state, prev_state = -1;
 bool recalibrating = 0; bool discharged = 0;
 bool stop = 0;
 
@@ -126,56 +127,8 @@ boolean blink = 0;
 // Current Capacity: Only calculated during discharge process
 float q1 = 0, q2 = 0, q3 = 0;
 
-// Initial charge values
-float q1_0 = 1793;
-float q2_0 = 2000.5;
-float q3_0 = 1921.75;
-
-// Assume hundred percent SoH
-float q1_now = q1_0, q2_now = q2_0, q3_now= q3_0;
-float SoH_1, SoH_2, SoH_3, gross_SoH;
-float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0, gross_SoC; // For this file: SOC is in percentage (100% is 100)
-float temp1 = 0, temp2 = 0, temp3 = 0;
-
 // Stores the amount of charge added/removed within the past 2 minutes. Reset after.
 float dq1 = 0, dq2 = 0, dq3 = 0;
-float sum1, sum2, sum3;
-
-// SOC Moving Averages
-MovingAverage<float> SoC_1_arr = MovingAverage<float>(5);
-MovingAverage<float> SoC_2_arr = MovingAverage<float>(5);
-MovingAverage<float> SoC_3_arr = MovingAverage<float>(5);
-
-// SoC Tables
-String discharge_SoC_filename = "dv_SoC.csv";
-String charge_SoC_filename = "cv_SoC.csv";
-        
-float d_v_1[100] = {};
-float c_v_1[100] = {};
-float d_v_2[100] = {};
-float c_v_2[100] = {};
-float d_v_3[100] = {};
-float c_v_3[100] = {};   
-float d_SoC[100] = {};
-float c_SoC[100] = {};
-
-int arr_size;
-
-// Discharge thresholds
-float d_ocv_l_1 = 3100;
-float d_ocv_u_1 = 3200;
-float c_ocv_u_1 = 3400;
-float c_ocv_l_1 = 3300;
-
-float d_ocv_l_2 = 3100;
-float d_ocv_u_2 = 3200;
-float c_ocv_u_2 = 3400;
-float c_ocv_l_2 = 3300;
-
-float d_ocv_l_3 = 3100;
-float d_ocv_u_3 = 3200;
-float c_ocv_u_3 = 3400;
-float c_ocv_l_3 = 3300;
 
 void setup() {
 
@@ -185,72 +138,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  SoC_1_arr.fill(0);
-  SoC_2_arr.fill(0);
-  SoC_3_arr.fill(0);
-
-  File myFile;
-  String content;
-
-  //Check for the SD Card
-  Serial.println("\nInitializing SD card...");
-  if (!SD.begin(chipSelect)) {
-    Serial.println("* is a card inserted?");
-    while (true) {} //It will stick here FOREVER if no SD is in on boot
-  } else {
-    Serial.println("Wiring is correct and a card is present.");
-  }
-
-  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
-    SD.remove("BatCycle.csv");
-  }
-
-  // Initialise discharge and charge tables
-  myFile = SD.open(discharge_SoC_filename);
-  if (myFile) {
-    Serial.println("Start insertion: discharge");  
-      for (int i = 0; i < 100; i++) {
-          content = myFile.readStringUntil(',');
-          d_v_1[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          d_v_2[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          d_v_3[i] = content.toFloat();
-          content = myFile.readStringUntil('\n');
-          d_SoC[i] = content.toFloat();
-          Serial.println(String(d_v_1[i]) + "," + String(d_v_2[i]) + "," + String(d_v_3[i]) + "," + String(d_SoC[i]));
-          if (content == "") {
-              break;
-              Serial.println("Insertion Complete");    
-          }                 
-      }
-  } else {
-      Serial.println("File not open");
-  }
-  myFile.close();
-
-  myFile = SD.open(charge_SoC_filename);
-  if (myFile) {
-      Serial.println("Start insertion: charge");  
-      for (int i = 0; i < 100; i++) {
-          content = myFile.readStringUntil(',');
-          c_v_1[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          c_v_2[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          c_v_3[i] = content.toFloat();
-          content = myFile.readStringUntil('\n');
-          c_SoC[i] = content.toFloat();
-          Serial.println(String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i])  + "," + String(c_SoC[i]));
-          if (content == "") {
-              break;
-              Serial.println("Insertion Complete");    
-          }                 
-      }
-  } else {
-      Serial.println("File not open");
-  }
-  myFile.close();
+  mySMPS.init();
 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -350,7 +238,7 @@ void loop() {
   }
  
   // This still runs every 1 second
-  if (int_count == 200) { // SLOW LOOP (0.2Hz)
+  if (int_count % 200 == 0) { // SLOW LOOP (0.2Hz)
     input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
@@ -377,6 +265,7 @@ void loop() {
             if (true) { // (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
                 //Connect to discharging relay if a battery is significantly lower  
                 if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
+                    Serial.println("Cell 1 lowest");
                     digitalWrite(PIN_DISC1, false);
                     digitalWrite(PIN_DISC2, true);
                     digitalWrite(PIN_DISC3, true);
@@ -384,6 +273,7 @@ void loop() {
                     dq2 = dq2 + (current_measure - V_2/150)/1000;
                     dq3 = dq3 + (current_measure - V_3/150)/1000;
                 } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
+                    Serial.println("Cell 2 lowest");
                     digitalWrite(PIN_DISC1, true);
                     digitalWrite(PIN_DISC2, false);
                     digitalWrite(PIN_DISC3, true);
@@ -391,6 +281,7 @@ void loop() {
                     dq2 = dq2 + current_measure/1000;
                     dq3 = dq3 + (current_measure - V_3/150)/1000;
                 } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
+                    Serial.println("Cell 3 lowest");
                     digitalWrite(PIN_DISC1, true);
                     digitalWrite(PIN_DISC2, true);
                     digitalWrite(PIN_DISC3, false);
@@ -440,8 +331,8 @@ void loop() {
                 next_state = RECAL_DONE;
                 digitalWrite(PIN_YELLED,false);
                 rest_timer = 0;
-            } else { // Otherwise discharge //TODO: Change to normal discharge (not slow discharge)
-                next_state = DISCHARGE;
+            } else { // Otherwise discharge //TODO: Change to slow discharge
+                next_state = SLOW_DISCHARGE;
                 digitalWrite(PIN_YELLED,false);
                 rest_timer = 0;
             }    
@@ -506,13 +397,14 @@ void loop() {
         }
         break;
       }
-      case DISCHARGE: { // 8 Normal discharge (-500mA)
+      case SLOW_DISCHARGE: { // 3 Slow discharge (-500mA)
         current_ref = -250;
         if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
-          next_state = DISCHARGE;
+          next_state = SLOW_DISCHARGE;
           digitalWrite(PIN_YELLED,false);
           if (V_1 < V_LOWBALLIM || V_2 < V_LOWBALLIM || V_3 < V_LOWBALLIM) {
               if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
+                  Serial.println("Cell 1 lowest");
                   digitalWrite(PIN_DISC1, true);
                   digitalWrite(PIN_DISC2, false);
                   digitalWrite(PIN_DISC3, false);
@@ -520,6 +412,7 @@ void loop() {
                   dq2 = dq2 + current_measure/1000;
                   dq3 = dq3 + current_measure/1000;
               } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
+                  Serial.println("Cell 2 lowest");
                   digitalWrite(PIN_DISC1, false);
                   digitalWrite(PIN_DISC2, true);
                   digitalWrite(PIN_DISC3, false);
@@ -527,6 +420,7 @@ void loop() {
                   dq2 = dq2 + (current_measure - V_2/150)/1000;
                   dq3 = dq3 + current_measure/1000;
               } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
+                  Serial.println("Cell 3 lowest");
                   digitalWrite(PIN_DISC1, false);
                   digitalWrite(PIN_DISC2, false);
                   digitalWrite(PIN_DISC3, true);
@@ -565,157 +459,10 @@ void loop() {
     }
     
     // SoC Measurement
-    temp1 = SoC_1;
-    temp2 = SoC_2;
-    temp3 = SoC_3;
-  
-    if (state_num == 0) { //IDLE
-        // LOOKUP for V1, V2, V3
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 0;
-                break;
-            } else if (V_2 < d_v_2[i] && V_2 > d_v_2[i+1]) {
-                temp2 = d_SoC[i];
-                break;
-            }
-        }
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp2 = 1;
-                break;
-            } else if (V_2 > c_v_2[i] && V_2 < c_v_2[i+1]) {
-                temp2 = c_SoC[i];
-                break;
-            }
-        }
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp3 = 1;
-                break;
-            } else if (V_3 > c_v_3[i] && V_3 < c_v_3[i+1]) {
-                temp3 = c_SoC[i];
-                break;
-            }
-        }
-    } else if (state_num == 1 || state_num == 6 || state_num == 10) { // CHARGE
-        if (V_1 > c_ocv_u_1 || V_1 < c_ocv_l_1) { // LOOKUP        
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp1 = 1;
-                    break;
-                } else if (V_1 > c_v_1[i] && V_1 < c_v_1[i+1]) {
-                    temp1 = c_SoC[i];
-                    break;
-                }
-            }
-            
-        } else { // COULOMB COUNTING
-            temp1 = temp1 + dq1/q1_now * 100;
-        }
-        if (V_2 > c_ocv_u_2 || V_2 < c_ocv_l_2) { // LOOKUP
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp2 = 1;
-                    break;
-                } else if (V_2 > c_v_2[i] && V_2 < c_v_2[i+1]) {
-                    temp2 = c_SoC[i];
-                    break;
-                }
-            }
-            
-        } else { // COULOMB COUNTING  
-            temp2 = temp2 + dq2/q2_now * 100;
-        }
-        if (V_3 > c_ocv_u_3 || V_1 < c_ocv_l_3) { // LOOKUP  
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp3 = 1;
-                    break;
-                } else if (V_3 > c_v_3[i] && V_3 < c_v_3[i+1]) {
-                    temp3 = c_SoC[i];
-                    break;
-                }
-            }          
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + dq3/q3_now * 100;
-        }
-    } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
-        if (V_1 > d_ocv_u_1 || V_1 < d_ocv_l_1) { // LOOKUP
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp1 = 0;
-                    break;
-                } else if (V_1 < d_v_1[i] && V_1 > d_v_1[i+1]) {
-                    temp1 = d_SoC[i];
-                    break;
-                }
-            }
-        } else { // COULOMB COUNTING
-            temp1 = temp1 + dq1/q1_now * 100;
-        }
-        if (V_2 > d_ocv_u_2 || V_2 < d_ocv_l_2) {
-            // LOOKUP
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp2 = 0;
-                    break;
-                } else if (V_2 < d_v_2[i] && V_2 > d_v_2[i+1]) {
-                    temp2 = d_SoC[i];
-                    break;
-                }
-            }
-        } else { // COULOMB COUNTING
-            temp2 = temp2 + dq2/q2_now * 100;
-        }
-        if (V_3 > d_ocv_u_3 || V_1 < d_ocv_l_3) { // LOOKUP
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp3 = 0;
-                    break;
-                } else if (V_3 < d_v_3[i] && V_3 > d_v_3[i+1]) {
-                    temp3 = d_SoC[i];
-                    break;
-                }
-            }
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + dq3/q3_now * 100;
-        }
-    } else if (state_num == 5 || state_num == 7) {
-        // FREEZE VALUES, do nothing
-    } else if (state_num == 2 || state_num == 4) {
-        temp1 = 1;
-        temp2 = 1;
-        temp3 = 1;
-    }
-  
-    // Moving average
-    float sum1 = 0, sum2 = 0, sum3 = 0;
-    // If Moving average filter is not full yet
-    if (arr_size < 10) {
-        SoC_1_arr.push(temp1);
-        SoC_2_arr.push(temp2);
-        SoC_3_arr.push(temp3);
-        for (int i = 0; i < arr_size + 1; i++) {
-            sum1 = sum1 + SoC_1_arr[i];
-            sum2 = sum2 + SoC_2_arr[i];
-            sum3 = sum3 + SoC_3_arr[i];
-        }
-        arr_size = arr_size + 1;
-        SoC_1 = sum1/arr_size;
-        SoC_2 = sum2/arr_size;
-        SoC_3 = sum3/arr_size;
-    } else {
-        SoC_1 = SoC_1_arr.push(temp1).get();
-        SoC_2 = SoC_2_arr.push(temp2).get();
-        SoC_3 = SoC_3_arr.push(temp3).get();
-    }
-  
-     //CALCULATE GROSS SOC
-    prev_state = state_num;
+    mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
   
     // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3)  + "," + String(current_measure);
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure);
     Serial.println(dataString);
     
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
@@ -726,10 +473,12 @@ void loop() {
     }
     dataFile.close();
 
-    int_count = 0;
-    rly_timer = 0;
+        rly_timer = 0;
     dq1 = 0; dq2 = 0; dq3 = 0;
-    // Dont print to SD
+  }
+
+  if (int_count == 2000) {
+    int_count = 0;
   }
 }
 

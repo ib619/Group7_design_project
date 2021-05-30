@@ -10,7 +10,9 @@
 #include <SPI.h>
 #include <SD.h>
 #include <MovingAverage.h>
+#include "Power.h"
 
+SMPS mySMPS;
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
 
 // set up variables using the SD utility library functions:
@@ -54,23 +56,7 @@ float v0, v1; // current and previous voltage values
 float p0, p1; // current and previous power values
 float i0, i1; // current and previous current values
 float p_diff, v_diff;
-
-// SOC Variables
-float q1_now = 1793;
-float SoC_1 = 0;
-float temp1 = 0;
-float dq1 = 0;
-float sum1;
-MovingAverage<float> SoC_1_arr = MovingAverage<float>(60);
-
-// SoC Tables
-String charge_SoC_filename = "cv_SoC.csv";
-float c_v_1[100] = {};
-float c_SoC[100] = {};
-
-// Discharge thresholds
-float c_ocv_u_1 = 3450;
-float c_ocv_l_1 = 3300;
+float dq1;
 
 int arr_size = 0;
 
@@ -82,45 +68,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  SoC_1_arr.fill(0);
-
-  //Check for the SD Card
-  Serial.println("\nInitializing SD card...");
-  if (!SD.begin(chipSelect)) {
-    Serial.println("* is a card inserted?");
-    while (true) {} //It will stick here FOREVER if no SD is in on boot
-  } else {
-    Serial.println("Wiring is correct and a card is present.");
-  }
-
-  if (SD.exists("MPPT_PnO.csv")) { // Wipe the datalog when starting
-    SD.remove("MPPT_PnO.csv");
-  }
-
-  // Initialise discharge and charge tables
-  File myFile = SD.open(charge_SoC_filename);
-  String content;
-  if (myFile) {
-      Serial.println("Start insertion: charge");  
-      for (int i = 0; i < 100; i++) {
-          content = myFile.readStringUntil(',');
-          c_v_1[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // c_v_2[i] = content.toFloat();
-          content = myFile.readStringUntil(',');
-          // c_v_3[i] = content.toFloat();
-          content = myFile.readStringUntil('\n');
-          c_SoC[i] = content.toFloat();
-          Serial.println(String(c_v_1[i]) + "," + String(c_SoC[i]));
-          if (content == "") {
-              break;
-              Serial.println("Insertion Complete");    
-          }                 
-      }
-  } else {
-      Serial.println("File not open");
-  }
-  myFile.close();
+  mySMPS.init();
  
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -262,76 +210,9 @@ void loop() {
     }
 
     // SoC Measurement
-    temp1 = SoC_1;
-
-    if (state_num == 0 || state_num == 5) { //IDLE
-        // LOOKUP for V1, V2, V3
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 0;
-                break;
-            } else if (V_Bat > c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                temp1 = c_SoC[i];
-                break;
-            }
-        }
-    } else if ((state_num == 1) && prev_state == 0) {
-      // LOOKUP
-      for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                temp1 = 0;
-                break;
-            } else if (V_Bat > c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                temp1 = c_SoC[i];
-                break;
-            }
-        }
-    } else if (state_num == 1) { // CHARGE
-        if (V_Bat > c_ocv_u_1 || V_Bat < c_ocv_l_1) { // LOOKUP        
-            for (int i=0; i < 100; i++) {
-                if (i == 99) {
-                    temp1 = 100;
-                    break;
-                } else if (V_Bat > c_v_1[i] && V_Bat < c_v_1[i+1]) {
-                    temp1 = c_SoC[i];
-                    Serial.println("Charge Lookup");
-                    break;
-                }
-            }
-            
-        } else { // COULOMB COUNTING
-            temp1 = SoC_1 + dq1/q1_now * 100;
-            Serial.println("Coulomb Counting");
-        }
-    } else if (state_num == 2) {
-        temp1 = 100;
-    }
+    mySMPS.compute_SOC(state_num, V_Bat, 0, 0, dq1, 0, 0);
     
-    // Moving average
-    // Should ignore first 5 values
-    Serial.println(temp1);
-    if (arr_size < 60) { // If Moving average filter is not full yet
-      sum1 = 0;
-      if (arr_size > 5) {
-        SoC_1_arr.push(temp1);
-        for (int i = 0; i < arr_size + 1 - 5; i++) {
-            sum1 = sum1 + SoC_1_arr[i];
-        }
-        SoC_1 = sum1/(arr_size + 1 - 5);
-      } else {
-        SoC_1 = temp1;
-      }
-      arr_size = arr_size + 1;
-      
-    } else { // In most cases
-      SoC_1 = SoC_1_arr.push(temp1).get();    
-    }
-    
-  
-     //CALCULATE GROSS SOC
-    prev_state = state_num;
-    
-    dataString = String(state_num) + "," + String(V_Bat) + "," + String(SoC_1) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
     File dataFile = SD.open("MPPT_PnO.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)

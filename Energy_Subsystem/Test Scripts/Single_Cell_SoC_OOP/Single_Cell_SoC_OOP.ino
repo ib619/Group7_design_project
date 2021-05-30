@@ -80,7 +80,7 @@ void loop() {
       state_num = next_state; //state transition
       V_Bat = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
       V_PD = analogRead(A1)*4.096/1.03 * 2.699; // obtained via trial and error
-      if ((V_Bat > 3700 || V_Bat < 2400)) { //Checking for Error states (just battery voltage for now)
+      if ((V_Bat > 3700 || V_Bat < 2000)) { //Checking for Error states (just battery voltage for now) //temporary
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
           digitalWrite(7,true); //turn on the red LED
