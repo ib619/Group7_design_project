@@ -53,36 +53,36 @@ export default Map;
 const Border = styled.div`
   position: relative;
   margin: 1rem auto;
-  width: 26rem;
-  height: 26rem;
+  width: 500px;
+  height: 500px;
   padding: 0.5rem;
-  border: 2px solid black;
+  border: 2px solid grey;
 `;
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1],
-    top: props.coords[2],
+    left: props.coords[1] + 230,
+    bottom: props.coords[2] - 230,
     opacity: 1 / props.coords[3],
     background: props.coords[0],
   },
 }))`
   padding: 0.5rem;
-  width: 1rem;
-  height: 1rem;
+  width: 15px;
+  height: 15px;
   position: relative;
+  transition: all 1s ease-out;
 `;
 
 const Pointer = styled.img.attrs((props) => ({
   style: {
-    left: props.pos.x,
-    top: props.pos.y,
+    left: props.pos.x + 220, // hardcoded offset values :(
+    bottom: props.pos.y - 220,
   },
 }))`
   position: relative;
-  height: 45px;
-  width: 45px;
-  margin: 5px;
+  height: 50px;
+  width: 40px;
   transform: rotate(${({ pos }) => pos.heading}deg);
   transition: all 0.6s ease-out;
 `;
