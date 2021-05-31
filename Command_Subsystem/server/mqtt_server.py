@@ -3,7 +3,7 @@ import time
 import json 
 import threading
 import logging
-from database import create_obstacle_record, select_top_obstacle, create_position_record, select_all_positions, create_rover_record, create_connection
+from database import *
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -17,9 +17,6 @@ class MqttServer:
         self.obstacle_server.on_connect = self.on_connect_obstacle
         self.obstacle_server.on_publish = self.on_publish_obstacle
         self.obstacle_server.on_message = self.on_message_obstacle
-        # self.drive_server = paho.Client("DriveHandler")
-        # self.drive_server.on_connect = self.on_connect_drive
-        # self.drive_server.on_message = self.on_message_drive
         self.position_server = paho.Client("positionHandler")
         self.position_server.on_connect = self.on_connect_position
         self.position_server.on_publish = self.on_publish_position
@@ -33,7 +30,7 @@ class MqttServer:
 
         # impt variables
         self.rover_id = 1 # testing values
-        # self.rover_id = create_rover_record(create_connection('db/marsrover.db'))
+        # self.rover_id = create_trip_record(create_connection('db/marsrover.db'))
 
     def connect(self):
         try:
@@ -71,19 +68,8 @@ class MqttServer:
             # new obstacle data from esp 
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data) # decode string into json format
-            record = [data["colour"], data["x"], data["y"], self.rover_id]
+            record = (data["colour"], data["x"], data["y"], self.rover_id)
             create_obstacle_record(db, record)
-        # elif msg.topic == 'obstacle/get':
-        #     res = str(msg.payload.decode("utf-8"))
-        #     if res == "all":
-        #         data = select_all_obstacles(db)
-        #     else:
-        #         data = select_top_obstacle(db, res)
-        #     # array of tuples, (colour, x, y, recentness (1 for most recent))
-        #     json_data = json.dumps(data)
-        #     client.publish("obstacle/result", json_data, qos=1)
-
-    # Drive Stuff
 
     # Position Stuff
     def on_connect_position(self, client, obj, flags, rc):
@@ -104,18 +90,19 @@ class MqttServer:
             # new position data from esp 
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data) # decode string into json format
-            record = [data["x"], data["y"], data["heading"], self.rover_id]
+            record = (data["x"], data["y"], data["heading"], self.rover_id)
             create_position_record(db, record)
 
             # Publish path on every new position update 
             path = select_all_positions(db, self.rover_id)
             json_path = json.dumps(path)
             client.publish("path", json_path, qos=1)
-        else:
+        elif msg.topic == 'reset':
             # reset from react 
-            # creates new rover_id item
             self.rover_id = 1
-            # self.rover_id = create_rover_record(db)
+            # ends current trip & starts new trip
+            # end_trip(db, self.rover_id)
+            # self.rover_id = create_trip_record(db)
         
     # Event Handlers
     def start_server_handler(self):

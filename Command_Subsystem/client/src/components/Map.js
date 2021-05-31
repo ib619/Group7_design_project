@@ -3,10 +3,9 @@ import { useSubscription } from "mqtt-react-hooks";
 import { MapInteractionCSS } from "react-map-interaction";
 import BootstrapSwitchButton from "bootstrap-switch-button-react";
 import styled from "styled-components";
-// import { Line } from "react-lineto";
-// import pointerblack from "../assets/pointer-black.svg";
 import pointerwhite from "../assets/pointer-white.svg";
-import Plus from "../assets/plus-solid.svg";
+import home from "../assets/home.svg";
+// import plus from "../assets/plus-solid.svg";
 
 const Map = () => {
   // for the map stuff
@@ -59,7 +58,7 @@ const Map = () => {
           }}
         />
         <MapInteractionCSS showControls={true} minScale={0.2} maxScale={2}>
-          <Center src={Plus} />
+          <Center src={home} />
           <Person src={pointerwhite} pos={pos} />
           {obstacles &&
             Array.from(obstacles).map((data, i) => (
@@ -103,16 +102,17 @@ const Border = styled.div`
   width: 800px;
   height: 500px;
   padding: 0.5rem;
-  border: 2px solid grey;
+  border: 2px solid #200000;
+  border-width: 10px;
+  background: #320202;
 
   .switch {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
   }
 `;
 
 const Center = styled.img`
-  color: ;
   position: relative;
   left: 380px;
   bottom: -230px;
@@ -156,6 +156,7 @@ const Person = styled.img.attrs((props) => ({
   position: relative;
   height: 50px;
   width: 40px;
+  z-index: 1;
   transform: rotate(${({ pos }) => pos.heading}deg);
   transition: all 0.6s ease-out;
 `;
