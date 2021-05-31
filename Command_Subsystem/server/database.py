@@ -39,17 +39,17 @@ def select_top_obstacle(conn, num, rover_id):
                y_coord, 
                row_number() over (PARTITION BY colour ORDER BY date DESC) as date_rank
         FROM obstacle_record
-        WHERE rover_id="""+str(rover_id)+""") 
-        WHERE date_rank <="""+str(num)+";"
+        WHERE rover_id=?) 
+        WHERE date_rank <=?;"""
     cur = conn.cursor()
-    cur.execute(sql_query)
+    cur.execute(sql_query, [rover_id, num])
     return cur.fetchall()
 
 # Get all obstacles
 def select_all_obstacles(conn, rover_id):
     sql_query = """SELECT colour, x_coord, y_coord FROM obstacle_record 
                     GROUP BY colour
-                    WHERE rover_id="""+str(rover_id)+";"
+                    WHERE rover_id=?;"""
     cur = conn.cursor()
     cur.execute(sql_query)
     return cur.fetchall()
@@ -70,10 +70,10 @@ def create_position_record(conn, position_record):
 def select_all_positions(conn, rover_id):
     # ascending means least recent data is first
     sql_query = """SELECT x_coord, y_coord FROM position_record 
-                    WHERE rover_id="""+str(rover_id)+"""                    
+                    WHERE rover_id=?                   
                     ORDER BY date ASC;"""
     cur = conn.cursor()
-    cur.execute(sql_query)
+    cur.execute(sql_query, rover_id)
     return cur.fetchall()
 
 # Rover table
