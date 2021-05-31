@@ -2,6 +2,7 @@ import React from "react";
 import { useMqttState } from "mqtt-react-hooks";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
+// import RoverStatus from "./RoverStatus";
 
 const Status = () => {
   /*
@@ -22,6 +23,7 @@ const Status = () => {
   return (
     <Container>
       <h3>MQTT Status: {connectionStatus}</h3>
+      {/* <RoverStatus /> */}
       <Button variant="outline-light" onClick={handleClick}>
         Reset
       </Button>
