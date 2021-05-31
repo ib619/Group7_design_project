@@ -42,11 +42,47 @@ ColourObject FPGAInterface::readByIndex(int index)  {
     return tmp;
 }
 
+void FPGAInterface::writeLED(int n, int value) {
+    if(value!=0) {
+        led |= int(pow(2,n));
+    }
+    else    {
+        led &= ~int(pow(2,n));
+    }
+    _setLEDRegister();
+}
+
+void FPGAInterface::toggleLED(int n)    {
+    led ^= int(pow(2,n));
+    _setLEDRegister();
+}
+
+void FPGAInterface::offLEDs()    {
+    led=0;
+    _setLEDRegister();
+}
+
+void FPGAInterface::onLEDs()  {
+    led=1023;
+    _setLEDRegister();
+}
+
 void FPGAInterface::_setAddress(long addr)  {
     i2c->beginTransmission(slave_address);
     i2c->write(addr>>24);
     i2c->write((addr>>16)&255);
     i2c->write((addr>>8)&255);
     i2c->write(addr&255);
+    i2c->endTransmission();
+}
+
+void FPGAInterface::_setLEDRegister()   {
+    i2c->beginTransmission(slave_address);
+    i2c->write(LED_BASE>>24);
+    i2c->write((LED_BASE>>16)&255);
+    i2c->write((LED_BASE>>8)&255);
+    i2c->write(LED_BASE&255);
+    i2c->write(led&255);
+    i2c->write(led>>8);
     i2c->endTransmission();
 }

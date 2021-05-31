@@ -442,4 +442,6 @@ set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_erosion_filter5x5.
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_erosion_filter3x3.v
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_dilation_filter5x5.v
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution5x5_dilation.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution3x3_dilation.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_dilation_filter3x3.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

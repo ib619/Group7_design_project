@@ -27,10 +27,9 @@ assign grey_detect = (dilation_mode) ? dilation_grey_detect: (erosion_mode) ? er
 assign yellow_detect = (dilation_mode) ? dilation_yellow_detect: (erosion_mode) ? erosion_yellow_detect: pf_yellow_detect;
 
 
-
 assign pf_red_detect = (hue < 8'd30) & (hue > 8'd0)
-                        & (saturation < 8'd255) & ( saturation > 8'd90) 
-                        & (value_b < 8'd255 ) & ( value_b > 8'd70);
+                        & (saturation < 8'd255) & ( saturation > 8'd110) 
+                        & (value_b < 8'd255 ) & ( value_b > 8'd30);
 
 
 assign pf_green_detect = (hue < 8'd135) & (hue > 8'd110)
@@ -43,17 +42,43 @@ assign pf_blue_detect = (hue < 8'd220) & (hue > 8'd150)
                         & (value_b < 8'd255 ) & ( value_b > 8'd60);
 
 
-assign pf_grey_detect = (hue < 8'd180) & (hue > 8'd0)
-                        & (saturation < 8'd32) & ( saturation > 8'd0) 
-                        & (value_b < 8'd70) & ( value_b > 8'd10);
+assign pf_grey_detect = ((hue < 8'd90) & (hue > 8'd40)
+                        & (saturation < 8'd40) & ( saturation > 8'd0) 
+                        & (value_b < 8'd65) & ( value_b > 8'd0)) | 
+								((hue < 8'd220) & (hue > 8'd140)
+                        & (saturation < 8'd70) & ( saturation > 8'd0) 
+                        & (value_b < 8'd60) & ( value_b > 8'd30));
                         
-assign pf_yellow_detect = (hue < 8'd50) & (hue > 8'd36)
-                        & (saturation < 8'd255) & ( saturation > 8'd150) 
+assign pf_yellow_detect = (hue < 8'd50) & (hue > 8'd30)
+                        & (saturation < 8'd255) & ( saturation > 8'd120) 
                         & (value_b < 8'd255 ) & ( value_b > 8'd60);
-                            
+
+
+//assign pf_red_detect = (hue < 8'd40) & (hue > 8'd0)
+//                        & (saturation < 8'd220) & ( saturation > 8'd110) 
+//                        & (value_b < 8'd255 ) & ( value_b > 8'd120);
+//
+//assign pf_green_detect = (hue < 8'd140) & (hue > 8'd70)
+//                        & (saturation < 8'd230) & ( saturation > 8'd130) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd60);
+//                            
+//
+//assign pf_blue_detect = (hue < 8'd200) & (hue > 8'd100)
+//                        & (saturation < 8'd135) & ( saturation > 8'd55) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd50);
+//
+//
+//assign pf_grey_detect = (hue < 8'd100) & (hue > 8'd0)
+//                        & (saturation < 8'd130) & ( saturation > 8'd20) 
+//                        & (value_b < 8'd100) & ( value_b > 8'd20);
+//                        
+//
+//assign pf_yellow_detect = (hue < 8'd80) & (hue > 8'd20)
+//                        & (saturation < 8'd255) & ( saturation > 8'd120) 
+//                        & (value_b < 8'd200 ) & ( value_b > 8'd100);
 ///////////////////////////////////////////////////////////////////////
 //Morph Erosion Filter
-morph_erosion_filter5x5 ero_r(
+morph_erosion_filter3x3 ero_r(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(pf_red_detect),
@@ -61,7 +86,7 @@ morph_erosion_filter5x5 ero_r(
     .o_convolved_data(erosion_red_detect)
 );
 
-morph_erosion_filter5x5 ero_g(
+morph_erosion_filter3x3 ero_g(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(pf_green_detect),
@@ -69,7 +94,7 @@ morph_erosion_filter5x5 ero_g(
     .o_convolved_data(erosion_green_detect)
 );
 
-morph_erosion_filter5x5 ero_b(
+morph_erosion_filter3x3 ero_b(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(pf_blue_detect),
@@ -77,7 +102,7 @@ morph_erosion_filter5x5 ero_b(
     .o_convolved_data(erosion_blue_detect)
 );
 
-morph_erosion_filter5x5 ero_gr(
+morph_erosion_filter3x3 ero_gr(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(pf_grey_detect),
@@ -85,7 +110,7 @@ morph_erosion_filter5x5 ero_gr(
     .o_convolved_data(erosion_grey_detect)
 );
 
-morph_erosion_filter5x5 ero_y(
+morph_erosion_filter3x3 ero_y(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(pf_yellow_detect),
@@ -93,7 +118,7 @@ morph_erosion_filter5x5 ero_y(
     .o_convolved_data(erosion_yellow_detect)
 );
 //Morph Dilation Filter
-morph_dilation_filter5x5 dil_r(
+morph_dilation_filter3x3 dil_r(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(erosion_red_detect),
@@ -101,7 +126,7 @@ morph_dilation_filter5x5 dil_r(
     .o_convolved_data(dilation_red_detect)
 );
 
-morph_dilation_filter5x5 dil_g(
+morph_dilation_filter3x3 dil_g(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(erosion_green_detect),
@@ -109,7 +134,7 @@ morph_dilation_filter5x5 dil_g(
     .o_convolved_data(dilation_green_detect)
 );
 
-morph_dilation_filter5x5 dil_b(
+morph_dilation_filter3x3 dil_b(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(erosion_blue_detect),
@@ -117,7 +142,7 @@ morph_dilation_filter5x5 dil_b(
     .o_convolved_data(dilation_blue_detect)
 );
 
-morph_dilation_filter5x5 dil_gr(
+morph_dilation_filter3x3 dil_gr(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(erosion_grey_detect),
@@ -125,7 +150,7 @@ morph_dilation_filter5x5 dil_gr(
     .o_convolved_data(dilation_grey_detect)
 );
 
-morph_dilation_filter5x5 dil_y(
+morph_dilation_filter3x3 dil_y(
     .clk(clk),
     .rst_n(rst_n),
     .i_pixel(erosion_yellow_detect),

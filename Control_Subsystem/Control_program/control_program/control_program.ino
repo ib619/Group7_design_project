@@ -66,17 +66,19 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length) {
 }
 
 void setup() {
-  // put your setup code here, to run once:
-  initWiFi(ssid,password);
-
-  mqtt.setServer(mqttServer, mqttPort);
-  mqtt.setCallback(mqtt_callback);
-
-  fpga.setBusFrequency(400000);
+  // put your setup code here, to run once:  
+  fpga.setBusFrequency(1000000);
   fpga.setSlaveAddress(FPGA_I2C_ADDRESS);
   fpga.setBaseAddress(BASE_ADDRESS);
   fpga.begin(GPIO_NUM_13, GPIO_NUM_12);
+  fpga.offLEDs();
+  
+  initWiFi(ssid,password);
+  fpga.writeLED(9,1);
 
+  mqtt.setServer(mqttServer, mqttPort);
+  mqtt.setCallback(mqtt_callback);
+  
   drive.setBaudrate(115200);
   drive.begin();
 }
@@ -118,7 +120,6 @@ void loop() {
 
       if(millis()-ptime>=RSSI_UPDATE_INTERVAL)  { // publish RSSI
         publishRSSI(&mqtt, WiFi.RSSI());
-        publishPosition(&mqtt, &rover);
         ptime=millis();
       }
 
@@ -139,13 +140,23 @@ void loop() {
       }
     }
     else  { // MQTT broker not connected
+      fpga.writeLED(8,0);
       connectMQTT(&mqtt, mqttUser, mqttPassword);
+      if(mqtt.connected())  {
+        fpga.writeLED(8,1);
+      }
     }
   }
   else  {
+    fpga.writeLED(8,0);
+    fpga.writeLED(9,0);
     rover.drive_mode=0;
     drive.sendUpdates();
     initWiFi(ssid,password);
+    fpga.writeLED(9,1);
     connectMQTT(&mqtt, mqttUser, mqttPassword);
+    if(mqtt.connected())  {
+      fpga.writeLED(8,1);
+    }
   }
 }
