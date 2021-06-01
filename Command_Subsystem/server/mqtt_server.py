@@ -65,7 +65,7 @@ class MqttServer:
     def on_message_obstacle(self, client, userdata, msg):
         db = create_connection('db/marsrover.db')
         if msg.topic == 'obstacle/update':
-            # new obstacle data from esp 
+            # new obstacle data from esp
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data) # decode string into json format
             record = (data["colour"], data["x"], data["y"], self.rover_id)
