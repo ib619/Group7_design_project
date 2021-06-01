@@ -36,7 +36,13 @@ class MqttServer:
         # impt variables
         # self.rover_id = 1 # testing values
         self.rover_id = create_trip_record(create_connection('db/marsrover.db'))
-
+        self.obstacle_record = {
+            "red": deque([]), 
+            "green": deque([]), 
+            "yellow": deque([]), 
+            "blue": deque([]), 
+            "grey": deque([])
+        }
 
     def connect(self):
         try:
@@ -58,14 +64,14 @@ class MqttServer:
     ## Obstacle Stuff
     def on_connect_obstacle(self, client, obj, flags, rc):
         if rc == 0:
-            logging.debug("Obstacle client connected")
+            logging.debug("obstacle client connected")
             client.subscribe("obstacle/get", qos=1)
             client.subscribe("obstacle/update", qos=1)
         else:
             logging.debug("Obstacle failed to connect")
 
     def on_publish_obstacle(self, client, userdata, mid):
-        logging.debug("Obstacle data published")
+        logging.debug("obstacle data published")
 
     # callback for getting a messsage on opstacle topics
     def on_message_obstacle(self, client, userdata, msg):
@@ -74,19 +80,24 @@ class MqttServer:
             # new obstacle data from esp
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data) # decode string into json format
-            record = (data["colour"], data["x"], data["y"], self.rover_id)
-            create_obstacle_record(db, record)
+
+            # add data into deque on the left, if more than 5: remove from right
+            self.obstacle_record[data["colour"]].appendleft([data["colour"], data["x"], data["y"]])
+            if len(self.obstacle_record[data["colour"]]) > 5:
+                self.obstacle_record[data["colour"]].pop()
+            # record = (data["colour"], data["x"], data["y"], self.rover_id)
+            # create_obstacle_record(db, record)
 
     ## Position Stuff
     def on_connect_position(self, client, obj, flags, rc):
         if rc == 0:
-            logging.debug("Position client connected")
+            logging.debug("position client connected")
             client.subscribe("position/update", qos=1)
         else:
-            logging.debug("Position failed to connect")
+            logging.debug("position failed to connect")
 
     def on_publish_position(self, client, userdata, mid):
-        logging.debug("Path data published")
+        logging.debug("path data published")
 
     # callback for getting a messsage on position topics
     def on_message_position(self, client, userdata, msg):
@@ -122,8 +133,15 @@ class MqttServer:
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data) # decode string into json format
             if data["drive_status"] == 2:
-                # rover is back at base, start a new trip
+                # rover is back at base, start a new trip and reset local obstacle data
                 self.rover_id = create_trip_record(db)
+                self.obstacle_record = {
+                    "red": deque([]), 
+                    "green": deque([]), 
+                    "yellow": deque([]), 
+                    "blue": deque([]), 
+                    "grey": deque([])
+                }
         
     ### Event Handlers
     def start_server_handler(self):
@@ -134,11 +152,20 @@ class MqttServer:
 
     def handle_obstacle(self):
         while True:
-            # publish recent 5 obstacles every 5s
+            # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
             time.sleep(5)
             db = create_connection('db/marsrover.db')
-            data = select_top_obstacle(db, 5, self.rover_id)
-            json_data = json.dumps(data)
+            # data = select_top_obstacle(db, 5, self.rover_id)
+
+            # clean up data for easy reading on react side
+            res = []
+            for _, item in self.obstacle_record.items():
+                for i, data in enumerate(item):
+                    res.append(data+[i+1])
+                    if i == 0:
+                        create_obstacle_record(db, data+[self.rover_id])
+    
+            json_data = json.dumps(res)
             self.obstacle_server.publish("obstacle/result", json_data, qos=1)
 
 def main():

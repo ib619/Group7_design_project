@@ -41,18 +41,38 @@ def select_top_obstacle(conn, num, rover_id):
     #                     FROM obstacle_record
     #                     WHERE rover_id=?)
     #                 WHERE date_rank <=?;"""
-    sql_query = """select colour, x_coord, y_coord FROM 
-(
-select * from (select colour, x_coord, y_coord,date from obstacle_record where colour = "red" and rover_id = ? Order by date desc limit ?)
-union
-select * from (select colour, x_coord, y_coord, date from obstacle_record where colour = "blue" and rover_id = ? Order by date desc limit ?)
-union
-select * from (select colour, x_coord, y_coord, date from obstacle_record where colour = "green" and rover_id = ? Order by date desc limit ?)
-union
-select * from (select colour, x_coord, y_coord, date from obstacle_record where colour = "grey" and rover_id = ? Order by date desc limit ?)
-union
-select * from (select colour, x_coord, y_coord,date from obstacle_record where colour = "yellow" and rover_id = ? Order by date desc limit ?)
-)"""
+
+    sql_query = """SELECT colour, x_coord, y_coord FROM 
+                    ( SELECT * from 
+                        (SELECT colour, x_coord, y_coord,date 
+                        FROM obstacle_record 
+                        WHERE colour = "red" AND rover_id = ? 
+                        ORDER BY date DESC limit ?)
+                    UNION
+                    SELECT * from 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "blue" AND rover_id = ? 
+                        ORDER BY date DESC limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "green" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "grey" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "yellow" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    )"""
 
     cur = conn.cursor()
     cur.execute(sql_query, [rover_id, num, rover_id, num, rover_id, num, rover_id, num, rover_id, num])

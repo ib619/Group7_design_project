@@ -19,10 +19,19 @@ const Map = () => {
     "path",
   ]);
 
+  // // on refresh
+  // useEffect(() => {
+  //   const obstacle = JSON.parse(localStorage.getItem("obstacles"));
+  //   if (obstacle !== null) {
+  //     setObstacles(obstacle);
+  //   }
+  // }, [setObstacles]);
+
   // on message update
   useEffect(() => {
     if (message && message.topic === "obstacle/result") {
       setObstacles(JSON.parse(message.message));
+      // localStorage.setItem("obstacles", message.message);
     }
   }, [message, setObstacles]);
 
@@ -101,13 +110,12 @@ const Center = styled.img`
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] + 380,
-    bottom: props.coords[2] - 200,
+    left: props.coords[1] + 390,
+    bottom: props.coords[2] - 155,
     opacity: 1 / props.coords[3],
     background: props.coords[0] === "blue" ? "turquoise" : props.coords[0],
   },
 }))`
-  padding: 0.5rem;
   width: 15px;
   height: 15px;
   position: relative;
@@ -116,8 +124,8 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] + 380,
-    bottom: props.coords[1] - 200,
+    left: props.coords[0] + 390,
+    bottom: props.coords[1] - 155,
   },
 }))`
   background: white;
