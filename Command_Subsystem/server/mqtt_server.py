@@ -4,6 +4,7 @@ import json
 import threading
 import logging
 from database import *
+from collections import deque
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -21,6 +22,10 @@ class MqttServer:
         self.position_server.on_connect = self.on_connect_position
         self.position_server.on_publish = self.on_publish_position
         self.position_server.on_message = self.on_message_position
+        self.trip_server = paho.Client("tripHandler")
+        self.trip_server.on_connect = self.on_connect_trip
+        self.trip_server.on_publish = self.on_publish_trip
+        self.trip_server.on_message = self.on_message_trip
         self.username = name
         self.password = pw
 
@@ -29,17 +34,18 @@ class MqttServer:
         self.obstacle_thread = threading.Thread(name="obstacle-thread", target=self.handle_obstacle, daemon=True)
 
         # impt variables
-        self.rover_id = 1 # testing values
-        # self.rover_id = create_trip_record(create_connection('db/marsrover.db'))
+        # self.rover_id = 1 # testing values
+        self.rover_id = create_trip_record(create_connection('db/marsrover.db'))
+
 
     def connect(self):
         try:
             self.obstacle_server.username_pw_set(self.username, self.password)
             self.obstacle_server.connect(self.brokerip, self.brokerport)
-            # self.drive_server.username_pw_set(self.username, self.password)
-            # self.drive_server.connect(self.brokerip, self.brokerport)
             self.position_server.username_pw_set(self.username, self.password)
             self.position_server.connect(self.brokerip, self.brokerport)
+            self.trip_server.username_pw_set(self.username, self.password)
+            self.trip_server.connect(self.brokerip, self.brokerport)
         except:
             logging.debug("Connection Failed")
             exit(1)
@@ -48,8 +54,8 @@ class MqttServer:
         self.mqtt_thread.start()
         self.obstacle_thread.start()
 
-    ## MQTT Callbacks
-    # Obstacle Stuff
+    ### MQTT Callbacks
+    ## Obstacle Stuff
     def on_connect_obstacle(self, client, obj, flags, rc):
         if rc == 0:
             logging.debug("Obstacle client connected")
@@ -71,12 +77,11 @@ class MqttServer:
             record = (data["colour"], data["x"], data["y"], self.rover_id)
             create_obstacle_record(db, record)
 
-    # Position Stuff
+    ## Position Stuff
     def on_connect_position(self, client, obj, flags, rc):
         if rc == 0:
             logging.debug("Position client connected")
             client.subscribe("position/update", qos=1)
-            client.subscribe("reset", qos=1)
         else:
             logging.debug("Position failed to connect")
 
@@ -97,19 +102,35 @@ class MqttServer:
             path = select_all_positions(db, self.rover_id)
             json_path = json.dumps(path)
             client.publish("path", json_path, qos=1)
-        elif msg.topic == 'reset':
-            # reset from react 
-            self.rover_id = 1
-            # ends current trip & starts new trip
-            # end_trip(db, self.rover_id)
-            # self.rover_id = create_trip_record(db)
         
-    # Event Handlers
+    ## Trip Stuff
+    def on_connect_trip(self, client, obj, flags, rc):
+        if rc == 0:
+            logging.debug("trip client connected")
+            client.subscribe("rover/status", qos=1)
+        else:
+            logging.debug("trip failed to connect")
+
+    def on_publish_trip(self, client, userdata, mid):
+        logging.debug("trip published")
+
+    # callback for getting a messsage on trip topics
+    def on_message_trip(self, client, userdata, msg):
+        db = create_connection('db/marsrover.db')
+        if msg.topic == 'rover/status':
+            # rover status update
+            data = str(msg.payload.decode("utf-8", "ignore"))
+            data = json.loads(data) # decode string into json format
+            if data["drive_status"] == 2:
+                # rover is back at base, start a new trip
+                self.rover_id = create_trip_record(db)
+        
+    ### Event Handlers
     def start_server_handler(self):
         logging.debug("Started backend server")
         self.obstacle_server.loop_start()
-        # self.drive_server.loop_start()
         self.position_server.loop_start()
+        self.trip_server.loop_start()
 
     def handle_obstacle(self):
         while True:

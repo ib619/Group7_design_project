@@ -3,6 +3,7 @@ export const lightTheme = {
   text: "#FAFAFA",
   toggleBorder: "#FFF",
   background: "#202429",
+  map: "#B64D3A",
 };
 
 export const darkTheme = {
@@ -10,4 +11,5 @@ export const darkTheme = {
   text: "#FAFAFA",
   toggleBorder: "#6B8096",
   background: "#393939",
+  map: "#320202",
 };

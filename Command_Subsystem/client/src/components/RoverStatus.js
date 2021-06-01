@@ -5,7 +5,7 @@ import driving from "../assets/driving.gif";
 
 const RoverStatus = () => {
   const { message } = useSubscription("rover/status");
-  // const [status, setStatus] = useState({});
+  const [status, setStatus] = useState({});
 
   useEffect(() => {
     if (message && message.topic === "rover/status") {
