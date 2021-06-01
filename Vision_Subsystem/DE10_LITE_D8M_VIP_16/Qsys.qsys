@@ -19,6 +19,11 @@
    }
    element EEE_IMGPROC_0.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "270336";
@@ -106,7 +111,7 @@
    {
       datum baseAddress
       {
-         value = "270576";
+         value = "270560";
          type = "String";
       }
    }
@@ -128,6 +133,11 @@
    }
    element data_mem.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "262144";
@@ -136,6 +146,11 @@
    }
    element data_mem.s2
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "262144";
@@ -194,7 +209,7 @@
    {
       datum baseAddress
       {
-         value = "270600";
+         value = "270584";
          type = "String";
       }
    }
@@ -224,9 +239,14 @@
    }
    element led.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
-         value = "270560";
+         value = "4096";
          type = "String";
       }
    }
@@ -338,7 +358,7 @@
    {
       datum baseAddress
       {
-         value = "270592";
+         value = "270576";
          type = "String";
       }
    }
@@ -854,7 +874,7 @@
   <parameter name="dataAddrWidth" value="19" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory2_0.s1' start='0x20000' end='0x386A0' type='altera_avalon_onchip_memory2.s1' /><slave name='data_mem.s1' start='0x40000' end='0x41000' type='altera_avalon_onchip_memory2.s1' /><slave name='nios2_gen2.debug_mem_slave' start='0x41800' end='0x42000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='EEE_IMGPROC_0.s1' start='0x42000' end='0x42020' type='EEE_IMGPROC.s1' /><slave name='timer.s1' start='0x42020' end='0x42040' type='altera_avalon_timer.s1' /><slave name='TERASIC_AUTO_FOCUS_0.mm_ctrl' start='0x42040' end='0x42060' type='TERASIC_AUTO_FOCUS.mm_ctrl' /><slave name='i2c_opencores_camera.avalon_slave_0' start='0x42060' end='0x42080' type='i2c_opencores.avalon_slave_0' /><slave name='i2c_opencores_mipi.avalon_slave_0' start='0x42080' end='0x420A0' type='i2c_opencores.avalon_slave_0' /><slave name='mipi_pwdn_n.s1' start='0x420A0' end='0x420B0' type='altera_avalon_pio.s1' /><slave name='mipi_reset_n.s1' start='0x420B0' end='0x420C0' type='altera_avalon_pio.s1' /><slave name='key.s1' start='0x420C0' end='0x420D0' type='altera_avalon_pio.s1' /><slave name='sw.s1' start='0x420D0' end='0x420E0' type='altera_avalon_pio.s1' /><slave name='led.s1' start='0x420E0' end='0x420F0' type='altera_avalon_pio.s1' /><slave name='altpll_0.pll_slave' start='0x420F0' end='0x42100' type='altpll.pll_slave' /><slave name='sysid_qsys.control_slave' start='0x42100' end='0x42108' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart.avalon_jtag_slave' start='0x42108' end='0x42110' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory2_0.s1' start='0x20000' end='0x386A0' type='altera_avalon_onchip_memory2.s1' /><slave name='data_mem.s1' start='0x40000' end='0x41000' type='altera_avalon_onchip_memory2.s1' /><slave name='nios2_gen2.debug_mem_slave' start='0x41800' end='0x42000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='EEE_IMGPROC_0.s1' start='0x42000' end='0x42020' type='EEE_IMGPROC.s1' /><slave name='timer.s1' start='0x42020' end='0x42040' type='altera_avalon_timer.s1' /><slave name='TERASIC_AUTO_FOCUS_0.mm_ctrl' start='0x42040' end='0x42060' type='TERASIC_AUTO_FOCUS.mm_ctrl' /><slave name='i2c_opencores_camera.avalon_slave_0' start='0x42060' end='0x42080' type='i2c_opencores.avalon_slave_0' /><slave name='i2c_opencores_mipi.avalon_slave_0' start='0x42080' end='0x420A0' type='i2c_opencores.avalon_slave_0' /><slave name='mipi_pwdn_n.s1' start='0x420A0' end='0x420B0' type='altera_avalon_pio.s1' /><slave name='mipi_reset_n.s1' start='0x420B0' end='0x420C0' type='altera_avalon_pio.s1' /><slave name='key.s1' start='0x420C0' end='0x420D0' type='altera_avalon_pio.s1' /><slave name='sw.s1' start='0x420D0' end='0x420E0' type='altera_avalon_pio.s1' /><slave name='altpll_0.pll_slave' start='0x420E0' end='0x420F0' type='altpll.pll_slave' /><slave name='sysid_qsys.control_slave' start='0x420F0' end='0x420F8' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart.avalon_jtag_slave' start='0x420F8' end='0x42100' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -1110,6 +1130,15 @@
    kind="avalon"
    version="16.1"
    start="i2cslave_to_avlmm_bridge_0.avalon_master"
+   end="led.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x1000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="i2cslave_to_avlmm_bridge_0.avalon_master"
    end="data_mem.s2">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
@@ -1121,7 +1150,7 @@
    start="nios2_gen2.data_master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00042108" />
+  <parameter name="baseAddress" value="0x000420f8" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1148,7 +1177,7 @@
    start="nios2_gen2.data_master"
    end="sysid_qsys.control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00042100" />
+  <parameter name="baseAddress" value="0x000420f0" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1175,7 +1204,7 @@
    start="nios2_gen2.data_master"
    end="altpll_0.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x000420f0" />
+  <parameter name="baseAddress" value="0x000420e0" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1194,15 +1223,6 @@
    end="timer.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00042020" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="16.1"
-   start="nios2_gen2.data_master"
-   end="led.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x000420e0" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection

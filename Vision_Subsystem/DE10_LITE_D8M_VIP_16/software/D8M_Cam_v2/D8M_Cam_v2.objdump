@@ -79,7 +79,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  30 .jdi          0000414a  00000000  00000000  0007c5ba  2**0
                   CONTENTS, READONLY
- 31 .sopcinfo     000aa4c2  00000000  00000000  00080704  2**0
+ 31 .sopcinfo     000aa5b7  00000000  00000000  00080704  2**0
                   CONTENTS, READONLY
 SYMBOL TABLE:
 00020000 l    d  .entry	00000000 .entry
@@ -583,7 +583,7 @@ Disassembly of section .entry:
    20014:	08409114 	ori	at,at,580
     jmp r1
    20018:	0800683a 	jmp	at
-   2001c:	00000000 	call	0 <__alt_mem_onchip_memory2_0-0x20000>
+   2001c:	00000000 	call	0 <__reset-0x20000>
 
 Disassembly of section .exceptions:
 
@@ -6757,21 +6757,21 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    24340:	10800017 	ldw	r2,0(r2)
    24344:	1000683a 	jmp	r2
    24348:	00024e60 	cmpeqi	zero,zero,2361
-   2434c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24350:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24354:	00024e80 	call	24e8 <__alt_mem_onchip_memory2_0-0x1db18>
-   24358:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   2435c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24360:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24364:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24368:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   2436c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   2434c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24350:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24354:	00024e80 	call	24e8 <__reset-0x1db18>
+   24358:	00024f40 	call	24f4 <__reset-0x1db0c>
+   2435c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24360:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24364:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24368:	00024f40 	call	24f4 <__reset-0x1db0c>
+   2436c:	00024f40 	call	24f4 <__reset-0x1db0c>
    24370:	000245f4 	movhi	zero,2327
    24374:	00024d9c 	xori	zero,zero,2358
-   24378:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24378:	00024f40 	call	24f4 <__reset-0x1db0c>
    2437c:	000244bc 	xorhi	zero,zero,2322
    24380:	0002461c 	xori	zero,zero,2328
-   24384:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24384:	00024f40 	call	24f4 <__reset-0x1db0c>
    24388:	0002465c 	xori	zero,zero,2329
    2438c:	00024668 	cmpgeui	zero,zero,2329
    24390:	00024668 	cmpgeui	zero,zero,2329
@@ -6782,47 +6782,47 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    243a4:	00024668 	cmpgeui	zero,zero,2329
    243a8:	00024668 	cmpgeui	zero,zero,2329
    243ac:	00024668 	cmpgeui	zero,zero,2329
-   243b0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243b4:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243b8:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243bc:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243c0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243c4:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243c8:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243cc:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243d0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243d4:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   243b0:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243b4:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243b8:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243bc:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243c0:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243c4:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243c8:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243cc:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243d0:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243d4:	00024f40 	call	24f4 <__reset-0x1db0c>
    243d8:	0002469c 	xori	zero,zero,2330
    243dc:	00024758 	cmpnei	zero,zero,2333
-   243e0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   243e0:	00024f40 	call	24f4 <__reset-0x1db0c>
    243e4:	00024758 	cmpnei	zero,zero,2333
-   243e8:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243ec:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243f0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   243f4:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   243e8:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243ec:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243f0:	00024f40 	call	24f4 <__reset-0x1db0c>
+   243f4:	00024f40 	call	24f4 <__reset-0x1db0c>
    243f8:	000247f8 	rdprs	zero,zero,2335
-   243fc:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24400:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   243fc:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24400:	00024f40 	call	24f4 <__reset-0x1db0c>
    24404:	00024804 	movi	zero,2336
-   24408:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   2440c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24410:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24414:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24418:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24408:	00024f40 	call	24f4 <__reset-0x1db0c>
+   2440c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24410:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24414:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24418:	00024f40 	call	24f4 <__reset-0x1db0c>
    2441c:	00024c7c 	xorhi	zero,zero,2353
-   24420:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24424:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24420:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24424:	00024f40 	call	24f4 <__reset-0x1db0c>
    24428:	00024cdc 	xori	zero,zero,2355
-   2442c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24430:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24434:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24438:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   2443c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24440:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24444:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24448:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   2444c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24450:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   2442c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24430:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24434:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24438:	00024f40 	call	24f4 <__reset-0x1db0c>
+   2443c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24440:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24444:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24448:	00024f40 	call	24f4 <__reset-0x1db0c>
+   2444c:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24450:	00024f40 	call	24f4 <__reset-0x1db0c>
    24454:	00024eec 	andhi	zero,zero,2363
    24458:	00024e8c 	andi	zero,zero,2362
    2445c:	00024758 	cmpnei	zero,zero,2333
@@ -6830,20 +6830,20 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    24464:	00024758 	cmpnei	zero,zero,2333
    24468:	00024e9c 	xori	zero,zero,2362
    2446c:	00024e8c 	andi	zero,zero,2362
-   24470:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   24474:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24470:	00024f40 	call	24f4 <__reset-0x1db0c>
+   24474:	00024f40 	call	24f4 <__reset-0x1db0c>
    24478:	00024ea8 	cmpgeui	zero,zero,2362
-   2447c:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   2447c:	00024f40 	call	24f4 <__reset-0x1db0c>
    24480:	00024eb8 	rdprs	zero,zero,2362
    24484:	00024d8c 	andi	zero,zero,2358
    24488:	000244c8 	cmpgei	zero,zero,2323
    2448c:	00024dac 	andhi	zero,zero,2358
-   24490:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24490:	00024f40 	call	24f4 <__reset-0x1db0c>
    24494:	00024db8 	rdprs	zero,zero,2358
-   24498:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   24498:	00024f40 	call	24f4 <__reset-0x1db0c>
    2449c:	00024e14 	movui	zero,2360
-   244a0:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
-   244a4:	00024f40 	call	24f4 <__alt_mem_onchip_memory2_0-0x1db0c>
+   244a0:	00024f40 	call	24f4 <__reset-0x1db0c>
+   244a4:	00024f40 	call	24f4 <__reset-0x1db0c>
    244a8:	00024e24 	muli	zero,zero,2360
    244ac:	d9003117 	ldw	r4,196(sp)
    244b0:	d8802d15 	stw	r2,180(sp)
@@ -14075,7 +14075,7 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    2b350:	0002bc30 	cmpltui	zero,zero,2800
    2b354:	0002bcd8 	cmpnei	zero,zero,2803
    2b358:	0002b518 	cmpnei	zero,zero,2772
-   2b35c:	0002bc40 	call	2bc4 <__alt_mem_onchip_memory2_0-0x1d43c>
+   2b35c:	0002bc40 	call	2bc4 <__reset-0x1d43c>
    2b360:	0002bcd8 	cmpnei	zero,zero,2803
    2b364:	0002ba38 	rdprs	zero,zero,2792
    2b368:	0002ba44 	movi	zero,2793
@@ -14114,7 +14114,7 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    2b3ec:	0002bcd8 	cmpnei	zero,zero,2803
    2b3f0:	0002bcd8 	cmpnei	zero,zero,2803
    2b3f4:	0002bcd8 	cmpnei	zero,zero,2803
-   2b3f8:	0002bb00 	call	2bb0 <__alt_mem_onchip_memory2_0-0x1d450>
+   2b3f8:	0002bb00 	call	2bb0 <__reset-0x1d450>
    2b3fc:	0002bcd8 	cmpnei	zero,zero,2803
    2b400:	0002bcd8 	cmpnei	zero,zero,2803
    2b404:	0002bb70 	cmpltui	zero,zero,2797
@@ -14133,7 +14133,7 @@ void QUEUE_Empty(QUEUE_STRUCT *pQueue){
    2b438:	0002bcd8 	cmpnei	zero,zero,2803
    2b43c:	0002bcd8 	cmpnei	zero,zero,2803
    2b440:	0002bcd8 	cmpnei	zero,zero,2803
-   2b444:	0002bc80 	call	2bc8 <__alt_mem_onchip_memory2_0-0x1d438>
+   2b444:	0002bc80 	call	2bc8 <__reset-0x1d438>
    2b448:	0002b948 	cmpgei	zero,zero,2789
    2b44c:	0002bcd8 	cmpnei	zero,zero,2803
    2b450:	0002bcd8 	cmpnei	zero,zero,2803

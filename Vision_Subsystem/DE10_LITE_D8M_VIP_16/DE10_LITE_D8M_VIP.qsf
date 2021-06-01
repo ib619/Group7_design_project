@@ -415,7 +415,21 @@ set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name VERILOG_CONSTANT_LOOP_LIMIT 400000
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/line_buffer2.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/separableconvolution5x5_erosion.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/separableconvolution5x5_dilation.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/separableconvolution3x3_erosion.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/separableconvolution3x3_dilation.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/morph_erosion_filter5x5.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/morph_erosion_filter3x3.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/morph_dilation_filter5x5.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_filters/morph_dilation_filter3x3.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/edge_detection/sobel_filter3x3.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/edge_detection/separableconvolution3x3_gy.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/edge_detection/separableconvolution3x3_gx.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/colour_threshold/rgb_to_hsv.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/colour_threshold/colour_threshold.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/gaussian_filter/separableconvolution5x5_gaussian.v
+set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/gaussian_filter/gaussian_filter5x5.v
 set_global_assignment -name VERILOG_FILE FpsMonitor.v
 set_global_assignment -name QSYS_FILE Qsys.qsys
 set_global_assignment -name SDC_FILE DE10_LITE_D8M_VIP.SDC
@@ -426,22 +440,9 @@ set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/STREAM_REG_TEST.v
 set_global_assignment -name QIP_FILE ip/EEE_IMGPROC/MSG_FIFO.qip
 set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/EEE_IMGPROC.v
 set_global_assignment -name CDF_FILE Chain.cdf
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/rgb_to_hsv.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/colour_threshold.v
 set_global_assignment -name VERILOG_FILE ip/i2c_adapter.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/erosion.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/control.v
-set_global_assignment -name QIP_FILE shiftreg.qip
 set_global_assignment -name SIGNALTAP_FILE output_files/stp1.stp
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution3x3.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/convolution5x5.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/convolution3x3.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution5x5.v
-set_global_assignment -name QIP_FILE line_buffer5x5.qip
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_erosion_filter5x5.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_erosion_filter3x3.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_dilation_filter5x5.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution5x5_dilation.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/separableconvolution3x3_dilation.v
-set_global_assignment -name VERILOG_FILE ip/EEE_IMGPROC/morph_dilation_filter3x3.v
+set_global_assignment -name QIP_FILE ip/EEE_IMGPROC/line_buffers/line_buffer3x3_1bit.qip
+set_global_assignment -name QIP_FILE ip/EEE_IMGPROC/line_buffers/line_buffer5x5_1bit.qip
+set_global_assignment -name QIP_FILE ip/EEE_IMGPROC/line_buffers/line_buffer5x5_8bit.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
