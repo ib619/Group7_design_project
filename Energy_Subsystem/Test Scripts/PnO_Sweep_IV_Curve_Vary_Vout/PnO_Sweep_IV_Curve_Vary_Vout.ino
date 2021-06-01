@@ -1,7 +1,17 @@
 // ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
 // V/I Limit: 5V, 230mA
 // Perturb and Observe Algorithm
-// LED is ON when the PV panel is supplying power.
+// LED is ON when sweeping.
+// Switch on Lamp!!!
+// Sweep IV curve: From 0 to -230mA. Stay at each current for 3 seconds
+// 0: IDLE
+// 1: SWEEP
+// 2: SWEEP COMPLETE
+
+// How bout we try to control the current on the output side?
+  // Panel connected to V_A
+  // 10R Resistor connected to V_B
+  
 
 //Packages
 #include <Wire.h>
@@ -24,6 +34,7 @@ unsigned int loop_trigger;
 unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging. 
 
 // Voltage PID Controller Stuff
+float vref = 0;
 float ev=0,cv=0,ei=0; //internal signals // FIXME:
   // ev: difference between V_ref and V_b
   // cv: current obtained from voltage PID controller. need to saturate it
@@ -31,13 +42,6 @@ float ev=0,cv=0,ei=0; //internal signals // FIXME:
 float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
-
-// PnO Algorithm (only updates in slow loop)
-float vref = 2500;
-float v0, v1; // current and previous voltage values
-float p0, p1; // current and previous power values
-float i0, i1; // current and previous current values
-float p_diff, v_diff;
 
 // Current PID Controller Stuff
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
@@ -49,12 +53,14 @@ float current_measure; // obtained from ina219 (inductor current)
 float current_ref = 0, error_amps; // Current Control
 float pwm_out;
 float closed_pwm;
-float V_pv; // voltage at terminal VB
+float V_B; // voltage at terminal VB
 float V_A; // voltage at terminal VA
 boolean input_switch; // OLCL switch. 0 means back to IDLE
 
+bool move_on = 0;
+
 // Panel Limits
-float current_limit = 0.2;
+float current_limit = +230;
 float V_limit = 4700;
 
 // State Machine
@@ -69,7 +75,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  //Check for the SD Card - Initiate a "MPPT_PnO.csv" upon reset
+  //Check for the SD Card - Initiate a "SweePnO.csv" upon reset
   Serial.println("\nInitializing SD card...");
   if (!SD.begin(chipSelect)) {
     Serial.println("* is a card inserted?");
@@ -77,8 +83,8 @@ void setup() {
   } else {
     Serial.println("Wiring is correct and a card is present.");
   }
-  if (SD.exists("MPPT_PnO.csv")) { // Wipe the datalog when starting
-    SD.remove("MPPT_PnO.csv");
+  if (SD.exists("SweePnO.csv")) { // Wipe the datalog when starting
+    SD.remove("SweePnO.csv");
   }
   
   noInterrupts(); //disable all interrupts
@@ -118,19 +124,18 @@ void loop() {
   // FAST LOOP (1kHZ)
   if (loop_trigger == 1){
       state_num = next_state; //state transition
-      V_pv = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
+      V_B = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
       V_A = analogRead(A1)*4.096/1.03* 2.699;
-      if (V_pv > 4700) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
+      if (V_B > 4700) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
           digitalWrite(7,true); //turn on the red LED
       }
       current_measure = (ina219.getCurrent_mA()); // sample the inductor current (via the sensor chip)
 
-      // Voltage then Current PID -  Controllers calculate using V&A (not mV&mA)
-      ev = (vref - V_pv)/1000;  //voltage error at this time
+      ev = (vref - V_B)/1000;  //voltage error at this time
       cv = pidv(ev);  //voltage pid
-      // cv = saturation(cv, current_limit, 0); //current demand saturation
+      cv = saturation(cv, current_limit, 0); //current demand saturation
       ei = (cv - current_measure)/1000; //current error
       closed_pwm = pidi(ei);  //current pid
       closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
@@ -141,19 +146,15 @@ void loop() {
       loop_trigger = 0; //reset the trigger and move on with life
   }
   
-  // SLOW LOOP (1Hz)
-  if (int_count == 1000) { 
+  // SLOW LOOP (2 seconds)
+  if (int_count == 2000) { 
     input_switch = digitalRead(2); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case 0:{ // Start state (no current, no LEDs)
         vref = 2500;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
-          v1 = V_pv;
-          i1 = current_measure;
-          p1 = v1*i1;
           next_state = 1;
-          vref = vref + 100;
           digitalWrite(8,true);
         } else { // otherwise stay put
           next_state = 0;
@@ -163,29 +164,42 @@ void loop() {
         break;
       }
       case 1:{ // Running state (a green LED)
-        p0 = V_pv * current_measure;
-        p_diff = p0-p1;
-        v0 = V_pv;
-
-        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1)) && (vref+100<V_limit)) {
-          vref = vref + 100;
-        } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
-          vref = vref - 100;
+        if (move_on == 0) {
+          move_on = 1;
         } else {
-          Serial.println("Not incrementing or decrementing");
+          move_on = 0;
         }
 
+        if(move_on == 1) {
+          vref = vref + 100;
+        }
+        
         // Reset Flags for next iteration
         next_state = 1;
         digitalWrite(8,true); 
-        p1 = p0;
-        v1 = v0;
 
         if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
           next_state = 0;
           digitalWrite(8,false);
         }
+
+        if(vref = 4700){ // Sweeping complete
+          next_state = 2;
+          digitalWrite(8,true);
+          digitalWrite(7,true);
+        }
+
         break;
+      }
+      case 2: {
+        if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
+          next_state = 0;
+          digitalWrite(8,false);
+        } else {
+          digitalWrite(8,true);
+          digitalWrite(7,true);
+          next_state = 0;
+        }
       }
       case 5: { // ERROR state RED led and no current
         next_state = 5; // Always stay here
@@ -208,10 +222,10 @@ void loop() {
     
     // Print values to serial monitor and csv
     // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(vref/1000) + "," + String(V_pv/1000) + "," + String(current_measure/1000) + "," + String(p0/1000000) + "," + String(V_A/1000); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(V_B) + "," + String(current_ref) + ","+ String(current_measure) + "," + String(V_A); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
-    File dataFile = SD.open("MPPT_PnO.csv", FILE_WRITE); // open our CSV file
+    File dataFile = SD.open("SweePnO.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
       dataFile.println(dataString); // print the data
     } else {
