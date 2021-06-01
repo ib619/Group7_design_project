@@ -14,9 +14,9 @@ const RoverStatus = () => {
   }, [message]);
 
   return (
-    <>
+    <React.Fragment>
       <img src={driving} alt="loading..." style={{ height: 50, width: 100 }} />
-    </>
+    </React.Fragment>
   );
 };
 

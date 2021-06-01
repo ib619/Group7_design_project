@@ -8,7 +8,7 @@ import styled from "styled-components";
 
 const HomeNavBar = (props) => {
   return (
-    <>
+    <React.Fragment>
       <Navbar bg="dark" variant="dark">
         <Container>
           <Navbar.Brand href="/">
@@ -26,7 +26,7 @@ const HomeNavBar = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    </>
+    </React.Fragment>
   );
 };
 

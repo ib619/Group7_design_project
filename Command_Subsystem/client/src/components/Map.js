@@ -43,7 +43,7 @@ const Map = () => {
   }, [message, show, setPath]);
 
   return (
-    <>
+    <React.Fragment>
       <Border className="map">
         <BootstrapSwitchButton
           checked={false}
@@ -90,7 +90,7 @@ const Map = () => {
       <Coords>
         x: {pos.x}, y: {pos.y}, direction: {pos.heading}˚
       </Coords>
-    </>
+    </React.Fragment>
   );
 };
 
@@ -111,6 +111,7 @@ const Border = styled.div`
     z-index: 2;
   }
 `;
+// background: ${({ theme }) => (theme === "light" ? "#B64D3A" : "#320202")};
 
 const Center = styled.img`
   position: relative;
