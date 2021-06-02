@@ -28,9 +28,9 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
 
 Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index) {
     Obstacle tmp;
-    int angle=rover->rover_heading + co.angle;
-    tmp.x = (co.distance*10*sin(angle)) + rover->x_axis;
-    tmp.y = (co.distance*10*cos(angle)) + rover->y_axis;
+    int angle=rover->rover_heading + co.angle;      // this is in DEGREES, cos/sin function takes in RADIANS
+    tmp.x = (co.distance*10*sin(angle*DEG_TO_RAD)) + rover->x_axis;
+    tmp.y = (co.distance*10*cos(angle*DEG_TO_RAD)) + rover->y_axis;
     switch(index)   {
         case 0:
             tmp.colour="red";

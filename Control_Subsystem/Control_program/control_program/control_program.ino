@@ -9,9 +9,10 @@
 #define BASE_ADDRESS 0x40000
 #define FPGA_I2C_ADDRESS 0x55
 
-#define COLLISION_THRESHOLD 10  // currently in cm
+#define COLLISION_THRESHOLD 20  // currently in cm cos object distance comes in cm
 
 #define RSSI_UPDATE_INTERVAL 100
+#define VISION_UPDATE_INTERVAL 500
 
 // WiFi stuff
 const char *ssid = WIFI_SSID;
@@ -29,6 +30,7 @@ PubSubClient mqtt(espClient);
 DriveInterface drive(&Serial);
 FPGAInterface fpga(&Wire);
 RoverDataStructure rover;
+RoverDataStructure command_holder;
 
 Obstacle obstacles[5];
 
@@ -39,27 +41,29 @@ int obstacleDetectFlag=0;
 int collisionFlag=0;
 
 unsigned long ptime=0;
+unsigned long vision_ptime=0;
+int vision_update=0;
 
 void mqtt_callback(char* topic, byte* payload, unsigned int length) {
   if(strcmp(topic,"drive/discrete")==0)  {
     StaticJsonDocument<256> doc;
     deserializeJson(doc, payload, length);
-    rover.direction=doc["direction"];
-    rover.distance=doc["distance"];
-    rover.speed=doc["speed"];
-    rover.drive_mode=1;
-    if(busyFlag==0)  {
+    if(busyFlag==0&&collisionFlag==0) {
+      rover.direction=doc["direction"];
+      rover.distance=doc["distance"];
+      rover.speed=doc["speed"];
+      rover.drive_mode=1;
       updateFlag=1;
     }
   }
   else if(strcmp(topic,"drive/t2c")==0) {
     StaticJsonDocument<256> doc;
     deserializeJson(doc, payload, length);
-    rover.target_x=doc["x"];
-    rover.target_y=doc["y"];
-    rover.speed=doc["speed"];
-    rover.drive_mode=2;
-    if(busyFlag==0)  {
+    if(busyFlag==0&&collisionFlag==0) {
+      rover.target_x=doc["x"];
+      rover.target_y=doc["y"];
+      rover.speed=doc["speed"];
+      rover.drive_mode=2;
       updateFlag=1;
     }
   }
@@ -105,17 +109,26 @@ void loop() {
 
         busyFlag=rover.alert;
       }
-      
-      ColourObject obj; // fetch data from FPGA
+
+      if(millis()-vision_ptime>=VISION_UPDATE_INTERVAL)  {  //throttle vision update
+        vision_update=1;        
+      }
+      ColourObject obj;             // fetch data from FPGA
       for(int i=0;i<5;i++)  {
         obj=fpga.readByIndex(i);
         if(obj.detected>0)  {
           if(obj.distance<COLLISION_THRESHOLD)  {
             collisionFlag=1;
           }
-          Obstacle obs = convertObjectToObstacle(&rover, obj, i);
-          publishObstacle(&mqtt, obs);
+          if(vision_update) {
+            Obstacle obs = convertObjectToObstacle(&rover, obj, i);
+            publishObstacle(&mqtt, obs);
+          }
         }
+      }
+      if(vision_update) {
+        vision_ptime=millis();
+        vision_update=0;
       }
 
       if(millis()-ptime>=RSSI_UPDATE_INTERVAL)  { // publish RSSI
@@ -123,7 +136,74 @@ void loop() {
         ptime=millis();
       }
 
-      mqtt.loop();
+      mqtt.loop();    //check for messages from Command
+      if(collisionFlag>0) {   //collision detected
+        switch(collisionFlag) {
+          case 1:
+            fpga.writeLED(0,1);
+            if(busyFlag==0) {
+              collisionFlag=2;
+            }
+            else  {
+              if(rover.drive_mode==2) { //save target coordinates/speed if in t2c mode
+                command_holder.drive_mode=2;
+                command_holder.target_x=rover.target_x;
+                command_holder.target_y=rover.target_y;
+                command_holder.speed=rover.speed;
+              }
+              rover.drive_mode=0;
+              updateFlag=1;
+            }
+            break;
+           case 2:              //turn right 90 degrees then move 250mm
+            rover.drive_mode=1;
+            rover.direction=90;
+            rover.speed=150;
+            rover.distance=250;
+            updateFlag=1;
+            collisionFlag=3;
+            break;
+           case 3:
+            if(busyFlag==1) {   //wait for the rover to start moving
+              collisionFlag=4;
+            }
+            break;
+           case 4:
+            if(busyFlag==0) { //turn left 90 degrees then move 400mm
+              rover.drive_mode=1;
+              rover.direction=-90;
+              rover.speed=150;
+              rover.distance=400;
+              updateFlag=1;
+              collisionFlag=5;
+            }
+            break;
+            case 5:
+              if(busyFlag==1) {
+                collisionFlag=6;
+              }
+              break;
+             case 6:
+              if(busyFlag==0) {   //exit collision avoidance routine
+                fpga.writeLED(0,0);
+                if(command_holder.drive_mode==2)  { //restore t2c is available
+                  rover.drive_mode=2;
+                  rover.target_x=command_holder.target_x;
+                  rover.target_y=command_holder.target_y;
+                  rover.speed=command_holder.speed;
+                  updateFlag=1;
+                  command_holder.drive_mode=0;
+                  command_holder.target_x=0;
+                  command_holder.target_y=0;
+                  command_holder.speed=0;
+                }
+                collisionFlag=0;
+              }
+              break;
+             default: //sinkhole
+              break;
+        }
+      }
       if(updateFlag==1) { // send data to drive arduino
         if(rover.speed==0)  {
           rover.drive_mode=0;
@@ -138,6 +218,7 @@ void loop() {
         drive.sendUpdates();
         updateFlag=0;
       }
+      fpga.writeLED(6,busyFlag);
     }
     else  { // MQTT broker not connected
       fpga.writeLED(8,0);
