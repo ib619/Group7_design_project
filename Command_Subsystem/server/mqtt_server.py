@@ -160,8 +160,8 @@ class MqttServer:
             # clean up data for easy reading on react side
             res = []
             for _, item in self.obstacle_record.items():
-                test = list(item).copy()
-                for i, data in enumerate(test):
+                item_copy = list(item).copy()
+                for i, data in enumerate(item_copy):
                     res.append(data+[i+1])
                     if i == 0:
                         create_obstacle_record(db, data+[self.rover_id])
