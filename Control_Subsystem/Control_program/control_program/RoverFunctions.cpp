@@ -71,12 +71,13 @@ int publishPosition(PubSubClient *client, RoverDataStructure *data)   {
     }
 }
 
-int publishBatteryStatus(PubSubClient *client, RoverDataStructure *data)   {
+int publishBatteryStatus(PubSubClient *client, int cell, int soc, int soh, int state)   {
     StaticJsonDocument<256> doc;
     JsonObject obj = doc.to<JsonObject>();
-    obj["battery_level"] = data->battery_level;
-    obj["battery_soh"] = data->battery_SOH;
-    obj["battery_state"] = data->battery_state;
+    obj["cell"] = cell;
+    obj["battery_level"] = soc;
+    obj["battery_soh"] = soh;
+    obj["battery_state"] = state;
     char buffer[256];
     size_t n = serializeJson(doc, buffer);
     if(client->publish("battery/status", buffer, n)==true)  {

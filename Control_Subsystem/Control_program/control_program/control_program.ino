@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include "RoverFunctions.h"
 #include "DriveInterface.h"
+#include "EnergyInterface.h"
 #include "FPGAInterface.h"
 #include "config.h"
 
@@ -28,6 +29,7 @@ const int mqttPort = MQTT_PORT;
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
 DriveInterface drive(&Serial);
+EnergyInterface energy(&Serial1);
 FPGAInterface fpga(&Wire);
 RoverDataStructure rover;
 RoverDataStructure command_holder;
@@ -96,6 +98,10 @@ void setup() {
   
   drive.setBaudrate(115200);
   drive.begin();
+
+  energy.setBaudrate(38400);
+  energy.begin();
+  
   fpga.writeLED(7,1);
 }
 
@@ -104,23 +110,32 @@ void loop() {
   if(WiFi.status()==WL_CONNECTED) {
     if(mqtt.connected()) { // MQTT broker connected
       if(drive.fetchData()) { // check if data available from Drive arduino
-        rover.battery_level=drive.getBatteryLevel();
-        rover.rover_range=drive.getRange();
         rover.obstacle_detected=drive.getObstacle();
         rover.alert=drive.getAlert();
         rover.x_axis=drive.getAxisX();
         rover.y_axis=drive.getAxisY();
         rover.rover_heading=drive.getRoverHeading();
-        rover.battery_SOH=drive.getBatterySOH();
-        rover.battery_state=drive.getBatteryState();
         
         // send rover data to MQTT broker
         publishPosition(&mqtt, &rover);
-        publishBatteryStatus(&mqtt, &rover);
         publishRoverStatus(&mqtt, &rover);
+
+        // send position data to Energy Arduino
+        energy.writeSpeed(rover.speed);
+        energy.writePositionX(rover.x_axis);
+        energy.writePositionY(rover.y_axis);
+        energy.sendUpdates();
 
         busyFlag=rover.alert;
         fpga.writeLED(6,busyFlag);
+      }
+
+      if(energy.fetchData())  { //check if data available from Energy arduino
+        rover.rover_range=energy.getRoverRange();
+        rover.battery_state=energy.getState();
+        for(int i=0;i<3;i++)  { //send cell info (3 cells) to MQTT broker
+          publishBatteryStatus(&mqtt,i,energy.getBatterySOC(i),energy.getBatterySOH(i),rover.battery_state);
+        }
       }
 
       if(millis()-vision_ptime>=VISION_UPDATE_INTERVAL)  {  //throttle vision update

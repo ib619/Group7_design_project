@@ -44,7 +44,7 @@ int ControlInterface::fetchData()  {
             target_y=tmp[5];
         }        
         system_time=(tmp[6]<<16)+tmp[7];
-        reset=tmp[8];
+        reset|=tmp[8];
         return 1;
     }
     else    {

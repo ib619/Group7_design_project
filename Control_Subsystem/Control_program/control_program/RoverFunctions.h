@@ -40,7 +40,7 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
 Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index);
 
 int publishPosition(PubSubClient *client, RoverDataStructure *data);
-int publishBatteryStatus(PubSubClient *client, RoverDataStructure *data);
+int publishBatteryStatus(PubSubClient *client, int cell, int soc, int soh, int state);
 int publishRoverStatus(PubSubClient *client, RoverDataStructure *data);
 int publishRSSI(PubSubClient *client, long rssi);
 int publishObstacle(PubSubClient *client, Obstacle obs);

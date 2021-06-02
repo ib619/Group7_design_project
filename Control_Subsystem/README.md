@@ -30,4 +30,4 @@ LEDR 0: collision avoidance routine engaged
 ### Arduino-ESP32 API Master Source files
 Drive: Control_Subsystem/Arduino-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)
 
-Energy: Control_Subsystem/Energy-ESP32 Interface/ci_energy_api_dev (ControlInterface.h and ControlInterface.cpp) [COMING SOON!]
+Energy: Control_Subsystem/Energy-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)
