@@ -21,6 +21,7 @@ struct RoverDataStructure {
         int distance=0;
         int target_x=0;
         int target_y=0;
+        int reset=0;
 
         // data values
         int battery_level=0;

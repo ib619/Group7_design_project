@@ -21,6 +21,7 @@ class DriveInterface {
         void writeTargetX(int x);
         void writeTargetY(int y);
         void writeSystemTime(unsigned long time);
+        void writeReset(int rst);
 
         int getBatteryLevel() const;
         int getRange() const;
@@ -49,6 +50,7 @@ class DriveInterface {
         int target_x=0;
         int target_y=0;
         unsigned long system_time=0;    /// 4 bytes
+        int reset=0;
 
         // data values
         int battery_level=0;

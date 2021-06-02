@@ -35,13 +35,16 @@ int ControlInterface::fetchData()  {
             tmp[i]=(int16_t)((high_byte<<8)+low_byte);
         }
         // load received control values into respective variables
-        drive_mode=tmp[0];
-        direction=tmp[1];
-        speed=tmp[2];
-        distance=tmp[3];
-        target_x=tmp[4];
-        target_y=tmp[5];
+        if(tmp[8]==0)   {       //update control fields only if "reset" is 0
+            drive_mode=tmp[0];
+            direction=tmp[1];
+            speed=tmp[2];
+            distance=tmp[3];
+            target_x=tmp[4];
+            target_y=tmp[5];
+        }        
         system_time=(tmp[6]<<16)+tmp[7];
+        reset=tmp[8];
         return 1;
     }
     else    {
@@ -87,6 +90,12 @@ int ControlInterface::getTargetY() const    {
 
 unsigned long ControlInterface::getSystemTime() const   {
     return system_time;
+}
+
+int ControlInterface::getReset()   {  //sets the value of "reset" to 0 upon calls
+    int tmp=reset;
+    reset=0;
+    return tmp;
 }
 
 void ControlInterface::writeBatterylevel(int batt) {

@@ -67,6 +67,17 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length) {
       updateFlag=1;
     }
   }
+  else if(strcmp(topic,"reset")==0) {
+    int a=atoi((char*)payload);
+    if(a==1) {
+      rover.reset=1;
+      updateFlag=1;
+    }
+    else if(a==2)  {
+      rover.drive_mode=0;
+      updateFlag=1;
+    }
+  }
 }
 
 void setup() {
@@ -92,7 +103,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   if(WiFi.status()==WL_CONNECTED) {
     if(mqtt.connected()) { // MQTT broker connected
-      if(drive.fetchData()) { // check if data available from arduino
+      if(drive.fetchData()) { // check if data available from Drive arduino
         rover.battery_level=drive.getBatteryLevel();
         rover.rover_range=drive.getRange();
         rover.obstacle_detected=drive.getObstacle();
@@ -109,6 +120,7 @@ void loop() {
         publishRoverStatus(&mqtt, &rover);
 
         busyFlag=rover.alert;
+        fpga.writeLED(6,busyFlag);
       }
 
       if(millis()-vision_ptime>=VISION_UPDATE_INTERVAL)  {  //throttle vision update
@@ -117,8 +129,8 @@ void loop() {
       ColourObject obj;             // fetch data from FPGA
       for(int i=0;i<5;i++)  {
         obj=fpga.readByIndex(i);
-        if(obj.detected>0&&collisionFlag==0)  {
-          if(obj.distance<COLLISION_THRESHOLD)  {
+        if(obj.detected>0)  {
+          if(obj.distance>0&&collisionFlag==0&&obj.distance<COLLISION_THRESHOLD)  {
             collisionFlag=1;
           }
           if(vision_update) {
@@ -209,17 +221,23 @@ void loop() {
         if(rover.speed==0)  {
           rover.drive_mode=0;
         }
-        drive.writeDriveMode(rover.drive_mode);
-        drive.writeDirection(rover.direction);
-        drive.writeSpeed(rover.speed);
-        drive.writeDistance(rover.distance);
-        drive.writeTargetX(rover.target_x);
-        drive.writeTargetY(rover.target_y);
+        if(rover.reset==0)  { //update control fields only if reset is 0
+          drive.writeDriveMode(rover.drive_mode);
+          drive.writeDirection(rover.direction);
+          drive.writeSpeed(rover.speed);
+          drive.writeDistance(rover.distance);
+          drive.writeTargetX(rover.target_x);
+          drive.writeTargetY(rover.target_y);
+        }
+        drive.writeReset(rover.reset);
         drive.writeSystemTime(millis());
         drive.sendUpdates();
-        updateFlag=0;
+        updateFlag=0; //clear updateFlag
+        if(rover.reset!=0)  {
+          rover.reset=0;  //clear rover.reset field if it is not 0
+        }
       }
-      fpga.writeLED(6,busyFlag);
+            
       if(rover.drive_mode==1) {   //drive_mode indicator lights
         fpga.writeLED(1,1);
         fpga.writeLED(2,0);
@@ -241,9 +259,10 @@ void loop() {
       }
     }
   }
-  else  {
+  else  {   //WiFi disconnected
     fpga.writeLED(8,0);
     fpga.writeLED(9,0);
+    fpga.writeLED(6,0);
     rover.drive_mode=0;
     drive.sendUpdates();
     initWiFi(ssid,password);
