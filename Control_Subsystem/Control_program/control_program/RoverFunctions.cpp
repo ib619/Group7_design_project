@@ -18,6 +18,7 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
         if(client->connect("RoverESP32", mqtt_user, mqtt_password)) {
             client->subscribe("drive/discrete");
             client->subscribe("drive/t2c");
+            client->subscribe("reset");
         }
         else    {
             // do nothing?

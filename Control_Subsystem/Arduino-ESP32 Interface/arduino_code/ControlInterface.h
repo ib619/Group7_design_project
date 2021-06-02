@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define CONTROL_PACKET_SIZE 16
+#define CONTROL_PACKET_SIZE 18
 
 class ControlInterface {
     public:
@@ -22,6 +22,7 @@ class ControlInterface {
         int getTargetX() const;
         int getTargetY() const;
         unsigned long getSystemTime() const;    // 4 bytes
+        int getReset();
 
         void writeBatterylevel(int batt);
         void writeRange(int rng);
@@ -51,6 +52,7 @@ class ControlInterface {
         int target_x=0;
         int target_y=0;
         unsigned long system_time=0;    // 4 bytes
+        int reset=0;
 
         // data values
         int battery_level=0;

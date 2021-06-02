@@ -53,6 +53,7 @@ void DriveInterface::sendUpdates()  {
     send_integer(target_y);
     send_integer(system_time>>16);      // system_time higher 2 bytes
     send_integer(system_time&65535);    // system_time lower 2 bytes
+    send_integer(reset);
 }
 
 void DriveInterface::writeDriveMode(int dm) {
@@ -81,6 +82,10 @@ void DriveInterface::writeTargetY(int y)    {
 
 void DriveInterface::writeSystemTime(unsigned long time)    {
     system_time=time;
+}
+
+void DriveInterface::writeReset(int rst)    {
+    reset=rst;
 }
 
 int DriveInterface::getBatteryLevel() const {
