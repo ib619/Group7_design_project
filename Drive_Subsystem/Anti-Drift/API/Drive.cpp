@@ -43,6 +43,7 @@ void Rover::moveForward(float travelDist) {
 			lockX = myDirectionX;
 			lockY = myDirectionY;
 			lock_direction = 0;
+			Serial.println("Lock direction");
 		}
 
 		float crossprod = myDirectionX * lockY - lockX * myDirectionY;
@@ -67,8 +68,8 @@ void Rover::moveForward(float travelDist) {
 		
 		if (distance_setpoint > 0) {
 			Serial.println("Correction: " + String(correction) + "\n");
-			LM->move(speed_setpoint - correction);
-			RM->move(speed_setpoint + correction);
+			LM->move(speed_setpoint + correction);
+			RM->move(speed_setpoint - correction);
 			distance_setpoint = distance_setpoint - travelDist;
 			lastError = Error;
 		}

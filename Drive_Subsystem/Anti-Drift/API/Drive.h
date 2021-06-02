@@ -65,7 +65,7 @@ private:
 	float cumError = 0;
 	float rateError = 0;
 
-	float Kp = 1;
+	float Kp = 0.6;
 	float Ki = 0.0001;
 	float Kd = 0;
 
