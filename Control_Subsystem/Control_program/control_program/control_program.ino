@@ -85,6 +85,7 @@ void setup() {
   
   drive.setBaudrate(115200);
   drive.begin();
+  fpga.writeLED(7,1);
 }
 
 void loop() {
@@ -116,7 +117,7 @@ void loop() {
       ColourObject obj;             // fetch data from FPGA
       for(int i=0;i<5;i++)  {
         obj=fpga.readByIndex(i);
-        if(obj.detected>0)  {
+        if(obj.detected>0&&collisionFlag==0)  {
           if(obj.distance<COLLISION_THRESHOLD)  {
             collisionFlag=1;
           }
@@ -186,7 +187,7 @@ void loop() {
              case 6:
               if(busyFlag==0) {   //exit collision avoidance routine
                 fpga.writeLED(0,0);
-                if(command_holder.drive_mode==2)  { //restore t2c is available
+                if(command_holder.drive_mode==2)  { //restore t2c if available
                   rover.drive_mode=2;
                   rover.target_x=command_holder.target_x;
                   rover.target_y=command_holder.target_y;
@@ -219,6 +220,18 @@ void loop() {
         updateFlag=0;
       }
       fpga.writeLED(6,busyFlag);
+      if(rover.drive_mode==1) {   //drive_mode indicator lights
+        fpga.writeLED(1,1);
+        fpga.writeLED(2,0);
+      }
+      else if(rover.drive_mode==2)  {
+        fpga.writeLED(1,0);
+        fpga.writeLED(2,1);
+      }
+      else  {
+        fpga.writeLED(1,0);
+        fpga.writeLED(2,0);
+      }
     }
     else  { // MQTT broker not connected
       fpga.writeLED(8,0);
