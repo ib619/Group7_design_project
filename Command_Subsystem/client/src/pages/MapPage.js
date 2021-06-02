@@ -3,9 +3,9 @@ import Map from "../components/Map";
 
 const MapPage = () => {
   return (
-    <>
+    <React.Fragment>
       <Map />
-    </>
+    </React.Fragment>
   );
 };
 

@@ -20,7 +20,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={themeMode}>
-      <>
+      <React.Fragment>
         <Connector
           brokerUrl="ws://localhost:8080"
           options={{
@@ -39,7 +39,7 @@ const App = () => {
             <Route exact path="/discrete" component={DiscretePage} />
           </Switch>
         </Connector>
-      </>
+      </React.Fragment>
     </ThemeProvider>
   );
 };

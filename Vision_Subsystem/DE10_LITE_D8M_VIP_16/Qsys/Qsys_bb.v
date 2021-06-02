@@ -16,6 +16,8 @@ module Qsys (
 	clk_vga_clk,
 	d8m_xclkin_clk,
 	eee_imgproc_0_conduit_mode_new_signal,
+	eee_imgproc_0_conduit_mode_new_signal_1,
+	eee_imgproc_0_conduit_mode_new_signal_2,
 	i2c_opencores_camera_export_scl_pad_io,
 	i2c_opencores_camera_export_sda_pad_io,
 	i2c_opencores_mipi_export_scl_pad_io,
@@ -63,6 +65,8 @@ module Qsys (
 	output		clk_vga_clk;
 	output		d8m_xclkin_clk;
 	input		eee_imgproc_0_conduit_mode_new_signal;
+	input		eee_imgproc_0_conduit_mode_new_signal_1;
+	input		eee_imgproc_0_conduit_mode_new_signal_2;
 	inout		i2c_opencores_camera_export_scl_pad_io;
 	inout		i2c_opencores_camera_export_sda_pad_io;
 	inout		i2c_opencores_mipi_export_scl_pad_io;

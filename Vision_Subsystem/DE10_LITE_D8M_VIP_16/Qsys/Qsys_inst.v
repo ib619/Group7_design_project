@@ -15,6 +15,8 @@
 		.clk_vga_clk                                            (<connected-to-clk_vga_clk>),                                            //                                clk_vga.clk
 		.d8m_xclkin_clk                                         (<connected-to-d8m_xclkin_clk>),                                         //                             d8m_xclkin.clk
 		.eee_imgproc_0_conduit_mode_new_signal                  (<connected-to-eee_imgproc_0_conduit_mode_new_signal>),                  //             eee_imgproc_0_conduit_mode.new_signal
+		.eee_imgproc_0_conduit_mode_new_signal_1                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_1>),                //                                       .new_signal_1
+		.eee_imgproc_0_conduit_mode_new_signal_2                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_2>),                //                                       .new_signal_2
 		.i2c_opencores_camera_export_scl_pad_io                 (<connected-to-i2c_opencores_camera_export_scl_pad_io>),                 //            i2c_opencores_camera_export.scl_pad_io
 		.i2c_opencores_camera_export_sda_pad_io                 (<connected-to-i2c_opencores_camera_export_sda_pad_io>),                 //                                       .sda_pad_io
 		.i2c_opencores_mipi_export_scl_pad_io                   (<connected-to-i2c_opencores_mipi_export_scl_pad_io>),                   //              i2c_opencores_mipi_export.scl_pad_io

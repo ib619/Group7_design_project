@@ -18,7 +18,7 @@ const SignalStrength = () => {
   }, [message, strength]);
 
   return (
-    <>
+    <React.Fragment>
       {strength <= -80 ? (
         <ImgContainer src={LevelDead} />
       ) : strength <= -70 ? (
@@ -30,7 +30,7 @@ const SignalStrength = () => {
       ) : (
         <ImgContainer src={Level3} />
       )}
-    </>
+    </React.Fragment>
   );
 };
 

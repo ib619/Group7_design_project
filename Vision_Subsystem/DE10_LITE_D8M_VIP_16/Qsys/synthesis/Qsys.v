@@ -22,6 +22,8 @@ module Qsys (
 		input  wire        eee_imgproc_0_conduit_mode_new_signal,                  //             eee_imgproc_0_conduit_mode.new_signal
 		input  wire        eee_imgproc_0_conduit_mode_new_signal_1,                //                                       .new_signal_1
 		input  wire        eee_imgproc_0_conduit_mode_new_signal_2,                //                                       .new_signal_2
+		input  wire        eee_imgproc_0_conduit_mode_new_signal_3,                //                                       .new_signal_3
+		input  wire        eee_imgproc_0_conduit_mode_new_signal_4,                //                                       .new_signal_4
 		inout  wire        i2c_opencores_camera_export_scl_pad_io,                 //            i2c_opencores_camera_export.scl_pad_io
 		inout  wire        i2c_opencores_camera_export_sda_pad_io,                 //                                       .sda_pad_io
 		inout  wire        i2c_opencores_mipi_export_scl_pad_io,                   //              i2c_opencores_mipi_export.scl_pad_io
@@ -83,6 +85,11 @@ module Qsys (
 	wire         i2cslave_to_avlmm_bridge_0_avalon_master_readdatavalid;            // mm_interconnect_0:i2cslave_to_avlmm_bridge_0_avalon_master_readdatavalid -> i2cslave_to_avlmm_bridge_0:readdatavalid
 	wire         i2cslave_to_avlmm_bridge_0_avalon_master_write;                    // i2cslave_to_avlmm_bridge_0:write -> mm_interconnect_0:i2cslave_to_avlmm_bridge_0_avalon_master_write
 	wire  [31:0] i2cslave_to_avlmm_bridge_0_avalon_master_writedata;                // i2cslave_to_avlmm_bridge_0:writedata -> mm_interconnect_0:i2cslave_to_avlmm_bridge_0_avalon_master_writedata
+	wire         mm_interconnect_0_led_s1_chipselect;                               // mm_interconnect_0:led_s1_chipselect -> led:chipselect
+	wire  [31:0] mm_interconnect_0_led_s1_readdata;                                 // led:readdata -> mm_interconnect_0:led_s1_readdata
+	wire   [1:0] mm_interconnect_0_led_s1_address;                                  // mm_interconnect_0:led_s1_address -> led:address
+	wire         mm_interconnect_0_led_s1_write;                                    // mm_interconnect_0:led_s1_write -> led:write_n
+	wire  [31:0] mm_interconnect_0_led_s1_writedata;                                // mm_interconnect_0:led_s1_writedata -> led:writedata
 	wire         mm_interconnect_0_data_mem_s2_chipselect;                          // mm_interconnect_0:data_mem_s2_chipselect -> data_mem:chipselect2
 	wire  [31:0] mm_interconnect_0_data_mem_s2_readdata;                            // data_mem:readdata2 -> mm_interconnect_0:data_mem_s2_readdata
 	wire   [9:0] mm_interconnect_0_data_mem_s2_address;                             // mm_interconnect_0:data_mem_s2_address -> data_mem:address2
@@ -156,11 +163,6 @@ module Qsys (
 	wire   [2:0] mm_interconnect_1_timer_s1_address;                                // mm_interconnect_1:timer_s1_address -> timer:address
 	wire         mm_interconnect_1_timer_s1_write;                                  // mm_interconnect_1:timer_s1_write -> timer:write_n
 	wire  [15:0] mm_interconnect_1_timer_s1_writedata;                              // mm_interconnect_1:timer_s1_writedata -> timer:writedata
-	wire         mm_interconnect_1_led_s1_chipselect;                               // mm_interconnect_1:led_s1_chipselect -> led:chipselect
-	wire  [31:0] mm_interconnect_1_led_s1_readdata;                                 // led:readdata -> mm_interconnect_1:led_s1_readdata
-	wire   [1:0] mm_interconnect_1_led_s1_address;                                  // mm_interconnect_1:led_s1_address -> led:address
-	wire         mm_interconnect_1_led_s1_write;                                    // mm_interconnect_1:led_s1_write -> led:write_n
-	wire  [31:0] mm_interconnect_1_led_s1_writedata;                                // mm_interconnect_1:led_s1_writedata -> led:writedata
 	wire  [31:0] mm_interconnect_1_sw_s1_readdata;                                  // sw:readdata -> mm_interconnect_1:sw_s1_readdata
 	wire   [1:0] mm_interconnect_1_sw_s1_address;                                   // mm_interconnect_1:sw_s1_address -> sw:address
 	wire  [31:0] mm_interconnect_1_key_s1_readdata;                                 // key:readdata -> mm_interconnect_1:key_s1_readdata
@@ -221,27 +223,29 @@ module Qsys (
 	wire         rst_controller_002_reset_out_reset_req;                            // rst_controller_002:reset_req -> [data_mem:reset_req, nios2_gen2:reset_req, onchip_memory2_0:reset_req, rst_translator_001:reset_req_in]
 
 	EEE_IMGPROC eee_imgproc_0 (
-		.clk           (altpll_0_c2_clk),                                     //                   clock.clk
-		.reset_n       (~rst_controller_reset_out_reset),                     //                   reset.reset_n
-		.sink_data     (terasic_auto_focus_0_dout_data),                      //   avalon_streaming_sink.data
-		.sink_valid    (terasic_auto_focus_0_dout_valid),                     //                        .valid
-		.sink_ready    (terasic_auto_focus_0_dout_ready),                     //                        .ready
-		.sink_sop      (terasic_auto_focus_0_dout_startofpacket),             //                        .startofpacket
-		.sink_eop      (terasic_auto_focus_0_dout_endofpacket),               //                        .endofpacket
-		.source_data   (eee_imgproc_0_avalon_streaming_source_data),          // avalon_streaming_source.data
-		.source_eop    (eee_imgproc_0_avalon_streaming_source_endofpacket),   //                        .endofpacket
-		.source_ready  (eee_imgproc_0_avalon_streaming_source_ready),         //                        .ready
-		.source_sop    (eee_imgproc_0_avalon_streaming_source_startofpacket), //                        .startofpacket
-		.source_valid  (eee_imgproc_0_avalon_streaming_source_valid),         //                        .valid
-		.s_chipselect  (mm_interconnect_1_eee_imgproc_0_s1_chipselect),       //                      s1.chipselect
-		.s_read        (mm_interconnect_1_eee_imgproc_0_s1_read),             //                        .read
-		.s_write       (mm_interconnect_1_eee_imgproc_0_s1_write),            //                        .write
-		.s_readdata    (mm_interconnect_1_eee_imgproc_0_s1_readdata),         //                        .readdata
-		.s_writedata   (mm_interconnect_1_eee_imgproc_0_s1_writedata),        //                        .writedata
-		.s_address     (mm_interconnect_1_eee_imgproc_0_s1_address),          //                        .address
-		.mode          (eee_imgproc_0_conduit_mode_new_signal),               //            conduit_mode.new_signal
-		.erosion_mode  (eee_imgproc_0_conduit_mode_new_signal_1),             //                        .new_signal_1
-		.dilation_mode (eee_imgproc_0_conduit_mode_new_signal_2)              //                        .new_signal_2
+		.clk                 (altpll_0_c2_clk),                                     //                   clock.clk
+		.reset_n             (~rst_controller_reset_out_reset),                     //                   reset.reset_n
+		.sink_data           (terasic_auto_focus_0_dout_data),                      //   avalon_streaming_sink.data
+		.sink_valid          (terasic_auto_focus_0_dout_valid),                     //                        .valid
+		.sink_ready          (terasic_auto_focus_0_dout_ready),                     //                        .ready
+		.sink_sop            (terasic_auto_focus_0_dout_startofpacket),             //                        .startofpacket
+		.sink_eop            (terasic_auto_focus_0_dout_endofpacket),               //                        .endofpacket
+		.source_data         (eee_imgproc_0_avalon_streaming_source_data),          // avalon_streaming_source.data
+		.source_eop          (eee_imgproc_0_avalon_streaming_source_endofpacket),   //                        .endofpacket
+		.source_ready        (eee_imgproc_0_avalon_streaming_source_ready),         //                        .ready
+		.source_sop          (eee_imgproc_0_avalon_streaming_source_startofpacket), //                        .startofpacket
+		.source_valid        (eee_imgproc_0_avalon_streaming_source_valid),         //                        .valid
+		.s_chipselect        (mm_interconnect_1_eee_imgproc_0_s1_chipselect),       //                      s1.chipselect
+		.s_read              (mm_interconnect_1_eee_imgproc_0_s1_read),             //                        .read
+		.s_write             (mm_interconnect_1_eee_imgproc_0_s1_write),            //                        .write
+		.s_readdata          (mm_interconnect_1_eee_imgproc_0_s1_readdata),         //                        .readdata
+		.s_writedata         (mm_interconnect_1_eee_imgproc_0_s1_writedata),        //                        .writedata
+		.s_address           (mm_interconnect_1_eee_imgproc_0_s1_address),          //                        .address
+		.mode                (eee_imgproc_0_conduit_mode_new_signal),               //            conduit_mode.new_signal
+		.erosion_mode        (eee_imgproc_0_conduit_mode_new_signal_1),             //                        .new_signal_1
+		.dilation_mode       (eee_imgproc_0_conduit_mode_new_signal_2),             //                        .new_signal_2
+		.gaussian_mode       (eee_imgproc_0_conduit_mode_new_signal_3),             //                        .new_signal_3
+		.edge_detection_mode (eee_imgproc_0_conduit_mode_new_signal_4)              //                        .new_signal_4
 	);
 
 	TERASIC_AUTO_FOCUS #(
@@ -492,11 +496,11 @@ module Qsys (
 	Qsys_led led (
 		.clk        (clk_clk),                             //                 clk.clk
 		.reset_n    (~rst_controller_002_reset_out_reset), //               reset.reset_n
-		.address    (mm_interconnect_1_led_s1_address),    //                  s1.address
-		.write_n    (~mm_interconnect_1_led_s1_write),     //                    .write_n
-		.writedata  (mm_interconnect_1_led_s1_writedata),  //                    .writedata
-		.chipselect (mm_interconnect_1_led_s1_chipselect), //                    .chipselect
-		.readdata   (mm_interconnect_1_led_s1_readdata),   //                    .readdata
+		.address    (mm_interconnect_0_led_s1_address),    //                  s1.address
+		.write_n    (~mm_interconnect_0_led_s1_write),     //                    .write_n
+		.writedata  (mm_interconnect_0_led_s1_writedata),  //                    .writedata
+		.chipselect (mm_interconnect_0_led_s1_chipselect), //                    .chipselect
+		.readdata   (mm_interconnect_0_led_s1_readdata),   //                    .readdata
 		.out_port   (led_external_connection_export)       // external_connection.export
 	);
 
@@ -634,7 +638,12 @@ module Qsys (
 		.data_mem_s2_writedata                                        (mm_interconnect_0_data_mem_s2_writedata),                //                                                       .writedata
 		.data_mem_s2_byteenable                                       (mm_interconnect_0_data_mem_s2_byteenable),               //                                                       .byteenable
 		.data_mem_s2_chipselect                                       (mm_interconnect_0_data_mem_s2_chipselect),               //                                                       .chipselect
-		.data_mem_s2_clken                                            (mm_interconnect_0_data_mem_s2_clken)                     //                                                       .clken
+		.data_mem_s2_clken                                            (mm_interconnect_0_data_mem_s2_clken),                    //                                                       .clken
+		.led_s1_address                                               (mm_interconnect_0_led_s1_address),                       //                                                 led_s1.address
+		.led_s1_write                                                 (mm_interconnect_0_led_s1_write),                         //                                                       .write
+		.led_s1_readdata                                              (mm_interconnect_0_led_s1_readdata),                      //                                                       .readdata
+		.led_s1_writedata                                             (mm_interconnect_0_led_s1_writedata),                     //                                                       .writedata
+		.led_s1_chipselect                                            (mm_interconnect_0_led_s1_chipselect)                     //                                                       .chipselect
 	);
 
 	Qsys_mm_interconnect_1 mm_interconnect_1 (
@@ -696,11 +705,6 @@ module Qsys (
 		.jtag_uart_avalon_jtag_slave_chipselect                     (mm_interconnect_1_jtag_uart_avalon_jtag_slave_chipselect),           //                                                     .chipselect
 		.key_s1_address                                             (mm_interconnect_1_key_s1_address),                                   //                                               key_s1.address
 		.key_s1_readdata                                            (mm_interconnect_1_key_s1_readdata),                                  //                                                     .readdata
-		.led_s1_address                                             (mm_interconnect_1_led_s1_address),                                   //                                               led_s1.address
-		.led_s1_write                                               (mm_interconnect_1_led_s1_write),                                     //                                                     .write
-		.led_s1_readdata                                            (mm_interconnect_1_led_s1_readdata),                                  //                                                     .readdata
-		.led_s1_writedata                                           (mm_interconnect_1_led_s1_writedata),                                 //                                                     .writedata
-		.led_s1_chipselect                                          (mm_interconnect_1_led_s1_chipselect),                                //                                                     .chipselect
 		.mipi_pwdn_n_s1_address                                     (mm_interconnect_1_mipi_pwdn_n_s1_address),                           //                                       mipi_pwdn_n_s1.address
 		.mipi_pwdn_n_s1_write                                       (mm_interconnect_1_mipi_pwdn_n_s1_write),                             //                                                     .write
 		.mipi_pwdn_n_s1_readdata                                    (mm_interconnect_1_mipi_pwdn_n_s1_readdata),                          //                                                     .readdata

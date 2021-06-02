@@ -8,7 +8,7 @@ const FormAlert = (props) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       {props.valid === true ? (
         <Alert show={props.show} variant="success">
           <Alert.Heading>Success!!</Alert.Heading>
@@ -34,7 +34,7 @@ const FormAlert = (props) => {
           </div>
         </Alert>
       )}
-    </>
+    </React.Fragment>
   );
 };
 
