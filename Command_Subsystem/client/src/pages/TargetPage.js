@@ -68,7 +68,7 @@ const TargetPage = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <FormAlert
         show={show}
         setShow={setShow}
@@ -120,7 +120,7 @@ const TargetPage = () => {
           Submit
         </Button>
       </Form>
-    </>
+    </React.Fragment>
   );
 };
 

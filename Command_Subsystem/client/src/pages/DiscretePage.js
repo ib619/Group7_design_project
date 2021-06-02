@@ -82,7 +82,7 @@ const DiscretePage = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <FormAlert
         show={show}
         setShow={setShow}
@@ -144,7 +144,7 @@ const DiscretePage = () => {
           Submit
         </Button>
       </Form>
-    </>
+    </React.Fragment>
   );
 };
 

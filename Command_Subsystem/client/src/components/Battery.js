@@ -20,7 +20,7 @@ const Battery = () => {
   }, [message]);
 
   return (
-    <>
+    <React.Fragment>
       {battery <= 20 ? (
         <ImgContainer src={Level0} />
       ) : battery <= 40 ? (
@@ -32,7 +32,7 @@ const Battery = () => {
       ) : (
         <ImgContainer src={Level4} />
       )}
-    </>
+    </React.Fragment>
   );
 };
 

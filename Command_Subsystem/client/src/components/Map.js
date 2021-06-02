@@ -19,10 +19,19 @@ const Map = () => {
     "path",
   ]);
 
+  // // on refresh
+  // useEffect(() => {
+  //   const obstacle = JSON.parse(localStorage.getItem("obstacles"));
+  //   if (obstacle !== null) {
+  //     setObstacles(obstacle);
+  //   }
+  // }, [setObstacles]);
+
   // on message update
   useEffect(() => {
     if (message && message.topic === "obstacle/result") {
       setObstacles(JSON.parse(message.message));
+      // localStorage.setItem("obstacles", message.message);
     }
   }, [message, setObstacles]);
 
@@ -43,7 +52,7 @@ const Map = () => {
   }, [message, show, setPath]);
 
   return (
-    <>
+    <React.Fragment>
       <Border className="map">
         <BootstrapSwitchButton
           checked={false}
@@ -66,31 +75,12 @@ const Map = () => {
             ))}
           {show &&
             Array.from(path).map((data, i) => <Point key={i} coords={data} />)}
-          {/* {show &&
-            Array.from(path).map((data, i, arr) => {
-              let prevCoord = i === 0 ? [0, 0] : arr[i - 1];
-              return (
-                <Line
-                  key={i}
-                  x0={prevCoord[0]}
-                  y0={prevCoord[1]}
-                  x1={data[0]}
-                  y1={data[1]}
-                />
-              );
-            })} */}
-          {/* <Line x0={0} y0={0} x1={100} y1={100} /> */}
-          {/* <Line
-            from={{ x: 0, y: 0 }}
-            to={{ x: 100, y: 100 }}
-            style="5px solid white"
-          /> */}
         </MapInteractionCSS>
       </Border>
       <Coords>
         x: {pos.x}, y: {pos.y}, direction: {pos.heading}˚
       </Coords>
-    </>
+    </React.Fragment>
   );
 };
 
@@ -104,7 +94,7 @@ const Border = styled.div`
   padding: 0.5rem;
   border: 2px solid #200000;
   border-width: 10px;
-  background: #320202;
+  background: ${({ theme }) => theme.map};
 
   .switch {
     position: absolute;
@@ -120,13 +110,12 @@ const Center = styled.img`
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] + 380,
-    bottom: props.coords[2] - 200,
+    left: props.coords[1] + 390,
+    bottom: props.coords[2] - 155,
     opacity: 1 / props.coords[3],
     background: props.coords[0] === "blue" ? "turquoise" : props.coords[0],
   },
 }))`
-  padding: 0.5rem;
   width: 15px;
   height: 15px;
   position: relative;
@@ -135,8 +124,8 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] + 380,
-    bottom: props.coords[1] - 200,
+    left: props.coords[0] + 390,
+    bottom: props.coords[1] - 155,
   },
 }))`
   background: white;

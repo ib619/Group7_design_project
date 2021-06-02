@@ -32,17 +32,50 @@ def create_obstacle_record(conn, obstacle_record):
 
 # Get recent num obstacles
 def select_top_obstacle(conn, num, rover_id):
-    sql_query = """SELECT * FROM (
-                        SELECT 
-                            colour, 
-                            x_coord, 
-                            y_coord, 
-                            row_number() over (PARTITION BY colour ORDER BY date DESC) as date_rank
-                        FROM obstacle_record
-                        WHERE rover_id=?) 
-                    WHERE date_rank <=?;"""
+    # sql_query = """SELECT * FROM (
+    #                     SELECT
+    #                         colour,
+    #                         x_coord,
+    #                         y_coord,
+    #                         row_number() over (PARTITION BY colour ORDER BY date DESC) as date_rank
+    #                     FROM obstacle_record
+    #                     WHERE rover_id=?)
+    #                 WHERE date_rank <=?;"""
+
+    sql_query = """SELECT colour, x_coord, y_coord FROM 
+                    ( SELECT * from 
+                        (SELECT colour, x_coord, y_coord,date 
+                        FROM obstacle_record 
+                        WHERE colour = "red" AND rover_id = ? 
+                        ORDER BY date DESC limit ?)
+                    UNION
+                    SELECT * from 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "blue" AND rover_id = ? 
+                        ORDER BY date DESC limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "green" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "grey" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    UNION
+                    SELECT * FROM 
+                        (SELECT colour, x_coord, y_coord, date 
+                        FROM obstacle_record 
+                        WHERE colour = "yellow" AND rover_id = ? 
+                        ORDER BY date desc limit ?)
+                    )"""
+
     cur = conn.cursor()
-    cur.execute(sql_query, [rover_id, num])
+    cur.execute(sql_query, [rover_id, num, rover_id, num, rover_id, num, rover_id, num, rover_id, num])
     return cur.fetchall()
 
 # Get all obstacles
