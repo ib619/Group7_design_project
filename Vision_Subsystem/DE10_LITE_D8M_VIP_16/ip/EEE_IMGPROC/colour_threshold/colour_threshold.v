@@ -13,7 +13,11 @@ module colour_threshold(
     output     blue_detect,
     output     grey_detect,
     output     yellow_detect,
-	 output     grey_edge_detect
+	 output     red_edge_detect,
+	 output     blue_edge_detect,
+	 output     green_edge_detect,
+	 output     grey_edge_detect,
+	 output     yellow_edge_detect
 //	 output    [21:0] pixel_addr_out
 );
 
@@ -160,13 +164,46 @@ morph_dilation_filter3x3 dil_y(
     .o_convolved_data(dilation_yellow_detect)
 );
 
-sobel_filter3x3 sobelfilter (
+// Edge Detection
+wire [7:0] dilation_red_detect_8 = (dilation_red_detect) ? 8'd255 : 8'd0;
+wire [7:0] dilation_green_detect_8 = (dilation_green_detect) ? 8'd255 : 8'd0;
+wire [7:0] dilation_blue_detect_8 = (dilation_blue_detect) ? 8'd255 : 8'd0;
+wire [7:0] dilation_grey_detect_8 = (dilation_grey_detect) ? 8'd255 : 8'd0;
+wire [7:0] dilation_yellow_detect_8 = (dilation_yellow_detect) ? 8'd255 : 8'd0;
+
+//sobel_filter3x3 sobelfilter_red (
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(dilation_red_detect_8),
+//	.i_pixel_valid(valid_in), // Both in_valid and packet video
+//	.o_convolved_data(red_edge_detect)
+//);
+//sobel_filter3x3 sobelfilter_green (
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(dilation_green_detect_8),
+//	.i_pixel_valid(valid_in), // Both in_valid and packet video
+//	.o_convolved_data(green_edge_detect)
+//);
+//sobel_filter3x3 sobelfilter_blue (
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(dilation_blue_detect_8),
+//	.i_pixel_valid(valid_in), // Both in_valid and packet video
+//	.o_convolved_data(blue_edge_detect)
+//);
+sobel_filter3x3 sobelfilter_grey (
 	.clk(clk),
-	.rst_n(reset_n),
-	.i_pixel(dilation_grey_detect),
+	.rst_n(rst_n),
+	.i_pixel(dilation_grey_detect_8),
 	.i_pixel_valid(valid_in), // Both in_valid and packet video
 	.o_convolved_data(grey_edge_detect)
 );
-
-							
+//sobel_filter3x3 sobelfilter_yellow (
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(dilation_yellow_detect_8),
+//	.i_pixel_valid(valid_in), // Both in_valid and packet video
+//	.o_convolved_data(yellow_edge_detect)
+//);					
 endmodule

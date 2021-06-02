@@ -313,7 +313,13 @@ int main()
 			   dist = estimate_dist(centroid_y2);
 			   printf("Dist: %d, Angle: %d", dist, angle);
 			   updateColour(0x40000,  1, angle, dist, i);
-		   } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+		   } else if (w2 < 150) {
+			   printf("Decided on Colour 2 assume reflection: ");
+			   angle = estimate_angle(centroid_x2);
+			   dist = estimate_dist(centroid_y2 - h2/4);
+			   printf("Dist: %d, Angle: %d", dist, angle);
+			   updateColour(0x40000,  1, angle, dist, i);
+       	   } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
 			   printf("Decided on Colour 1: ");
 			   angle = estimate_angle(centroid_x1);
 			   dist = estimate_dist(centroid_y1);

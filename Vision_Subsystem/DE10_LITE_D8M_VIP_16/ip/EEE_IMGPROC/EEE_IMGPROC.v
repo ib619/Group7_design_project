@@ -86,7 +86,8 @@ reg packet_video;
 wire [7:0]   red_out, green_out, blue_out;
 wire [7:0]   red_inter_out,green_inter_out,blue_inter_out;
 wire [7:0]   grey;
-wire         red_detect, green_detect, blue_detect, grey_detect, yellow_detect, grey_edge_detect;
+wire         red_detect, green_detect, blue_detect, grey_detect, yellow_detect;
+wire         red_edge_detect, blue_edge_detect, green_edge_detect, grey_edge_detect, yellow_edge_detect;
 wire         in_valid, out_ready, sop_in, eop_in, valid_rgbhsv;
 wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
@@ -203,7 +204,11 @@ colour_threshold c_th (
     .blue_detect(blue_detect),
     .grey_detect(grey_detect),
     .yellow_detect(yellow_detect),
-	 .grey_edge_detect(grey_edge_detect)
+	 .red_edge_detect(red_edge_detect),
+	 .blue_edge_detect(blue_edge_detect),
+	 .green_edge_detect(green_edge_detect),
+	 .grey_edge_detect(grey_edge_detect),
+	 .yellow_edge_detect(yellow_edge_detect)
 //	 .pixel_addr_out(pixel_addr_obstacle)
 );
 
@@ -217,9 +222,8 @@ assign grey = green_out[7:1] + red_out[7:2] + blue_out[7:2]; //Grey = green/2 + 
 assign obstacle_high  = red_detect ? {8'hff, 8'h0, 8'h0} : 
                         blue_detect ? {8'hCC, 8'hff, 8'hff} :
                         green_detect ? {8'h0, 8'hff, 8'h0} :
-                        grey_detect ? {8'h0, 8'h33, 8'h66} :
+                        grey_detect ? {8'd223, 8'd0, 8'd254} :
                         yellow_detect ? {8'hff, 8'hff, 8'h0} :
-								(edge_detection_mode & grey_edge_detect)? {8'd255, 8'd0, 8'd0} :
                         {grey, grey, grey};
 
 // Show bounding box
@@ -260,11 +264,19 @@ assign new_image = (r_bb_active|r2_bb_active) ? {8'hff, 8'h0, 8'h0} :
                    (gr_bb_active|gr2_bb_active) ? {8'd223, 8'd0, 8'd254}:
                    (y_bb_active|y2_bb_active) ? {8'hff, 8'hff, 8'h0} :
                    obstacle_high;
-
+						 
+//Show edges
+wire [23:0] edges;
+//assign edges   = red_edge_detect ? {8'hff, 8'h0, 8'h0} : 
+//                 blue_edge_detect ? {8'hCC, 8'hff, 8'hff} :
+//					  green_edge_detect ? {8'h0, 8'hff, 8'h0} :
+assign edges   =  grey_edge_detect ? {8'd223, 8'd0, 8'd254} :
+//                 yellow_edge_detect ? {8'hff, 8'hff, 8'h0} :
+                 {8'd0, 8'd0, 8'd0};
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? new_image : {red_out,green_out,blue_out};
+assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? ((edge_detection_mode) ? edges: new_image ): {red_out,green_out,blue_out};
 
 
 //Find first and last red pixels

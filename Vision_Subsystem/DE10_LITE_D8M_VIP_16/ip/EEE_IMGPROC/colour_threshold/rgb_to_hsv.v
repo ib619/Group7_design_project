@@ -12,6 +12,11 @@ module  rgb_to_hsv(
     output reg                    valid_out,
     input                         sop,
     input                         valid_in
+	 //Testing
+//	 output [13:0]  top60_check,
+//	 output [13:0]  quotient_check,
+//	 output [7:0]   cdiff_reg_check,
+//	 output [13:0]  quotient_before
 );
 
 
@@ -29,11 +34,14 @@ wire b_more_g;
 reg [7:0] division;//division
 reg [8:0] hsv_h_interm;
 wire [7:0] hsv_s_interm;
-
+wire [15:0] quotient_s;
+wire [13:0] quotient_h;
 
 // Pipeline Registers
 reg [7:0] cmax_reg; 
+reg [7:0] cmax_reg1; 
 reg [7:0] cdiff_reg;
+reg [7:0] cdiff_reg1;
 
 reg r_more_g_reg1;
 reg r_more_b_reg1;
@@ -56,6 +64,11 @@ reg [21:0] pixel_addr2;
 reg valid1;
 reg valid2;
 
+//Testing
+assign top60_check = top_60;
+assign cdiff_reg_check = cdiff_reg;
+assign quotient_check = quotient_s;
+
 
 wire valid = ~sop & valid_in;
 assign r_more_g = (rgb_r > rgb_g)? 1'b1:1'b0; 
@@ -66,7 +79,6 @@ assign b_more_g = (rgb_b > rgb_g)? 1'b1:1'b0;
 assign cmax = (r_more_g & r_more_b) ? rgb_r : (g_more_b & ~r_more_g) ? rgb_g : rgb_b; 
 assign cmin = (~r_more_g & ~r_more_b) ? rgb_r : (g_more_b & r_more_b) ? rgb_b : rgb_g;
 assign cdiff = cmax - cmin;
-
 
 always @(*)
     begin
@@ -92,7 +104,9 @@ always@(posedge clk)
     begin
         if (~rst_n) begin
             cmax_reg <= 8'd0;
+				cmax_reg1 <= 8'd0;
             cdiff_reg <= 8'd0;
+				cdiff_reg1 <= 8'd0;
             r_more_g_reg1 <= 1'b0;
             r_more_b_reg1 <= 1'b0;
             g_more_b_reg1 <= 1'b0;
@@ -109,7 +123,9 @@ always@(posedge clk)
             end
         else begin
             cmax_reg <= cmax;
+				cmax_reg1 <= cmax_reg;
             cdiff_reg <= cdiff;
+				cdiff_reg1 <= cdiff_reg;
             r_more_g_reg1 <= r_more_g;
             r_more_b_reg1 <= r_more_b;
             g_more_b_reg1 <= g_more_b;
@@ -127,41 +143,63 @@ always@(posedge clk)
                 
             end
     end
-    
+
+
+assign quotient_before = $signed(top_60)/cdiff_reg;
+
+divider1	divide_h (
+	.aclr ( ~rst_n ),
+	.clken ( valid1 ),
+	.clock ( clk ),
+	.denom ( cdiff_reg ),
+	.numer ( top_60 ),
+	.quotient ( quotient_h )
+	);
+
+	
 always @(*)
     begin
         // Max = R
         if (r_more_g_reg1 & r_more_b_reg1)
             begin
-                division = (cdiff_reg == 8'd0) ?  8'd240: $signed(top_60) / cdiff_reg;
+                division = (cdiff_reg1 == 8'd0) ?  8'd240: quotient_h;
             end
         // Max = G
         else if (g_more_b_reg1 & ~r_more_g_reg1) 
             begin
-                division = (cdiff_reg == 8'd0) ?  8'd240:$signed(top_60) / cdiff_reg;
+                division = (cdiff_reg1 == 8'd0) ?  8'd240: quotient_h;
             end
         // Max = B
         else if (b_more_g_reg1 ) 
             begin
-                division = (cdiff_reg == 8'd0) ? 8'd240: $signed(top_60) / cdiff_reg;
+                division = (cdiff_reg1 == 8'd0) ? 8'd240: quotient_h;
             end
         else division = 8'b0;
     end
 
-assign hsv_s_interm =  (cmax_reg == 8'd0)? 8'd0: {cdiff_reg[7:0],8'b00000000} / cmax_reg ;
+divider2	divide_s (
+	.aclr ( ~rst_n ),
+	.clken ( valid1 ),
+	.clock ( clk ),
+	.denom ( cmax_reg ),
+	.numer ( {cdiff_reg[7:0],8'b00000000} ),
+	.quotient ( quotient_s )
+);
+
+assign hsv_s_interm =  (cmax_reg1 == 8'd0)? 8'd0: quotient_s ;
 
 always@(posedge clk) 
     begin
         if (~rst_n) begin
-            division_reg <= 8'd0;
-            hsv_s_interm2 <= 8'd0;
+//            division_reg <= 8'd0;
+//            hsv_s_interm2 <= 8'd0;
             hsv_v_interm <= 8'd0;
             pixel_addr2 <= 20'd0;
             valid2 <= 1'b0;
             end
         else begin
-            division_reg <= division;	
-            hsv_s_interm2 <= hsv_s_interm;
+//            division_reg <= division;	
+//            hsv_s_interm2 <= hsv_s_interm;
             hsv_v_interm <= cmax_reg;	
             pixel_addr2 <= pixel_addr1;
             valid2 <= valid1;
@@ -173,17 +211,17 @@ always @(*)
         // Max = R
         if (r_more_g_reg2 & r_more_b_reg2)
             begin
-                hsv_h_interm = (g_more_b_reg2) ? division_reg : 9'd360 - division_reg;
+                hsv_h_interm = (g_more_b_reg2) ? division : 9'd360 - division;
             end
         // Max = G
         else if (g_more_b_reg2 & ~r_more_g_reg2) 
             begin
-                hsv_h_interm = (r_more_b_reg2) ? 9'd120 - division_reg  :division_reg + 9'd120;
+                hsv_h_interm = (r_more_b_reg2) ? 9'd120 - division  :division + 9'd120;
             end
         // Max = B
         else if (b_more_g_reg2)
             begin
-                hsv_h_interm = (r_more_g_reg2) ? division_reg + 9'd240 : 9'd240 - division_reg ;
+                hsv_h_interm = (r_more_g_reg2) ? division + 9'd240 : 9'd240 - division ;
 
             end
         else hsv_h_interm = 9'd0;
@@ -199,7 +237,7 @@ always@(posedge clk)
         end
         else begin
             hsv_h <= hsv_h_interm;	
-            hsv_s <= hsv_s_interm2;
+            hsv_s <= hsv_s_interm;
             hsv_v <= hsv_v_interm;
             pixel_addr_out <= pixel_addr2;
             valid_out <= valid2;

@@ -105,7 +105,7 @@ always @(posedge clk)
 wire pixelEnable;
 assign pixelEnable = ~(pixelRowCounter == 0 | pixelRowCounter == width - 1 | data_ready | (pixelCounter > width * (height-2) & pixelCounter < width * height ));	
 
-line_buffer3x3_1bit lbuff1 (
+line_buffer3x3_8bit lbuff1 (
 	.clock ( clk ),
 	.clken ( i_pixel_valid ),
 	.aclr ( ~rst_n), 
