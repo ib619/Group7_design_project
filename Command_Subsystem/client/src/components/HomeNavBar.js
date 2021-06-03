@@ -17,7 +17,7 @@ const HomeNavBar = (props) => {
       <Navbar bg="dark" variant="dark" className="justify-content-between">
         <Container>
           <Navbar.Brand href="/">
-            <img className="img" src={Rover} />
+            <img className="img" alt="roverlogo" src={Rover} />
           </Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Link href="/">Home</Nav.Link>
