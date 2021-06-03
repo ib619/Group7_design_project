@@ -77,6 +77,7 @@ const Map = () => {
             Array.from(path).map((data, i) => <Point key={i} coords={data} />)}
         </MapInteractionCSS>
       </Border>
+
       <Coords>
         x: {pos.x}, y: {pos.y}, direction: {pos.heading}˚
       </Coords>

@@ -15,3 +15,19 @@ The local "config.h" file can be created using the "config_template.h" file prov
 4) MQTT_PORT: port of MQTT broker (defaults to 1883)
 5) MQTT_USER: username for MQTT broker (can leave as default)
 6) MQTT_PASSWORD: password for MQTT broker (can leave as default)
+<br>
+### FPGA LED Indicators
+LEDR 9: WiFi Connected
+LEDR 8: MQTT Broker Connected
+LEDR 7: Main Loop entry
+LEDR 6: command execution status (on: busy, off: free)
+LEDR 2: drive_mode 2 engaged
+LEDR 1: drive_mode 1 engaged
+LEDR 0: collision avoidance routine engaged
+
+(if LEDR 1 and LEDR 2 are off, drive_mode is 0)
+<br>
+### Arduino-ESP32 API Master Source files
+Drive: Control_Subsystem/Arduino-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)
+
+Energy: Control_Subsystem/Energy-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)

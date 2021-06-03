@@ -153,14 +153,15 @@ class MqttServer:
     def handle_obstacle(self):
         while True:
             # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
-            time.sleep(5)
+            time.sleep(1)
             db = create_connection('db/marsrover.db')
             # data = select_top_obstacle(db, 5, self.rover_id)
 
             # clean up data for easy reading on react side
             res = []
             for _, item in self.obstacle_record.items():
-                for i, data in enumerate(item):
+                item_copy = list(item).copy()
+                for i, data in enumerate(item_copy):
                     res.append(data+[i+1])
                     if i == 0:
                         create_obstacle_record(db, data+[self.rover_id])

@@ -18,6 +18,7 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
         if(client->connect("RoverESP32", mqtt_user, mqtt_password)) {
             client->subscribe("drive/discrete");
             client->subscribe("drive/t2c");
+            client->subscribe("reset");
         }
         else    {
             // do nothing?
@@ -28,9 +29,9 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
 
 Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index) {
     Obstacle tmp;
-    int angle=rover->rover_heading + co.angle;
-    tmp.x = (co.distance*10*sin(angle)) + rover->x_axis;
-    tmp.y = (co.distance*10*cos(angle)) + rover->y_axis;
+    int angle=rover->rover_heading + co.angle;      // this is in DEGREES, cos/sin function takes in RADIANS
+    tmp.x = (co.distance*10*sin(angle*DEG_TO_RAD)) + rover->x_axis;
+    tmp.y = (co.distance*10*cos(angle*DEG_TO_RAD)) + rover->y_axis;
     switch(index)   {
         case 0:
             tmp.colour="red";
@@ -70,12 +71,13 @@ int publishPosition(PubSubClient *client, RoverDataStructure *data)   {
     }
 }
 
-int publishBatteryStatus(PubSubClient *client, RoverDataStructure *data)   {
+int publishBatteryStatus(PubSubClient *client, int cell, int soc, int soh, int state)   {
     StaticJsonDocument<256> doc;
     JsonObject obj = doc.to<JsonObject>();
-    obj["battery_level"] = data->battery_level;
-    obj["battery_soh"] = data->battery_SOH;
-    obj["battery_state"] = data->battery_state;
+    obj["cell"] = cell;
+    obj["battery_level"] = soc;
+    obj["battery_soh"] = soh;
+    obj["battery_state"] = state;
     char buffer[256];
     size_t n = serializeJson(doc, buffer);
     if(client->publish("battery/status", buffer, n)==true)  {

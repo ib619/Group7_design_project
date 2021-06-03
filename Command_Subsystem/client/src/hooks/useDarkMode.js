@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const useDarkMode = () => {
+const useDarkMode = () => {
   const [theme, setTheme] = useState("light");
   const [mountedComponent, setMountedComponent] = useState(false);
 
@@ -21,3 +21,5 @@ export const useDarkMode = () => {
 
   return [theme, themeToggler, mountedComponent];
 };
+
+export default useDarkMode;
