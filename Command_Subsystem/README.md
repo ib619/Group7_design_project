@@ -54,3 +54,15 @@ allow_anonymous true
 3. Backend/Database:
     - Backend database using sql hosted on AWS using Docker containers
     - MQTT protocol for communication between esp32, backend and frontend
+
+
+## How to set up AWS server
+1. Create EC2 Ubuntu Server and open the following ports:
+    - Custom TCP 8080 (Used for websockets with React, May not need to open this if React is on EC2 itself)
+    - Cusom TCP 1883 (Used for MQTT)
+    - SSH 22
+2. After opening the port and setting up the EC2 instance, ssh into the instance
+3. Run this command to build the docker image
+`sudo docker build . -t mars_server:1.0 --file Dockerfile`
+4. Run this command to start up the docker image and link docker ports to server ports
+`sudo docker run -it --rm -p 0.0.0.0:1883:1883 -p 0.0.0.0:8080:8080/tcp mars_server:1.0`
