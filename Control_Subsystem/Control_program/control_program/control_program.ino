@@ -128,6 +128,7 @@ void loop() {
 
         busyFlag=rover.alert;
         fpga.writeLED(6,busyFlag);
+        fpga.writeLED(5,rover.alert);
       }
 
       if(energy.fetchData())  { //check if data available from Energy arduino
@@ -233,6 +234,7 @@ void loop() {
 //        }
 //      }
       if(updateFlag==1) { // send data to drive arduino
+        fpga.writeLED(4,rover.reset);
         if(rover.speed==0)  {
           rover.drive_mode=0;
         }
