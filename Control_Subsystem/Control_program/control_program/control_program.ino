@@ -146,7 +146,7 @@ void loop() {
         obj=fpga.readByIndex(i);
         if(obj.detected>0)  {
           if(obj.distance>0&&collisionFlag==0&&obj.distance<COLLISION_THRESHOLD)  {
-            collisionFlag=1;
+//            collisionFlag=1;
           }
           if(vision_update) {
             Obstacle obs = convertObjectToObstacle(&rover, obj, i);
@@ -165,7 +165,7 @@ void loop() {
       }
 
       mqtt.loop();    //check for messages from Command
-      if(collisionFlag>0) {   //collision detected
+      if(0) {   //collision detected
         switch(collisionFlag) {
           case 1:
             fpga.writeLED(0,1);
