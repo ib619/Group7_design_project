@@ -30,8 +30,8 @@ module EEE_IMGPROC(
 	 erosion_mode,
 	 dilation_mode,
 	 gaussian_mode,
-	 edge_detection_mode
-
+	 edge_detection_mode,
+	 median_mode
 );
 
 // global clock & reset
@@ -66,7 +66,7 @@ input   erosion_mode;
 input   dilation_mode;
 input   gaussian_mode;
 input   edge_detection_mode;
-
+input   median_mode;
 ////////////////////////////////////////////////////////////////////////
 
 parameter IMAGE_W = 11'd640;
@@ -79,12 +79,16 @@ parameter BB_COL_DEFAULT = 24'h00ff00;
 wire [7:0]   red_out1, green_out1, blue_out1;
 wire         in_valid1, out_ready1, sop_in1, eop_in1;
 wire [7:0]   red_gaussian, green_gaussian, blue_gaussian;
-wire [7:0]   red_out1, green_out1, blue_out1;
+wire [7:0]   red_median, green_median, blue_median;
+reg packet_video1;
+wire [7:0]   red_in1, green_in1, blue_in1;
 
+reg packet_video;
 wire [7:0]   red_out, green_out, blue_out;
 wire [7:0]   red_inter_out,green_inter_out,blue_inter_out;
 wire [7:0]   grey;
 wire         red_detect, green_detect, blue_detect, grey_detect, yellow_detect;
+wire         red_edge_detect, blue_edge_detect, green_edge_detect, grey_edge_detect, yellow_edge_detect;
 wire         in_valid, out_ready, sop_in, eop_in, valid_rgbhsv;
 wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
@@ -114,14 +118,32 @@ gaussian_filter5x5 gaussianfilter(
 	.i_pixel_red(red_out1),
    .i_pixel_blue(blue_out1),
    .i_pixel_green(green_out1),
-	.i_pixel_valid(in_valid & ~sop_in1 & packet_video), // Both in_valid and packet video
+	.i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
 	.o_convolved_data_red(red_gaussian),
 	.o_convolved_data_blue(blue_gaussian),
 	.o_convolved_data_green(green_gaussian)
 );
 
-assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? new_image : {red_out,green_out,blue_out};
+median_filter3x3 medianfilter(
+	.clk(clk),
+	.rst_n(reset_n),
+	.i_pixel_red(red_out1),
+   .i_pixel_blue(blue_out1),
+   .i_pixel_green(green_out1),
+	.i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
+	.o_convolved_data_red(red_median),
+	.o_convolved_data_blue(blue_median),
+	.o_convolved_data_green(green_median)
+);
 
+always@(posedge clk) begin
+    if (sop_in1) begin
+        packet_video1 <= (blue_out1[3:0] == 3'h0);
+    end
+end
+assign {red_in1, green_in1, blue_in1} = (gaussian_mode & ~sop_in1 & packet_video1) ? {red_gaussian, green_gaussian, blue_gaussian} : 
+													 (median_mode & ~sop_in1 & packet_video1) ? {red_median, green_median, blue_median} : 
+													 {red_out1,green_out1,blue_out1};
 
 ////////////////////////////////////////////////////////////////////////
 //Streaming registers to buffer video signal
@@ -133,11 +155,31 @@ STREAM_REG #(.DATA_WIDTH(26)) in_reg2 (
     .data_out({red_out,green_out,blue_out,sop_in,eop_in}),
     .ready_in(out_ready),
     .valid_in(in_valid1),
-    .data_in({red_gaussian, green_gaussian, blue_gaussian, sop_in1,eop_in1})
+    .data_in({red_in1, green_in1, blue_in1, sop_in1,eop_in1})
 );
 
 ///////////////////////////////////////////////////////////////////////
 //RGB to HSV
+
+//Count valid pixels to get the image coordinates. Reset and detect packet type on Start of Packet.
+reg [10:0] x, y;
+always@(posedge clk) begin
+    if (sop_in) begin
+        x <= 11'h0;
+        y <= 11'h0;
+        packet_video <= (blue_out[3:0] == 3'h0);
+    end
+    else if (in_valid) begin
+        if (x == IMAGE_W-1) begin
+            x <= 11'h0;
+            y <= y + 11'h1;
+        end
+        else begin
+            x <= x + 11'h1;
+        end
+    end
+end
+
 
 rgb_to_hsv rgb_hsv(
     .clk(clk),
@@ -149,8 +191,7 @@ rgb_to_hsv rgb_hsv(
     .hsv_h(hue),
     .hsv_s(saturation),
     .hsv_v(value_b),
-    .sop(sop_in),
-    .valid_in(in_valid),
+    .valid_in(in_valid & ~sop_in & packet_video),
     .valid_out(valid_rgbhsv),
     .pixel_addr_out(pixel_addr_interm)
 );
@@ -176,19 +217,26 @@ colour_threshold c_th (
     .green_detect(green_detect),
     .blue_detect(blue_detect),
     .grey_detect(grey_detect),
-    .yellow_detect(yellow_detect)
+    .yellow_detect(yellow_detect),
+	 .red_edge_detect(red_edge_detect),
+	 .blue_edge_detect(blue_edge_detect),
+	 .green_edge_detect(green_edge_detect),
+	 .grey_edge_detect(grey_edge_detect),
+	 .yellow_edge_detect(yellow_edge_detect)
 //	 .pixel_addr_out(pixel_addr_obstacle)
 );
 
-// Find boundary of cursor box
 
+							
+							
+// Find boundary of cursor box
 // Highlight detected areas
 wire [23:0] obstacle_high;
 assign grey = green_out[7:1] + red_out[7:2] + blue_out[7:2]; //Grey = green/2 + red/4 + blue/4
 assign obstacle_high  = red_detect ? {8'hff, 8'h0, 8'h0} : 
                         blue_detect ? {8'hCC, 8'hff, 8'hff} :
                         green_detect ? {8'h0, 8'hff, 8'h0} :
-                        grey_detect ? {8'h0, 8'h33, 8'h66} :
+                        grey_detect ? {8'd223, 8'd0, 8'd254} :
                         yellow_detect ? {8'hff, 8'hff, 8'h0} :
                         {grey, grey, grey};
 
@@ -230,31 +278,20 @@ assign new_image = (r_bb_active|r2_bb_active) ? {8'hff, 8'h0, 8'h0} :
                    (gr_bb_active|gr2_bb_active) ? {8'd223, 8'd0, 8'd254}:
                    (y_bb_active|y2_bb_active) ? {8'hff, 8'hff, 8'h0} :
                    obstacle_high;
-
+						 
+//Show edges
+wire [23:0] edges;
+//assign edges   = red_edge_detect ? {8'hff, 8'h0, 8'h0} : 
+//                 blue_edge_detect ? {8'hCC, 8'hff, 8'hff} :
+//					  green_edge_detect ? {8'h0, 8'hff, 8'h0} :
+assign edges   =  grey_edge_detect ? {8'd223, 8'd0, 8'd254} :
+//                 yellow_edge_detect ? {8'hff, 8'hff, 8'h0} :
+                 {8'd0, 8'd0, 8'd0};
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? new_image : {red_out,green_out,blue_out};
+assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? ((edge_detection_mode) ? edges: new_image ): {red_out,green_out,blue_out};
 
-//Count valid pixels to get the image coordinates. Reset and detect packet type on Start of Packet.
-reg [10:0] x, y;
-reg packet_video;
-always@(posedge clk) begin
-    if (sop_in) begin
-        x <= 11'h0;
-        y <= 11'h0;
-        packet_video <= (blue_out[3:0] == 3'h0);
-    end
-    else if (in_valid) begin
-        if (x == IMAGE_W-1) begin
-            x <= 11'h0;
-            y <= y + 11'h1;
-        end
-        else begin
-            x <= x + 11'h1;
-        end
-    end
-end
 
 //Find first and last red pixels
 reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
@@ -433,55 +470,55 @@ reg [7:0] frame_count;
 always@(posedge clk) begin
     if (eop_in & in_valid & packet_video) begin  //Ignore non-video packets
         //Latch edges for display overlay on next frame
-        r_left <= r_x_min;
-        r_right <= r_x_max;
-        r_top <= r_y_min;
-        r_bottom <= r_y_max;
+        r_left <= (r_x_min == IMAGE_W-11'h1) ? r_x_min: r_x_min - 11'd7;
+        r_right <= (r_x_max == 0) ? r_x_max : r_x_max - 11'd7; // 3 + 2 + 2 
+        r_top <= (r_y_min == IMAGE_H-11'h1) ? r_y_min : r_y_min - 11'd4 ; // 2 + 2
+        r_bottom <= (r_y_max == 0) ? r_y_max : r_y_max - 11'd4;
 
-        r_left2 <= r_x_min2;
-        r_right2 <= r_x_max2;
-        r_top2 <= r_y_min2;
-        r_bottom2 <= r_y_max2;
-
-        g_left <= g_x_min;
-        g_right <= g_x_max;
-        g_top <= g_y_min;
-        g_bottom <= g_y_max;	
-        
-        g_left2 <= g_x_min2;
-        g_right2 <= g_x_max2;
-        g_top2 <= g_y_min2;
-        g_bottom2 <= g_y_max2;	
-
-        b_left <= b_x_min;
-        b_right <= b_x_max;
-        b_top <= b_y_min;
-        b_bottom <= b_y_max;	
-
-        b_left2 <= b_x_min2;
-        b_right2 <= b_x_max2;
-        b_top2 <= b_y_min2;
-        b_bottom2 <= b_y_max2;	
+        r_left2 <= (r_x_min2 == IMAGE_W-11'h1) ? r_x_min2: r_x_min2 - 11'd7;
+        r_right2 <= (r_x_max2 == 0) ? r_x_max2 : r_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        r_top2 <= (r_y_min2 == IMAGE_H-11'h1) ? r_y_min2 : r_y_min2 - 11'd4 ; //4 + 2 + 2
+        r_bottom2 <= (r_y_max2 == 0) ? r_y_max2 : r_y_max2 - 11'd4;
             
-        gr_left <= gr_x_min;
-        gr_right <= gr_x_max;
-        gr_top <= gr_y_min;
-        gr_bottom <= gr_y_max;	
+        g_left <= (g_x_min == IMAGE_W-11'h1) ? g_x_min: g_x_min - 11'd7;
+        g_right <= (g_x_max == 0) ? g_x_max : g_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        g_top <= (g_y_min == IMAGE_H-11'h1) ? g_y_min : g_y_min - 11'd4 ; //4 + 2 + 2
+        g_bottom <= (g_y_max == 0) ? g_y_max : g_y_max - 11'd4;
 
-        gr_left2 <= gr_x_min2;
-        gr_right2 <= gr_x_max2;
-        gr_top2 <= gr_y_min2;
-        gr_bottom2 <= gr_y_max2;
-            
-        y_left <= y_x_min;
-        y_right <= y_x_max;
-        y_top <= y_y_min;
-        y_bottom <= y_y_max;
+        g_left2 <= (g_x_min2 == IMAGE_W-11'h1) ? g_x_min2: g_x_min2 - 11'd7;
+        g_right2 <= (g_x_max2 == 0) ? g_x_max2 : g_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        g_top2 <= (g_y_min2 == IMAGE_H-11'h1) ? g_y_min2 : g_y_min2 - 11'd4 ; //4 + 2 + 2
+        g_bottom2 <= (g_y_max2 == 0) ? g_y_max2 : g_y_max2 - 11'd4;
 
-        y_left2 <= y_x_min2;
-        y_right2 <= y_x_max2;
-        y_top2 <= y_y_min2;
-        y_bottom2 <= y_y_max2;	
+        b_left <= (b_x_min == IMAGE_W-11'h1) ? b_x_min: b_x_min - 11'd7;
+        b_right <= (b_x_max == 0) ? b_x_max : b_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        b_top <= (b_y_min == IMAGE_H-11'h1) ? b_y_min : b_y_min - 11'd4 ; //4 + 2 + 2
+        b_bottom <= (b_y_max == 0) ? b_y_max : b_y_max - 11'd4;
+
+        b_left2 <= (b_x_min2 == IMAGE_W-11'h1) ? b_x_min2: b_x_min2 - 11'd7;
+        b_right2 <= (b_x_max2 == 0) ? b_x_max2 : b_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        b_top2 <= (b_y_min2 == IMAGE_H-11'h1) ? b_y_min2 : b_y_min2 - 11'd4 ; //4 + 2 + 2
+        b_bottom2 <= (b_y_max2 == 0) ? b_y_max2 : b_y_max2 - 11'd4;
+	
+        gr_left <= (gr_x_min == IMAGE_W-11'h1) ? gr_x_min: gr_x_min - 11'd7;
+        gr_right <= (gr_x_max == 0) ? gr_x_max : gr_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        gr_top <= (gr_y_min == IMAGE_H-11'h1) ? gr_y_min : gr_y_min - 11'd4 ; //4 + 2 + 2
+        gr_bottom <= (gr_y_max == 0) ? gr_y_max : gr_y_max - 11'd4;
+
+        gr_left2 <= (gr_x_min2 == IMAGE_W-11'h1) ? gr_x_min2: gr_x_min2 - 11'd7;
+        gr_right2 <= (gr_x_max2 == 0) ? gr_x_max2 : gr_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        gr_top2 <= (gr_y_min2 == IMAGE_H-11'h1) ? gr_y_min2 : gr_y_min2 - 11'd4 ; //4 + 2 + 2
+        gr_bottom2 <= (gr_y_max2 == 0) ? gr_y_max2 : gr_y_max2 - 11'd4;
+
+        y_left <= (y_x_min == IMAGE_W-11'h1) ? y_x_min: y_x_min - 11'd7;
+        y_right <= (y_x_max == 0) ? y_x_max : y_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        y_top <= (y_y_min == IMAGE_H-11'h1) ? y_y_min : y_y_min - 11'd4 ; //4 + 2 + 2
+        y_bottom <= (y_y_max == 0) ? y_y_max : y_y_max - 11'd4;
+
+        y_left2 <= (y_x_min2 == IMAGE_W-11'h1) ? y_x_min2: y_x_min2 - 11'd7;
+        y_right2 <= (y_x_max2 == 0) ? y_x_max2 : y_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        y_top2 <= (y_y_min2 == IMAGE_H-11'h1) ? y_y_min2 : y_y_min2 - 11'd4 ; //4 + 2 + 2
+        y_bottom2 <= (y_y_max2 == 0) ? y_y_max2 : y_y_max2 - 11'd4;
 
         bright_pix_count_reg <= bright_pix_count;
             

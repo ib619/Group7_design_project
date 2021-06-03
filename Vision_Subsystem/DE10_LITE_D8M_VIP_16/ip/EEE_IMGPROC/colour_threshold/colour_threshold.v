@@ -32,24 +32,24 @@ assign grey_detect = (dilation_mode) ? dilation_grey_detect: (erosion_mode) ? er
 assign yellow_detect = (dilation_mode) ? dilation_yellow_detect: (erosion_mode) ? erosion_yellow_detect: pf_yellow_detect;
 
 
-assign pf_red_detect = (hue < 8'd30) & (hue > 8'd0)
-                        & (saturation < 8'd255) & ( saturation > 8'd110) 
-                        & (value_b < 8'd255 ) & ( value_b > 8'd30);
+assign pf_red_detect = (hue < 8'd25) & (hue > 8'd0)
+                        & (saturation < 8'd200) & ( saturation > 8'd70) 
+                        & (value_b < 8'd255 ) & ( value_b > 8'd0);
 
 
 assign pf_green_detect = (hue < 8'd135) & (hue > 8'd110)
                         & (saturation < 8'd180) & ( saturation > 8'd100) 
-                        & (value_b < 8'd180 ) & ( value_b > 8'd80);
+                        & (value_b < 8'd220 ) & ( value_b > 8'd40);
                             
 
-assign pf_blue_detect = (hue < 8'd220) & (hue > 8'd150)
+assign pf_blue_detect = (hue < 8'd220) & (hue > 8'd140)
                         & (saturation < 8'd255) & ( saturation > 8'd70) 
-                        & (value_b < 8'd255 ) & ( value_b > 8'd60);
+                        & (value_b < 8'd255 ) & ( value_b > 8'd0);
 
 
-assign pf_grey_detect = ((hue < 8'd90) & (hue > 8'd40)
+assign pf_grey_detect = ((hue < 8'd130) & (hue > 8'd40)
                         & (saturation < 8'd40) & ( saturation > 8'd0) 
-                        & (value_b < 8'd65) & ( value_b > 8'd0)) | 
+                        & (value_b < 8'd80) & ( value_b > 8'd0)) | 
 								((hue < 8'd220) & (hue > 8'd140)
                         & (saturation < 8'd70) & ( saturation > 8'd0) 
                         & (value_b < 8'd60) & ( value_b > 8'd30));
@@ -58,29 +58,32 @@ assign pf_yellow_detect = (hue < 8'd50) & (hue > 8'd30)
                         & (saturation < 8'd255) & ( saturation > 8'd120) 
                         & (value_b < 8'd255 ) & ( value_b > 8'd60);
 
-
-//assign pf_red_detect = (hue < 8'd40) & (hue > 8'd0)
-//                        & (saturation < 8'd220) & ( saturation > 8'd110) 
-//                        & (value_b < 8'd255 ) & ( value_b > 8'd120);
+//assign pf_red_detect = (hue < 8'd30) & (hue > 8'd0)
+//                        & (saturation < 8'd255) & ( saturation > 8'd110) 
+//                        & (value_b < 8'd255 ) & ( value_b > 8'd30);
 //
-//assign pf_green_detect = (hue < 8'd140) & (hue > 8'd70)
-//                        & (saturation < 8'd230) & ( saturation > 8'd130) 
-//                        & (value_b < 8'd200 ) & ( value_b > 8'd60);
+//
+//assign pf_green_detect = (hue < 8'd135) & (hue > 8'd110)
+//                        & (saturation < 8'd180) & ( saturation > 8'd100) 
+//                        & (value_b < 8'd180 ) & ( value_b > 8'd80);
 //                            
 //
-//assign pf_blue_detect = (hue < 8'd200) & (hue > 8'd100)
-//                        & (saturation < 8'd135) & ( saturation > 8'd55) 
-//                        & (value_b < 8'd200 ) & ( value_b > 8'd50);
+//assign pf_blue_detect = (hue < 8'd220) & (hue > 8'd150)
+//                        & (saturation < 8'd255) & ( saturation > 8'd70) 
+//                        & (value_b < 8'd255 ) & ( value_b > 8'd60);
 //
 //
-//assign pf_grey_detect = (hue < 8'd100) & (hue > 8'd0)
-//                        & (saturation < 8'd130) & ( saturation > 8'd20) 
-//                        & (value_b < 8'd100) & ( value_b > 8'd20);
+//assign pf_grey_detect = ((hue < 8'd90) & (hue > 8'd40)
+//                        & (saturation < 8'd40) & ( saturation > 8'd0) 
+//                        & (value_b < 8'd65) & ( value_b > 8'd0)) | 
+//								((hue < 8'd220) & (hue > 8'd140)
+//                        & (saturation < 8'd70) & ( saturation > 8'd0) 
+//                        & (value_b < 8'd60) & ( value_b > 8'd30));
 //                        
-//
-//assign pf_yellow_detect = (hue < 8'd80) & (hue > 8'd20)
+//assign pf_yellow_detect = (hue < 8'd50) & (hue > 8'd30)
 //                        & (saturation < 8'd255) & ( saturation > 8'd120) 
-//                        & (value_b < 8'd200 ) & ( value_b > 8'd100);
+//                        & (value_b < 8'd255 ) & ( value_b > 8'd60);
+
 
 ///////////////////////////////////////////////////////////////////////
 //Morph Erosion Filter
@@ -192,13 +195,13 @@ wire [7:0] dilation_yellow_detect_8 = (dilation_yellow_detect) ? 8'd255 : 8'd0;
 //	.i_pixel_valid(valid_in), // Both in_valid and packet video
 //	.o_convolved_data(blue_edge_detect)
 //);
-sobel_filter3x3 sobelfilter_grey (
-	.clk(clk),
-	.rst_n(rst_n),
-	.i_pixel(dilation_grey_detect_8),
-	.i_pixel_valid(valid_in), // Both in_valid and packet video
-	.o_convolved_data(grey_edge_detect)
-);
+//sobel_filter3x3 sobelfilter_grey (
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(dilation_grey_detect_8),
+//	.i_pixel_valid(valid_in), // Both in_valid and packet video
+//	.o_convolved_data(grey_edge_detect)
+//);
 //sobel_filter3x3 sobelfilter_yellow (
 //	.clk(clk),
 //	.rst_n(rst_n),

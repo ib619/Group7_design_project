@@ -17,6 +17,9 @@
 		.eee_imgproc_0_conduit_mode_new_signal                  (<connected-to-eee_imgproc_0_conduit_mode_new_signal>),                  //             eee_imgproc_0_conduit_mode.new_signal
 		.eee_imgproc_0_conduit_mode_new_signal_1                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_1>),                //                                       .new_signal_1
 		.eee_imgproc_0_conduit_mode_new_signal_2                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_2>),                //                                       .new_signal_2
+		.eee_imgproc_0_conduit_mode_new_signal_3                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_3>),                //                                       .new_signal_3
+		.eee_imgproc_0_conduit_mode_new_signal_4                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_4>),                //                                       .new_signal_4
+		.eee_imgproc_0_conduit_mode_new_signal_5                (<connected-to-eee_imgproc_0_conduit_mode_new_signal_5>),                //                                       .new_signal_5
 		.i2c_opencores_camera_export_scl_pad_io                 (<connected-to-i2c_opencores_camera_export_scl_pad_io>),                 //            i2c_opencores_camera_export.scl_pad_io
 		.i2c_opencores_camera_export_sda_pad_io                 (<connected-to-i2c_opencores_camera_export_sda_pad_io>),                 //                                       .sda_pad_io
 		.i2c_opencores_mipi_export_scl_pad_io                   (<connected-to-i2c_opencores_mipi_export_scl_pad_io>),                   //              i2c_opencores_mipi_export.scl_pad_io
