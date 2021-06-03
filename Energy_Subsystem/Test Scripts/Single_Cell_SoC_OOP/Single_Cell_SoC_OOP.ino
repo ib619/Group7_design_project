@@ -35,6 +35,7 @@ unsigned int int_count = 0; // a variables to count the interrupts. Used for pro
 
 String dataString;
 float dq1 = 0;
+float SoC_1 = 0;
 
 void setup() {
   //Some General Setup Stuff
@@ -197,6 +198,7 @@ void loop() {
 
     // SoC Measurement
     mySMPS.compute_SOC(state_num, V_Bat, 0, 0, dq1, 0, 0);
+    SoC_1 = mySMPS.get_SOC(1);
     
     dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected

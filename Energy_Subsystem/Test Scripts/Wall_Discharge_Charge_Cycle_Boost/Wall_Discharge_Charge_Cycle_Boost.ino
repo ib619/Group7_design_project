@@ -5,6 +5,15 @@ Cell 1: 1793
 Cell 2: 2000.5
 Cell 3: 1921.75
 
+FOR TESTING BALANCING ONLY: BOOST CHARGING
+  PORT B: 5V Wall Plug, 2.2R resistor
+  PORT A: 3 batteries
+
+Only Charging
+
+Extrapolate output current
+Assuming 100% efficiency (to be safe)
+
 Aim:
 This is a simplified variant of the master file.
 Obtain to allow charging and charging at designated speeds
@@ -110,9 +119,8 @@ float pwm_out;
 
 // Series Batteries Variables
 float V_1 = 0, V_2 = 0, V_3 =0;
+float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0;
 float V_UPLIM = 3590;
-float V_UPBALLIM = 3300;
-float V_LOWBALLIM = 3100;
 float V_LOWLIM = 2500;
 
 // State Machine Stuff
@@ -130,6 +138,10 @@ float q1 = 0, q2 = 0, q3 = 0;
 // Stores the amount of charge added/removed within the past 2 minutes. Reset after.
 float dq1 = 0, dq2 = 0, dq3 = 0;
 
+// Account for difference in current when relay is on;
+bool disc1 = 0, disc2 = 0, disc3 = 0;
+bool relay_on = 0;
+
 void setup() {
 
   //Some General Setup Stuff
@@ -139,6 +151,10 @@ void setup() {
   Serial.begin(9600); // USB Communications
 
   mySMPS.init();
+
+  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
+    SD.remove("BatCycle.csv");
+  }
 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -235,6 +251,7 @@ void loop() {
     V_3 = analogRead(A3)*4.096/1.03;
   } else if (int_count == 126) {
     digitalWrite(9,false);
+    relay_on = 1;
   }
  
   // This still runs every 1 second
@@ -255,55 +272,39 @@ void loop() {
         break;
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        current_ref = 250;
+        current_ref = 1400;
         vref = 0;
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
-            // Start balancing when above V_UPBALLIM (3300mV)
+            next_state = CHARGE;
+            digitalWrite(PIN_YELLED,true);
             // Rationale: Discharge current in the more higher charged cells
-            if (true) { // (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
-                //Connect to discharging relay if a battery is significantly lower  
-                if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                    Serial.println("Cell 1 lowest");
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                    Serial.println("Cell 2 lowest");
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                    Serial.println("Cell 3 lowest");
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                }
+            //Connect to discharging relay if a battery is significantly lower  
+            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                disc1 = 0, disc2 = 1, disc3 = 1;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
+            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                disc1 = 1, disc2 = 0, disc3 = 1;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
+            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
+                disc1 = 1, disc2 = 1, disc3 = 0;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + current_measure/1000;
             } else {
-                digitalWrite(PIN_DISC1, false);
-                digitalWrite(PIN_DISC2, false);
-                digitalWrite(PIN_DISC3, false);
+              disc1 = 0, disc2 = 0, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
             }
+            digitalWrite(PIN_DISC1, disc1);
+            digitalWrite(PIN_DISC2, disc2);
+            digitalWrite(PIN_DISC3, disc3);
         } else { // otherwise go to constant voltage charge
           next_state = CV_CHARGE;
           digitalWrite(PIN_YELLED,false);
@@ -327,38 +328,10 @@ void loop() {
             digitalWrite(PIN_YELLED,false);
             rest_timer++;
         } else { // Move to completion state if battery has already been discharged
-            if (discharged == 1) {
-                next_state = RECAL_DONE;
-                digitalWrite(PIN_YELLED,false);
-                rest_timer = 0;
-            } else { // Otherwise discharge //TODO: Change to slow discharge
-                next_state = SLOW_DISCHARGE;
-                digitalWrite(PIN_YELLED,false);
-                rest_timer = 0;
-            }    
+            next_state = IDLE;
+            digitalWrite(IDLE,false);
         }
         break;        
-      }
-      case DISCHARGE_REST:{ // 4 Discharge rest, no LEDs no current
-        current_ref = 0;
-        vref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
-        if(input_switch == 0){
-          next_state = IDLE;
-          rest_timer = 0;
-          digitalWrite(PIN_YELLED,false);
-        }
-        discharged = 1;
-        if (rest_timer < 30) { // Rest here for 30s like before
-            next_state = DISCHARGE_REST;
-            digitalWrite(PIN_YELLED,false);
-            rest_timer++;
-        } else { // When thats done, move back to charging (and light the green LED)
-            next_state = CHARGE;
-            digitalWrite(PIN_YELLED,true);
-            rest_timer = 0;
-        }
-        break;
       }
       case ERROR: { // 5 ERROR state RED led and no current
         current_ref = 0;
@@ -397,72 +370,24 @@ void loop() {
         }
         break;
       }
-      case SLOW_DISCHARGE: { // 3 Slow discharge (-500mA)
-        current_ref = -250;
-        if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
-          next_state = SLOW_DISCHARGE;
-          digitalWrite(PIN_YELLED,false);
-          if (V_1 < V_LOWBALLIM || V_2 < V_LOWBALLIM || V_3 < V_LOWBALLIM) {
-              if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                  Serial.println("Cell 1 lowest");
-                  digitalWrite(PIN_DISC1, true);
-                  digitalWrite(PIN_DISC2, false);
-                  digitalWrite(PIN_DISC3, false);
-                  dq1 = dq1 + (current_measure - V_1/150)/1000;
-                  dq2 = dq2 + current_measure/1000;
-                  dq3 = dq3 + current_measure/1000;
-              } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                  Serial.println("Cell 2 lowest");
-                  digitalWrite(PIN_DISC1, false);
-                  digitalWrite(PIN_DISC2, true);
-                  digitalWrite(PIN_DISC3, false);
-                  dq1 = dq1 + current_measure/1000;
-                  dq2 = dq2 + (current_measure - V_2/150)/1000;
-                  dq3 = dq3 + current_measure/1000;
-              } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                  Serial.println("Cell 3 lowest");
-                  digitalWrite(PIN_DISC1, false);
-                  digitalWrite(PIN_DISC2, false);
-                  digitalWrite(PIN_DISC3, true);
-                  dq1 = dq1 + current_measure/1000;
-                  dq2 = dq2 + current_measure/1000;
-                  dq3 = dq3 + (current_measure - V_3/150)/1000;
-              } else {
-                  digitalWrite(PIN_DISC1, false);
-                  digitalWrite(PIN_DISC2, false);
-                  digitalWrite(PIN_DISC3, false);
-                  dq1 = dq1 + current_measure/1000;
-                  dq2 = dq2 + current_measure/1000;
-                  dq3 = dq3 + current_measure/1000;
-              } 
-          } else {
-              digitalWrite(PIN_DISC1, false);
-              digitalWrite(PIN_DISC2, false);
-              digitalWrite(PIN_DISC3, false);
-              q1 = q1 + current_measure/1000;
-              q2 = q2 + current_measure/1000;
-              q3 = q3 + current_measure/1000;
-              dq1 = dq1 + current_measure/1000;
-              dq2 = dq2 + current_measure/1000;
-              dq3 = dq3 + current_measure/1000;
-          }
-        } else { // If we reach full discharged, move to rest
-          next_state = DISCHARGE_REST;
-          digitalWrite(PIN_YELLED,false);
-        }
-        if(input_switch == 0){
-          next_state = IDLE;
-          digitalWrite(PIN_YELLED,false);
-        }
-        break;
-      }  
+    }
+
+    // The current is halted for a while when the relay is on.
+    if (relay_on == 1) {
+      dq1 = dq1*0.87;
+      dq2 = dq2*0.87;
+      dq3 = dq3*0.87;
+      relay_on = 0;
     }
     
     // SoC Measurement
     mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
+    SoC_1 = mySMPS.get_SOC(1);
+    SoC_2 = mySMPS.get_SOC(2);
+    SoC_3 = mySMPS.get_SOC(3);
   
     // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure);
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
     Serial.println(dataString);
     
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
@@ -473,11 +398,11 @@ void loop() {
     }
     dataFile.close();
 
-        rly_timer = 0;
+    rly_timer = 0;
     dq1 = 0; dq2 = 0; dq3 = 0;
   }
 
-  if (int_count == 2000) {
+  if (int_count == 1000) { // This runs every 5 seconds
     int_count = 0;
   }
 }

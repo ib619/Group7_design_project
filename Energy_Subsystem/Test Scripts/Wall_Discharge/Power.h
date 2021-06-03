@@ -60,6 +60,7 @@ class SMPS {
 
         //Compute SoC
         void compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3);
+        float get_SOC(int cell_num);
         
         // Helper functions called by compute_SOC()
         float lookup_c_table(int cell_num, float V_1, float V_2, float V_3);
@@ -93,27 +94,18 @@ class SMPS {
         float q2_0 = 2000.5;
         float q3_0 = 1921.75;
 
+        float dq = 0, dq2 = 0, dq3 = 0;
+        bool disc1 = 0, disc2 = 0, disc3 = 0;
+
         float q1_now, q2_now, q3_now;
         // float SoH_1, SoH_2, SoH_3;
         float SoC_1, SoC_2, SoC_3;
 
         // TODO: load these values from initialisation files
-        // These values are decided after reading the entire discharge
-        // or charge cycle (post recalibration, deterministic)
-        float d_ocv_l_1 = 3100;
-        float d_ocv_u_1 = 3200;
-        float c_ocv_u_1 = 3400;
-        float c_ocv_l_1 = 3300;
-
-        float d_ocv_l_2 = 3100;
-        float d_ocv_u_2 = 3200;
-        float c_ocv_u_2 = 3400;
-        float c_ocv_l_2 = 3300;
-
-        float d_ocv_l_3 = 3100;
-        float d_ocv_u_3 = 3200;
-        float c_ocv_u_3 = 3400;
-        float c_ocv_l_3 = 3300;
+        // These values are decided after reading the entire discharge or charge cycle (post recalibration, deterministic)
+        // FIXME: Instead of using voltage threshold use SoC threshold
+        float SoC_LT = 20;
+        float SoC_HT = 80;
 
         String discharge_SoC_filename = "dv_SoC.csv";
         String charge_SoC_filename = "cv_SoC.csv";

@@ -137,6 +137,13 @@ float q1 = 0, q2 = 0, q3 = 0;
 // Stores the amount of charge added/removed within the past 2 minutes. Reset after.
 float dq1 = 0, dq2 = 0, dq3 = 0; 
 
+// Account for difference in current when relay is on;
+bool disc1 = 0, disc2 = 0, disc3 = 0;
+bool relay_on = 0;
+
+// Use SoC for balancing
+float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0;
+
 void setup() {
 
   //Some General Setup Stuff
@@ -270,6 +277,7 @@ void loop() {
     V_3 = analogRead(A3)*4.096/1.03;
   } else if (int_count == 126) {
     digitalWrite(9,false);
+    relay_on = 1;
   }
  
   // This still runs every second
@@ -294,47 +302,32 @@ void loop() {
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
-            // Start balancing when above V_UPBALLIM (3300mV)
             // Rationale: Discharge current in the more higher charged cells
-            if (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
-                //Connect to discharging relay if a battery is significantly lower  
-                if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                }
+            //Connect to discharging relay if a battery is significantly lower  
+            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                disc1 = 0, disc2 = 1, disc3 = 1;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
+            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                disc1 = 1, disc2 = 0, disc3 = 1;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
+            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
+                disc1 = 1, disc2 = 1, disc3 = 0;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + current_measure/1000;
             } else {
-                digitalWrite(PIN_DISC1, false);
-                digitalWrite(PIN_DISC2, false);
-                digitalWrite(PIN_DISC3, false);
+              disc1 = 0, disc2 = 0, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
             }
+            digitalWrite(PIN_DISC1, disc1);
+            digitalWrite(PIN_DISC2, disc2);
+            digitalWrite(PIN_DISC3, disc3);
         } else { // otherwise go to constant voltage charge
           next_state = CV_CHARGE;
           digitalWrite(PIN_YELLED,false);
@@ -379,56 +372,36 @@ void loop() {
          if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
             next_state = SLOW_DISCHARGE;
             digitalWrite(PIN_YELLED,false);
-            if (V_1 < V_LOWBALLIM || V_2 < V_LOWBALLIM || V_3 < V_LOWBALLIM) {
-                if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    q1 = q1 + (current_measure - V_1/150)/1000;
-                    q2 = q2 + current_measure/1000;
-                    q3 = q3 + current_measure/1000;
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, false);
-                    q1 = q1 + current_measure/1000;
-                    q2 = q2 + (current_measure - V_2/150)/1000;
-                    q3 = q3 + current_measure/1000;
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, true);
-                    q1 = q1 + current_measure/1000;
-                    q2 = q2 + current_measure/1000;
-                    q3 = q3 + (current_measure - V_3/150)/1000;
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    q1 = q1 + current_measure/1000;
-                    q2 = q2 + current_measure/1000;
-                    q3 = q3 + current_measure/1000;
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } 
-           } else {
-                digitalWrite(PIN_DISC1, false);
-                digitalWrite(PIN_DISC2, false);
-                digitalWrite(PIN_DISC3, false);
-                q1 = q1 + current_measure/1000;
-                q2 = q2 + current_measure/1000;
-                q3 = q3 + current_measure/1000;
-           }            
+            
+            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                Serial.println("Cell 1 lowest");
+                disc1 = 1, disc2 = 0, disc3 = 0;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                Serial.println("Cell 2 lowest");
+                disc1 = 0, disc2 = 1, disc3 = 0;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
+                Serial.println("Cell 3 lowest");
+                disc1 = 0, disc2 = 0, disc3 = 1;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
+            } else {
+              Serial.println("No balancing");
+                disc1 = 0, disc2 = 0, disc3 = 0;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + current_measure/1000;
+            }
+            digitalWrite(PIN_DISC1, disc1);
+            digitalWrite(PIN_DISC2, disc2);
+            digitalWrite(PIN_DISC3, disc3);
+                     
          } else { // If we reach full discharged, move to rest
            next_state = DISCHARGE_REST;
            digitalWrite(PIN_YELLED,false);
@@ -508,47 +481,36 @@ void loop() {
          if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
             next_state = DISCHARGE;
             digitalWrite(PIN_YELLED,false);
-            if (V_1 < V_LOWBALLIM || V_2 < V_LOWBALLIM || V_3 < V_LOWBALLIM) {
-                if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } 
+            
+            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                Serial.println("Cell 1 lowest");
+                disc1 = 1, disc2 = 0, disc3 = 0;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                Serial.println("Cell 2 lowest");
+                disc1 = 0, disc2 = 1, disc3 = 0;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
+                Serial.println("Cell 3 lowest");
+                disc1 = 0, disc2 = 0, disc3 = 1;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
             } else {
-                digitalWrite(PIN_DISC1, false);
-                digitalWrite(PIN_DISC2, false);
-                digitalWrite(PIN_DISC3, false);
-                q1 = q1 + current_measure/1000;
-                q2 = q2 + current_measure/1000;
-                q3 = q3 + current_measure/1000;
+              Serial.println("No balancing");
+                disc1 = 0, disc2 = 0, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
             }
+            digitalWrite(PIN_DISC1, disc1);
+            digitalWrite(PIN_DISC2, disc2);
+            digitalWrite(PIN_DISC3, disc3);
+
          } else { // If we reach full discharged, move to rest
            next_state = DISCHARGE_REST;
            digitalWrite(PIN_YELLED,false);
@@ -562,47 +524,39 @@ void loop() {
       case RAPID_DISCHARGE: { // Rapid discharge (-1A)
         current_ref = -1000;
          if ((V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) && rapid_timer < 10) { // while timer is less than 10 seconds
-           next_state = RAPID_DISCHARGE;
-           digitalWrite(PIN_YELLED,false);
-            if (V_1 < V_LOWBALLIM || V_2 < V_LOWBALLIM || V_3 < V_LOWBALLIM) {
-                if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                    digitalWrite(PIN_DISC1, true);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + (current_measure - V_1/150)/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, true);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + (current_measure - V_2/150)/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, true);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + (current_measure - V_3/150)/1000;
-                } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
-                    dq1 = dq1 + current_measure/1000;
-                    dq2 = dq2 + current_measure/1000;
-                    dq3 = dq3 + current_measure/1000;
-                } 
+            next_state = RAPID_DISCHARGE;
+            digitalWrite(PIN_YELLED,false);
+
+            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                Serial.println("Cell 1 lowest");
+                disc1 = 1, disc2 = 0, disc3 = 0;
+                dq1 = dq1 + (current_measure - V_1/150)/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                Serial.println("Cell 2 lowest");
+                disc1 = 0, disc2 = 1, disc3 = 0;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + (current_measure - V_2/150)/1000;
+                dq3 = dq3 + current_measure/1000;
+            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
+                Serial.println("Cell 3 lowest");
+                disc1 = 0, disc2 = 0, disc3 = 1;
+                dq1 = dq1 + current_measure/1000;
+                dq2 = dq2 + current_measure/1000;
+                dq3 = dq3 + (current_measure - V_3/150)/1000;
             } else {
-                digitalWrite(PIN_DISC1, false);
-                digitalWrite(PIN_DISC2, false);
-                digitalWrite(PIN_DISC3, false);
+              Serial.println("No balancing");
+                disc1 = 0, disc2 = 0, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
             }
-           rapid_timer++;
+            digitalWrite(PIN_DISC1, disc1);
+            digitalWrite(PIN_DISC2, disc2);
+            digitalWrite(PIN_DISC3, disc3);
+
+            rapid_timer++;
          } else { // If we reach full discharged, move to rest
            rapid_timer = 0;
            next_state = DISCHARGE;
@@ -620,47 +574,30 @@ void loop() {
             if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
                 next_state = RAPID_CHARGE;
                 digitalWrite(PIN_YELLED,true);                              
-                // Start balancing when above V_UPBALLIM (3300mV)
-                // Rationale: Discharge current in the more higher charged cells
-                if (V_1 > V_UPBALLIM || V_2 > V_UPBALLIM || V_3 > V_UPBALLIM) {
-                    //Connect to discharging relay if a battery is significantly lower  
-                    if (V_2 - V_1 > 100  && V_3 - V_1 > 100) {  // Cell 1 Lowest
-                        digitalWrite(PIN_DISC1, false);
-                        digitalWrite(PIN_DISC2, true);
-                        digitalWrite(PIN_DISC3, true);
-                        dq1 = dq1 + current_measure/1000;
-                        dq2 = dq2 + (current_measure - V_2/150)/1000;
-                        dq3 = dq3 + (current_measure - V_3/150)/1000;
-                    } else if (V_1 - V_2 > 100 && V_3 - V_2 > 100) { // Cell 2 Lowest
-                        digitalWrite(PIN_DISC1, true);
-                        digitalWrite(PIN_DISC2, false);
-                        digitalWrite(PIN_DISC3, true);
-                        dq1 = dq1 + (current_measure - V_1/150)/1000;
-                        dq2 = dq2 + current_measure/1000;
-                        dq3 = dq3 + (current_measure - V_3/150)/1000;
-                    } else if (V_1 - V_3 > 100 && V_2 - V_3 > 100) { // Cell 3 Lowest
-                        digitalWrite(PIN_DISC1, true);
-                        digitalWrite(PIN_DISC2, true);
-                        digitalWrite(PIN_DISC3, false);
-                        dq1 = dq1 + (current_measure - V_1/150)/1000;
-                        dq2 = dq2 + (current_measure - V_2/150)/1000;
-                        dq3 = dq3 + current_measure/1000;
-                    } else {
-                        digitalWrite(PIN_DISC1, false);
-                        digitalWrite(PIN_DISC2, false);
-                        digitalWrite(PIN_DISC3, false);
-                        dq1 = dq1 + current_measure/1000;
-                        dq2 = dq2 + current_measure/1000;
-                        dq3 = dq3 + current_measure/1000;
-                    }
+                if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+                    disc1 = 0, disc2 = 1, disc3 = 1;
+                    dq1 = dq1 + current_measure/1000;
+                    dq2 = dq2 + (current_measure - V_2/150)/1000;
+                    dq3 = dq3 + (current_measure - V_3/150)/1000;
+                } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+                    disc1 = 1, disc2 = 0, disc3 = 1;
+                    dq1 = dq1 + (current_measure - V_1/150)/1000;
+                    dq2 = dq2 + current_measure/1000;
+                    dq3 = dq3 + (current_measure - V_3/150)/1000;
+                } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
+                    disc1 = 1, disc2 = 1, disc3 = 0;
+                    dq1 = dq1 + (current_measure - V_1/150)/1000;
+                    dq2 = dq2 + (current_measure - V_2/150)/1000;
+                    dq3 = dq3 + current_measure/1000;
                 } else {
-                    digitalWrite(PIN_DISC1, false);
-                    digitalWrite(PIN_DISC2, false);
-                    digitalWrite(PIN_DISC3, false);
+                  disc1 = 0, disc2 = 0, disc3 = 0;
                     dq1 = dq1 + current_measure/1000;
                     dq2 = dq2 + current_measure/1000;
                     dq3 = dq3 + current_measure/1000;
                 }
+                digitalWrite(PIN_DISC1, disc1);
+                digitalWrite(PIN_DISC2, disc2);
+                digitalWrite(PIN_DISC3, disc3);
             } else { // otherwise go to constant voltage charge
                 next_state = CV_CHARGE;
                 digitalWrite(PIN_YELLED, false);
@@ -685,12 +622,39 @@ void loop() {
         break;
       }    
     }
-    rly_timer = 0;
-    int_count = 0;
+
+    // The current is halted for a while when the relay is on.
+    if (relay_on == 1) {
+      dq1 = dq1*0.87;
+      dq2 = dq2*0.87;
+      dq3 = dq3*0.87;
+      relay_on = 0;
+    }
+    
+    //TODO: Evaluate SOC every second, send to control every second
+    // SoC Measurement
+    mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
+    SoC_1 = mySMPS.get_SOC(1);
+    SoC_2 = mySMPS.get_SOC(2);
+    SoC_3 = mySMPS.get_SOC(3);
+  
+    // Now Print all values to serial and SD
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    Serial.println(dataString);
+    
+    File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
+    if (dataFile){ 
+      dataFile.println(dataString);
+    } else {
+      Serial.println("File not open"); 
+    }
+    dataFile.close();
+
+    dq1 = 0; dq2 = 0; dq3 = 0;
+    int_count = 0; //FIXME:
   }
   
   // Only deal with SOC every 2 minutes
-  //TODO: Evaluate SOC every second, send to control every second
   //TODO: Record curve every 2 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
   if (int_count = 120000) {
       // OCV: Assume that voltage hasn't drastically changed within past 2 minutes
@@ -699,6 +663,13 @@ void loop() {
       if (recalibrating) {
           mySMPS.record_curve(state_num, V_1, V_2, V_3);
       } else {
+          // The current is halted for a while when the relay is on.
+          if (relay_on == 1) {
+            dq1 = dq1*0.87;
+            dq2 = dq2*0.87;
+            dq3 = dq3*0.87;
+            relay_on = 0;
+          }
           mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
       }      
       dq1 = 0; dq2 = 0; dq3 = 0;

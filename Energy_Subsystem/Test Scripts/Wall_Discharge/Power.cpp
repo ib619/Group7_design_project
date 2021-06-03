@@ -248,38 +248,38 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         temp2 = lookup_d_table(2, V_1, V_2, V_3);
         temp3 = lookup_d_table(3, V_1, V_2, V_3);
     } else if (state_num == 1 || state_num == 6 || state_num == 10) { // CHARGE
-        if (V_1 > c_ocv_u_1 || V_1 < c_ocv_l_1) { // LOOKUP        
+        if (SoC_1 > SoC_HT || SoC_1 < SoC_LT) { // LOOKUP        
             temp1 = lookup_c_table(1, V_1, V_2, V_3); 
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        if (V_2 > c_ocv_u_2 || V_2 < c_ocv_l_2) { // LOOKUP
+        if (SoC_2 > SoC_HT || SoC_2 < SoC_LT) { // LOOKUP
             temp2 = lookup_c_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING  
             temp2 = temp2 + charge_2/q2_now*100;
             lookup = 0;
         }
-        if (V_3 > c_ocv_u_3 || V_1 < c_ocv_l_3) { // LOOKUP  
+        if (SoC_3 > SoC_HT || SoC_3 < SoC_LT) { // LOOKUP  
             temp3 = lookup_c_table(3, V_1, V_2, V_3);          
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
             lookup = 0;
         }
     } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
-        if (V_1 > d_ocv_u_1 || V_1 < d_ocv_l_1) { // LOOKUP
+        if (SoC_1 > SoC_HT || SoC_1 < SoC_LT) { // LOOKUP
             temp1 = lookup_d_table(1, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        if (V_2 > d_ocv_u_2 || V_2 < d_ocv_l_2) { // LOOKUP           
+        if (SoC_2 > SoC_HT || SoC_2 < SoC_LT) { // LOOKUP           
             temp2 = lookup_d_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp2 = temp2 + charge_2/q2_now*100;
             lookup = 0;
         }
-        if (V_3 > d_ocv_u_3 || V_1 < d_ocv_l_3) { // LOOKUP
+        if (SoC_3 > SoC_HT || SoC_3 < SoC_LT) { // LOOKUP
             temp3 = lookup_d_table(3, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
@@ -352,6 +352,16 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
       Serial.println("File not open"); 
     }
     myFile.close();
+}
+
+float SMPS::get_SOC(int cell_num) {
+  if (cell_num == 1) {
+    return SoC_1;
+  } else if (cell_num == 2) {
+    return SoC_2;
+  } else if (cell_num == 3) {
+    return SoC_3;
+  }
 }
 
 float SMPS::lookup_c_table(int cell_num, float V_1, float V_2, float V_3) {

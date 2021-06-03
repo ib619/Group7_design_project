@@ -222,14 +222,10 @@ void SMPS::init() {
 
 void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3) {
     float temp1 = SoC_1;
-    // float temp2 = SoC_2;
-    // float temp3 = SoC_3;
     bool lookup = 1;
 
     if (state_num == 0 && prev_state == -1) {
         temp1 = lookup_c_table(1, V_1, V_2, V_3);
-        // temp2 = lookup_c_table(2, V_1, V_2, V_3);
-        // temp3 = lookup_c_table(3, V_1, V_2, V_3);
         Serial.println("Start log");
     } else if (state_num == 0 || state_num == 5 || state_num == 7) { //IDLE
         // LOOKUP for V1, V2, V3
@@ -237,108 +233,57 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
     } else if ((state_num == 1 || state_num == 6 || state_num == 10) && prev_state == 0){ // starting Charge
          // LOOKUP for V1, V2, V3
         temp1 = lookup_c_table(1, V_1, V_2, V_3);
-        // temp2 = lookup_c_table(2, V_1, V_2, V_3);
-        // temp3 = lookup_c_table(3, V_1, V_2, V_3);
     } else if ((state_num == 3 || state_num == 8 || state_num == 9) && prev_state == 0){ // starting discharge
          // LOOKUP for V1, V2, V3
         temp1 = lookup_d_table(1, V_1, V_2, V_3);
-        // temp2 = lookup_d_table(2, V_1, V_2, V_3);
-        // temp3 = lookup_d_table(3, V_1, V_2, V_3);
     } else if (state_num == 1 || state_num == 6 || state_num == 10) { // CHARGE
-        if (V_1 > c_ocv_u_1 || V_1 < c_ocv_l_1) { // LOOKUP        
+        if (SoC_1 > SoC_HT || SoC_1 < SoC_LT) { // LOOKUP        
             temp1 = lookup_c_table(1, V_1, V_2, V_3); 
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        /*
-        if (V_2 > c_ocv_u_2 || V_2 < c_ocv_l_2) { // LOOKUP
-            temp2 = lookup_c_table(2);
-        } else { // COULOMB COUNTING  
-            temp2 = temp2 + charge_2/q2_now*100;
-            lookup = 0;
-        }
-        if (V_3 > c_ocv_u_3 || V_1 < c_ocv_l_3) { // LOOKUP  
-            temp3 = lookup_c_table(3);          
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
-            lookup = 0;
-        }
-        */
     } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
-        if (V_1 > d_ocv_u_1 || V_1 < d_ocv_l_1) { // LOOKUP
+        if (SoC_1 > SoC_HT || SoC_1 < SoC_LT) { // LOOKUP
             temp1 = lookup_d_table(1, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        /*
-        if (V_2 > d_ocv_u_2 || V_2 < d_ocv_l_2) { // LOOKUP           
-            temp2 = lookup_d_table(2, V_1, V_2, V_3);
-        } else { // COULOMB COUNTING
-            temp2 = temp2 + charge_2/q2_now*100;
-            lookup = 0;
-        }
-        if (V_3 > d_ocv_u_3 || V_1 < d_ocv_l_3) { // LOOKUP
-            temp3 = lookup_d_table(3, V_1, V_2, V_3);
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
-            lookup = 0;
-        }
-        */
     } else if (state_num == 2) {
         temp1 = 100;
-        // temp2 = 100;
-        // temp3 = 100;
     } else if (state_num == 4) {
         temp1 = 0;
-        // temp2 = 0;
-        // temp3 = 0;
     }
 
     if (arr_size < 60) { // If Moving average filter is not full yet
-      float sum1 = 0, sum2 = 0, sum3 = 0;
+      float sum1 = 0;
       if (arr_size > 5) { // Should ignore first 5 values
         SoC_1_arr.push(temp1);
-        // SoC_2_arr.push(temp2);
-        // SoC_3_arr.push(temp3);
         if (lookup == 1) {
           for (int i = 0; i < arr_size + 1 - 5; i++) {
              sum1 = sum1 + SoC_1_arr[i];
-             // sum2 = sum2 + SoC_2_arr[i];
-             // sum3 = sum3 + SoC_3_arr[i];
           }
           SoC_1 = sum1/(arr_size + 1 - 5);
-          // SoC_2 = sum2/(arr_size + 1 - 5);
-          // SoC_3 = sum3/(arr_size + 1 - 5);
         } else { // Do not get moving average filter value for colomb count
           SoC_1 = temp1;
-          // SoC_2 = temp2;
-          // SoC_3 = temp3;
           Serial.println("Not moving average");
         }      
       } else { // Do not push into filter for first 5 values
         SoC_1 = temp1;
-        // SoC_2 = temp2;
-        // SoC_3 = temp3;
       }
       arr_size = arr_size + 1;     
     } else { // In most cases
       if (lookup == 1) {
         SoC_1 = SoC_1_arr.push(temp1).get();
-        // SoC_2 = SoC_2_arr.push(temp2).get();
-        // SoC_3 = SoC_3_arr.push(temp3).get();
       } else {
         SoC_1 = temp1;
-        // SoC_2 = temp2;
-        // SoC_3 = temp3;
         SoC_1_arr.push(temp1); // just push into FIFO, but not taking the moving average value
-        // SoC_2_arr.push(temp2);
-        // SoC_3_arr.push(temp3);
         Serial.println("Not moving average");
       }       
     }
 
+     //Assign previous state
     prev_state = state_num;
 
     // Now Print all values to serial and SD
@@ -352,6 +297,12 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
       Serial.println("File not open"); 
     }
     myFile.close();
+}
+
+float SMPS::get_SOC(int cell_num) {
+  if (cell_num == 1) {
+    return SoC_1;
+  }
 }
 
 float SMPS::lookup_c_table(int cell_num, float V_1, float V_2, float V_3) {

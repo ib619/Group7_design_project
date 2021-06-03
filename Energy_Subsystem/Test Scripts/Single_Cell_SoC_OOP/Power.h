@@ -60,6 +60,7 @@ class SMPS {
 
         //Compute SoC
         void compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3);
+        float get_SOC(int cell_num);
         
         // Helper functions called by compute_SOC()
         float lookup_c_table(int cell_num, float V_1, float V_2, float V_3);
@@ -104,6 +105,9 @@ class SMPS {
         float d_ocv_u_1 = 3250;
         float c_ocv_u_1 = 3450;
         float c_ocv_l_1 = 3300;
+
+        float SoC_LT = 20;
+        float SoC_HT = 80;
 
         /*
         float d_ocv_l_2 = 3100;
