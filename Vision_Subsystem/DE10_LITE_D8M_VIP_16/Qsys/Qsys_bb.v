@@ -18,6 +18,9 @@ module Qsys (
 	eee_imgproc_0_conduit_mode_new_signal,
 	eee_imgproc_0_conduit_mode_new_signal_1,
 	eee_imgproc_0_conduit_mode_new_signal_2,
+	eee_imgproc_0_conduit_mode_new_signal_3,
+	eee_imgproc_0_conduit_mode_new_signal_4,
+	eee_imgproc_0_conduit_mode_new_signal_5,
 	i2c_opencores_camera_export_scl_pad_io,
 	i2c_opencores_camera_export_sda_pad_io,
 	i2c_opencores_mipi_export_scl_pad_io,
@@ -67,6 +70,9 @@ module Qsys (
 	input		eee_imgproc_0_conduit_mode_new_signal;
 	input		eee_imgproc_0_conduit_mode_new_signal_1;
 	input		eee_imgproc_0_conduit_mode_new_signal_2;
+	input		eee_imgproc_0_conduit_mode_new_signal_3;
+	input		eee_imgproc_0_conduit_mode_new_signal_4;
+	input		eee_imgproc_0_conduit_mode_new_signal_5;
 	inout		i2c_opencores_camera_export_scl_pad_io;
 	inout		i2c_opencores_camera_export_sda_pad_io;
 	inout		i2c_opencores_mipi_export_scl_pad_io;

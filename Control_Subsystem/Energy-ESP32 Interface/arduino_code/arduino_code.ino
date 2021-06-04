@@ -6,6 +6,7 @@ int command=0;
 int speed=0;
 int x=0;
 int y=0;
+unsigned long distance=0;
 
 int soc[3];
 int soh[3];
@@ -28,6 +29,7 @@ void loop() {
     speed=ci.getSpeed();
     x=ci.getPositionX();
     y=ci.getPositionY();
+    distance=ci.getTotalDistance();
   }
 
   for(int i=0;i<3;i++)  {

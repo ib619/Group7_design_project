@@ -24,6 +24,7 @@ module Qsys (
 		input  wire        eee_imgproc_0_conduit_mode_new_signal_2,                //                                       .new_signal_2
 		input  wire        eee_imgproc_0_conduit_mode_new_signal_3,                //                                       .new_signal_3
 		input  wire        eee_imgproc_0_conduit_mode_new_signal_4,                //                                       .new_signal_4
+		input  wire        eee_imgproc_0_conduit_mode_new_signal_5,                //                                       .new_signal_5
 		inout  wire        i2c_opencores_camera_export_scl_pad_io,                 //            i2c_opencores_camera_export.scl_pad_io
 		inout  wire        i2c_opencores_camera_export_sda_pad_io,                 //                                       .sda_pad_io
 		inout  wire        i2c_opencores_mipi_export_scl_pad_io,                   //              i2c_opencores_mipi_export.scl_pad_io
@@ -245,7 +246,8 @@ module Qsys (
 		.erosion_mode        (eee_imgproc_0_conduit_mode_new_signal_1),             //                        .new_signal_1
 		.dilation_mode       (eee_imgproc_0_conduit_mode_new_signal_2),             //                        .new_signal_2
 		.gaussian_mode       (eee_imgproc_0_conduit_mode_new_signal_3),             //                        .new_signal_3
-		.edge_detection_mode (eee_imgproc_0_conduit_mode_new_signal_4)              //                        .new_signal_4
+		.edge_detection_mode (eee_imgproc_0_conduit_mode_new_signal_4),             //                        .new_signal_4
+		.median_mode         (eee_imgproc_0_conduit_mode_new_signal_5)              //                        .new_signal_5
 	);
 
 	TERASIC_AUTO_FOCUS #(

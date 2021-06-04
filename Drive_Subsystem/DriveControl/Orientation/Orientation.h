@@ -30,7 +30,7 @@ public:
     int exportPositionX(); //export current X coordinate for control subsystem
     int exportPositionY(); //export current Y coordinate for control subsystem
     int exportDirectionAngle(); //export the angle between initial and current rover direction
-    int exportTotalRun(); //export total distance travelled since the start of the rover
+    unsigned long exportTotalRun(); //export total distance travelled since the start of the rover
 
     // four following methods are needed to interface Orientation and Drive APIs for T2C algorithm
     float passPosX(); 
@@ -43,7 +43,7 @@ public:
 private:
     int radius = 168;
     int rotation;
-    int total_distance_travelled = 0;
+    unsigned long total_distance_travelled = 0;
     bool log_enable = 0;
     bool enable_direction_update = 0;
     Position truePosition;

@@ -33,6 +33,7 @@ class ControlInterface {
         void writeRoverHeading(int heading);
         void writeBatterySOH(int soh);
         void writeBatteryState(int state);
+        void writeTotalDistance(unsigned long dist);
     
     private:
         void send_integer(int data);
@@ -64,6 +65,7 @@ class ControlInterface {
         int rover_heading=0;
         int battery_SOH=0;
         int battery_state=0;
+        unsigned long total_distance=0;
 };
 
 #endif

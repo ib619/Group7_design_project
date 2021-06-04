@@ -38,6 +38,7 @@ int ControlInterface::fetchData()   {
         speed=tmp[1];
         pos_x=tmp[2];
         pos_y=tmp[3];
+        total_distance = ((tmp[4]&65535)<<16) + (tmp[5]&65535);
         return 1;
     }
     else    {
@@ -57,6 +58,22 @@ int ControlInterface::getCommand() const    {
     return command;
 }
 
+int ControlInterface::getSpeed() const  {
+    return speed;
+}
+
+int ControlInterface::getPositionX() const  {
+    return pos_x;
+}
+
+int ControlInterface::getPositionY() const  {
+    return pos_y;
+}
+
+unsigned long ControlInterface::getTotalDistance() const {
+    return total_distance;
+}
+
 void ControlInterface::writeSOC(int cell, int value)    { // cell number starts from 0
     battery_soc[cell]=value;
 }
@@ -67,6 +84,10 @@ void ControlInterface::writeSOH(int cell, int value)    {
 
 void ControlInterface::writeState(int st)    {
     state=st;
+}
+
+void ControlInterface::writeRoverRange(int range)   {
+    rover_range=range;
 }
 
 void ControlInterface::send_integer(int d)  {   // send integer MSB first

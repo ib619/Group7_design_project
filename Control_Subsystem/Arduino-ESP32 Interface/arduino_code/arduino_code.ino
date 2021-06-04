@@ -16,6 +16,7 @@ int obstacle_detected=0;
 int alert=0;
 int x_axis=0;
 int y_axis=0;
+long travelDistance=0;
 
 void setup() {
   // setup and start control interface
@@ -42,6 +43,7 @@ void loop() {
   ci.writeAlert(alert);
   ci.writeAxisX(x_axis);
   ci.writeAxisY(y_axis);
+  ci.writeTotalDistance(travelDistance);
   ci.sendUpdates(); //send new values to ESP32
 
 }

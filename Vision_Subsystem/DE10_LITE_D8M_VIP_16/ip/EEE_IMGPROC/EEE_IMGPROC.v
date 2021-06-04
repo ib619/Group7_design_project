@@ -30,8 +30,8 @@ module EEE_IMGPROC(
 	 erosion_mode,
 	 dilation_mode,
 	 gaussian_mode,
-	 edge_detection_mode
-
+	 edge_detection_mode,
+	 median_mode
 );
 
 // global clock & reset
@@ -66,7 +66,7 @@ input   erosion_mode;
 input   dilation_mode;
 input   gaussian_mode;
 input   edge_detection_mode;
-
+input   median_mode;
 ////////////////////////////////////////////////////////////////////////
 
 parameter IMAGE_W = 11'd640;
@@ -79,6 +79,7 @@ parameter BB_COL_DEFAULT = 24'h00ff00;
 wire [7:0]   red_out1, green_out1, blue_out1;
 wire         in_valid1, out_ready1, sop_in1, eop_in1;
 wire [7:0]   red_gaussian, green_gaussian, blue_gaussian;
+wire [7:0]   red_median, green_median, blue_median;
 reg packet_video1;
 wire [7:0]   red_in1, green_in1, blue_in1;
 
@@ -111,6 +112,20 @@ STREAM_REG #(.DATA_WIDTH(26)) in_reg1 (
 ///////////////////////////////////////////////////////////////////////
 // Gaussian Filter
 
+
+
+//median_filter3x3 medianfilter(
+//	.clk(clk),
+//	.rst_n(reset_n),
+//	.i_pixel_red(red_out1),
+//   .i_pixel_blue(blue_out1),
+//   .i_pixel_green(green_out1),
+//	.i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
+//	.o_convolved_data_red(red_median),
+//	.o_convolved_data_blue(blue_median),
+//	.o_convolved_data_green(green_median)
+//);
+
 gaussian_filter5x5 gaussianfilter(
 	.clk(clk),
 	.rst_n(reset_n),
@@ -128,8 +143,9 @@ always@(posedge clk) begin
         packet_video1 <= (blue_out1[3:0] == 3'h0);
     end
 end
-assign {red_in1, green_in1, blue_in1} = (gaussian_mode & ~sop_in1 & packet_video1) ? {red_gaussian, green_gaussian, blue_gaussian} : {red_out1,green_out1,blue_out1};
-
+assign {red_in1, green_in1, blue_in1} = (gaussian_mode & ~sop_in1 & packet_video1) ? {red_gaussian, green_gaussian, blue_gaussian} : 
+													 (median_mode & ~sop_in1 & packet_video1) ? {red_median, green_median, blue_median} : 
+													 {red_out1,green_out1,blue_out1};
 
 ////////////////////////////////////////////////////////////////////////
 //Streaming registers to buffer video signal
@@ -247,7 +263,7 @@ assign r_bb_active = (x == r_left) | (x == r_right) | (y == r_top) | (y == r_bot
 assign r2_bb_active = (x == r_left2) | (x == r_right2) | (y == r_top2) | (y == r_bottom2);
 
 assign g_bb_active = (x == g_left) | (x == g_right) | (y == g_top) | (y == g_bottom);
-assign g2_bb_active = (x == g_left2) | (x == g_right2) | (y == g_top) | (y == g_bottom);
+assign g2_bb_active = (x == g_left2) | (x == g_right2) | (y == g_top2) | (y == g_bottom2);
 
 assign b_bb_active = (x == b_left) | (x == b_right) | (y == b_top) | (y == b_bottom);
 assign b2_bb_active = (x == b_left2) | (x == b_right2) | (y == b_top2) | (y == b_bottom2);
@@ -283,56 +299,57 @@ assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & pack
 reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
 reg [10:0] r_x_min2, r_y_min2, r_x_max2, r_y_max2;
 wire [11:0] r_x_mid = (r_x_min + r_x_max) >>1;
-wire [11:0] r_y_mid =  (r_y_min + r_y_max)>>1;
+//wire [11:0] r_y_mid =  (r_y_min + r_y_max)>>1;
 wire [10:0] r_x_diff1 = r_x_mid - x;
 wire [10:0] r_x_diff2 = x - r_x_mid;
 wire [10:0] r_x_diff = (r_x_diff1[10]) ? r_x_diff2 : r_x_diff1;
-wire [10:0] r_y_diff = y - r_y_mid;
+wire [10:0] r_y_diff = y - r_y_max;
 
 reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
 reg [10:0] g_x_min2, g_y_min2, g_x_max2, g_y_max2;
 wire [11:0] g_x_mid = (g_x_min + g_x_max) >>1;
-wire [11:0] g_y_mid =  (g_y_min + g_y_max)>>1;
+//wire [11:0] g_y_mid =  (g_y_min + g_y_max)>>1;
 wire [10:0] g_x_diff1 = g_x_mid - x;
 wire [10:0] g_x_diff2 = x - g_x_mid;
 wire [10:0] g_x_diff = (g_x_diff1[10]) ? g_x_diff2 : g_x_diff1;
-wire [10:0] g_y_diff = y - g_y_mid;
+wire [10:0] g_y_diff = y - g_y_max;
 
 reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
 reg [10:0] b_x_min2, b_y_min2, b_x_max2, b_y_max2;
 wire [11:0] b_x_mid = (b_x_min + b_x_max) >>1;
-wire [11:0] b_y_mid =  (b_y_min + b_y_max)>>1;
+//wire [11:0] b_y_mid =  (b_y_min + b_y_max)>>1;
 wire [10:0] b_x_diff1 = b_x_mid - x;
 wire [10:0] b_x_diff2 = x - b_x_mid;
 wire [10:0] b_x_diff = (b_x_diff1[10]) ? b_x_diff2 : b_x_diff1;
-wire [10:0] b_y_diff = y - b_y_mid;
+wire [10:0] b_y_diff = y - b_y_max;
 
 reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] gr_x_min2, gr_y_min2, gr_x_max2, gr_y_max2;
 wire [11:0] gr_x_mid = (gr_x_min + gr_x_max) >>1;
-wire [11:0] gr_y_mid =  (gr_y_min + gr_y_max)>>1;
+//wire [11:0] gr_y_mid =  (gr_y_min + gr_y_max)>>1;
 wire [10:0] gr_x_diff1 = gr_x_mid - x;
 wire [10:0] gr_x_diff2 = x - gr_x_mid;
 wire [10:0] gr_x_diff = (gr_x_diff1[10]) ? gr_x_diff2 : gr_x_diff1;
-wire [10:0] gr_y_diff = y - gr_y_mid;
+wire [10:0] gr_y_diff = y - gr_y_max;
 
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 reg [10:0] y_x_min2, y_y_min2, y_x_max2, y_y_max2;
 wire [11:0] y_x_mid = (y_x_min + y_x_max) >>1;
-wire [11:0] y_y_mid =  (y_y_min + y_y_max)>>1;
+//wire [11:0] y_y_mid =  (y_y_min + y_y_max)>>1;
 wire [10:0] y_x_diff1 = y_x_mid - x;
 wire [10:0] y_x_diff2 = x - y_x_mid;
 wire [10:0] y_x_diff = (y_x_diff1[10]) ? y_x_diff2 : y_x_diff1;
-wire [10:0] y_y_diff = y - y_y_mid;
+wire [10:0] y_y_diff = y - y_y_max;
 
 always@(posedge clk) begin
     if ( in_valid ) begin        
+			// Count the number of pixels with Value_b higher than 128, Used for auto brightness
         if (value_b[7] == 1'b1) begin
             bright_pix_count <= bright_pix_count + 20'd1;
         end
-        if (y > 11'd100) begin
+        if (y > 11'd100 & x > 11'd10) begin
             if (red_detect) begin	//Update bounds when the pixel is red
-					  if ( (r_y_diff < 11'd60) | (r_y_diff[10] == 1'b1)) begin
+					  if  (r_y_diff < 11'd30) begin
 							if (x < r_x_min) r_x_min <= x;
 							if (x > r_x_max) r_x_max <= x;
 							if (y < r_y_min) r_y_min <= y;
@@ -346,7 +363,7 @@ always@(posedge clk) begin
 					  end
             end
             else if (blue_detect ) begin	//Update bounds when the pixel is blue
-					  if ( (b_y_diff < 11'd60) | (b_y_diff[10] == 1'b1)) begin //|( b_x_diff < 11'd120)
+					  if (b_y_diff < 11'd60) begin //|( b_x_diff < 11'd120)
 							if (x < b_x_min) b_x_min <= x;
 							if (x >  b_x_max) b_x_max <= x;
 							if (y < b_y_min) b_y_min <= y;
@@ -360,7 +377,7 @@ always@(posedge clk) begin
 					  end
             end 
             else if (green_detect ) begin	//Update bounds when the pixel is green
-					  if ( (g_y_diff < 11'd60) | (g_y_diff[10] == 1'b1)) begin
+					  if (g_y_diff < 11'd60) begin
 							if (x < g_x_min) g_x_min <= x;
 							if (x > g_x_max) g_x_max <= x;
 							if (y < g_y_min) g_y_min <= y;
@@ -374,7 +391,7 @@ always@(posedge clk) begin
 					  end
             end
             else if (grey_detect) begin	//Update bounds when the pixel is grey
-					  if ( (gr_y_diff < 11'd60) | (gr_y_diff[10] == 1'b1)) begin
+					  if  (gr_y_diff < 11'd60)  begin
 							if (x < gr_x_min) gr_x_min <= x;
 							if (x > gr_x_max) gr_x_max <= x;
 							if (y < gr_y_min) gr_y_min <= y;
@@ -388,7 +405,7 @@ always@(posedge clk) begin
 					  end
             end
             else if (yellow_detect) begin	//Update bounds when the pixel is yellow
-					  if ( (y_y_diff < 11'd60) | (y_y_diff[10] == 1'b1)) begin
+					  if (y_y_diff < 11'd60) begin
 							if (x < y_x_min) y_x_min <= x;
 							if (x > y_x_max) y_x_max <= x;
 							if (y < y_y_min) y_y_min <= y;

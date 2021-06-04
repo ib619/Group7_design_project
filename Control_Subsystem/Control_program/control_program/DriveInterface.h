@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define DATA_PACKET_SIZE 18
+#define DATA_PACKET_SIZE 22
 
 class DriveInterface {
     public:
@@ -32,6 +32,7 @@ class DriveInterface {
         int getRoverHeading() const;
         int getBatterySOH() const;
         int getBatteryState() const;
+        unsigned long getTotalDistance() const;
 
     private:
         void send_integer(int d);
@@ -62,6 +63,7 @@ class DriveInterface {
         int rover_heading=0;
         int battery_SOH=0;
         int battery_state=0;
+        unsigned long total_distance=0;  // 4 bytes
 };
 
 #endif
