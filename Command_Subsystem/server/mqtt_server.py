@@ -172,8 +172,8 @@ class MqttServer:
 def main():
     ip  = "localhost"
     port = 1883
-    name = "siting"
-    password = "password"
+    name = "admin"
+    password = "marsrover"
 
     client = MqttServer(ip, port, name, password)
     client.connect()
