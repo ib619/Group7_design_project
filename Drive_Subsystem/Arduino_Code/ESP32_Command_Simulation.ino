@@ -15,6 +15,7 @@ int rover_heading = 0;
 int alert = 0;
 int axisX = 0;
 int axisY = 0;
+unsigned long totRun = 0;
 
 void setup() {
   di.setBaudrate(115200);
@@ -65,11 +66,13 @@ void loop() {
     alert = di.getAlert();  //fetch new speed value
     axisX = di.getAxisX();  // fetch new distance value
     axisY = di.getAxisY(); //fetch new drive mode value
+    totRun = di.getTotalDistance();
 
     Serial.println("Heading: " + String(rover_heading));
     Serial.println("Alert: " + String(alert));
     Serial.println("X: " + String(axisX));
     Serial.println("Y: " + String(axisY));
+    Serial.println("Total Distance: " + String(totRun));
     Serial.println(" ");
 
   }

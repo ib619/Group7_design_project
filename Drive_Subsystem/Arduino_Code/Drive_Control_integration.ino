@@ -266,6 +266,7 @@ void setup() {
   myLeftMotor.init(20, 9);
   myRightMotor.init(21, 5);
   marsRover.init(&myLeftMotor, &myRightMotor);
+  marsRover.enablePID = 0;
 
 
   //Basic pin setups
