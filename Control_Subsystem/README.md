@@ -16,6 +16,7 @@ The local "config.h" file can be created using the "config_template.h" file prov
 5) MQTT_USER: username for MQTT broker (can leave as default)
 6) MQTT_PASSWORD: password for MQTT broker (can leave as default)
 <br>
+
 **FPGA LED Indicators**
     * LEDR 9: WiFi Connected
     * LEDR 8: MQTT Broker Connected
