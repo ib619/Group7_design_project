@@ -16,8 +16,6 @@
 #define PIN_MOUSECAM_RESET     8
 #define PIN_MOUSECAM_CS        7
 
-
-
 //defining constants
 
 #define ADNS3080_PIXELS_X                 30
@@ -336,6 +334,12 @@ void loop() {
     targetY = ci.getTargetY();
 
     Serial.println("Command Received");
+    Serial.println("Drive Mode: " + String(drive_mode));
+    Serial.println("Distance: " + String(distance_value));
+    Serial.println("Speed: " + String(speed_value));
+    Serial.println("Direction: " + String(direction_value));
+    Serial.println("Target X: " + String(targetX));
+    Serial.println("Target Y: " + String(targetY) + "\n");
 
     marsRover.decodeCommand(drive_mode, distance_value, speed_value, direction_value);
     marsRover.decodeT2C(targetX, targetY, myOrientation.passPosX(), myOrientation.passPosY(), myOrientation.passDirX(), myOrientation.passDirY());
@@ -410,10 +414,13 @@ myOrientation.updateDirection();
 
 if (myOrientation.position_changed){
   //Serial.println(myOrientation.exportDirectionAngle());
-  myOrientation.logOrientation();
+  //myOrientation.logOrientation();
   //myOrientation.logRotation();
   //Serial.println("Rover position: " + String(myOrientation.exportPositionX()) + ": " + String(myOrientation.exportPositionY()) + "\n");
 }
+
+marsRover.sampleTime((unsigned long)millis());
+marsRover.sampleDirection(myOrientation.passDirX(), myOrientation.passDirY());
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
 
@@ -422,6 +429,7 @@ if (myOrientation.position_changed) {
   ci.writeAlert(marsRover.command_running);
   ci.writeAxisX(myOrientation.exportPositionX());
   ci.writeAxisY(myOrientation.exportPositionY());
+  ci.writeTotalDistance(myOrientation.exportTotalRun());
   ci.sendUpdates(); //send new values to ESP32
 }
 
