@@ -125,7 +125,7 @@ int DriveInterface::getBatteryState() const {
     return battery_state;
 }
 
-long DriveInterface::getTotalDistance() const   {
+unsigned long DriveInterface::getTotalDistance() const   {
     return total_distance;
 }
 

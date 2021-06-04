@@ -32,7 +32,7 @@ class DriveInterface {
         int getRoverHeading() const;
         int getBatterySOH() const;
         int getBatteryState() const;
-        long getTotalDistance() const;
+        unsigned long getTotalDistance() const;
 
     private:
         void send_integer(int d);
@@ -63,7 +63,7 @@ class DriveInterface {
         int rover_heading=0;
         int battery_SOH=0;
         int battery_state=0;
-        long total_distance=0;  // 4 bytes
+        unsigned long total_distance=0;  // 4 bytes
 };
 
 #endif

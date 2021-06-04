@@ -21,7 +21,7 @@ class ControlInterface {
         int getSpeed() const;
         int getPositionX() const;
         int getPositionY() const;
-        long getTotalDistance() const;
+        unsigned long getTotalDistance() const;
 
         void writeSOC(int cell, int value);
         void writeSOH(int cell, int value);
@@ -40,7 +40,7 @@ class ControlInterface {
         int speed=0;
         int pos_x=0;
         int pos_y=0;
-        long total_distance=0;  // 4 bytes
+        unsigned long total_distance=0;  // 4 bytes
 
         // data values
         int battery_soc[3]={0,0,0}; // cell number starts from 0

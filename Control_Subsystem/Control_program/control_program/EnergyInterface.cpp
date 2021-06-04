@@ -82,7 +82,7 @@ void EnergyInterface::writePositionY(int y) {
     pos_y=y;
 }
 
-void EnergyInterface::writeTotalDistance(long dist)    {
+void EnergyInterface::writeTotalDistance(unsigned long dist)    {
     total_distance=dist;
 }
 
