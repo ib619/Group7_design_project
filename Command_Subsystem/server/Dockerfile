@@ -18,4 +18,6 @@ COPY acl .
 
 WORKDIR /home
 COPY  . .
+
 CMD ./start_server.sh
+
