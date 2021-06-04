@@ -1,6 +1,7 @@
 // ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
 // V/I Limit: 5V, 230mA
 // Perturb and Observe Algorithm
+// LED is ON when the PV panel is supplying power.
 
 //Packages
 #include <Wire.h>
@@ -49,6 +50,7 @@ float current_ref = 0, error_amps; // Current Control
 float pwm_out;
 float closed_pwm;
 float V_pv; // voltage at terminal VB
+float V_A; // voltage at terminal VA
 boolean input_switch; // OLCL switch. 0 means back to IDLE
 
 // Panel Limits
@@ -117,6 +119,7 @@ void loop() {
   if (loop_trigger == 1){
       state_num = next_state; //state transition
       V_pv = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
+      V_A = analogRead(A1)*4.096/1.03* 2.699;
       if (V_pv > 4700) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
@@ -127,7 +130,7 @@ void loop() {
       // Voltage then Current PID -  Controllers calculate using V&A (not mV&mA)
       ev = (vref - V_pv)/1000;  //voltage error at this time
       cv = pidv(ev);  //voltage pid
-      cv = saturation(cv, current_limit, 0); //current demand saturation
+      // cv = saturation(cv, current_limit, 0); //current demand saturation
       ei = (cv - current_measure)/1000; //current error
       closed_pwm = pidi(ei);  //current pid
       closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
@@ -150,6 +153,7 @@ void loop() {
           i1 = current_measure;
           p1 = v1*i1;
           next_state = 1;
+          vref = vref + 100;
           digitalWrite(8,true);
         } else { // otherwise stay put
           next_state = 0;
@@ -204,7 +208,7 @@ void loop() {
     
     // Print values to serial monitor and csv
     // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(vref/1000) + "," + String(V_pv/1000) + "," + String(p0/100000); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(vref/1000) + "," + String(V_pv/1000) + "," + String(current_measure/1000) + "," + String(p0/1000000) + "," + String(V_A/1000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
     File dataFile = SD.open("MPPT_PnO.csv", FILE_WRITE); // open our CSV file

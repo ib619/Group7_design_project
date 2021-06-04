@@ -1,0 +1,206 @@
+
+/*
+
+class Cell {
+    public:
+        Cell();
+        void init(float SOC, float SOH, float cQ);
+
+        void compute_SoC(); 
+            
+    private:
+        float currentCharge;
+        float soCharge;
+
+};
+
+Cell::Cell() {};
+
+void Cell::init(int rlyPin, int measPin, float SOC, float SOH, float nQ, float cQ) {
+    relayPin = rlyPin;
+    measurePin = measPin;
+    pinMode(relayPin, OUTPUT);
+    pinMode(measurePin, INPUT);
+
+    soHealth = SOH;
+    soCharge = SOC;
+    nominalCharge = nQ;
+    currentCharge = cQ;
+}
+
+void SMPS::sendVI(float v1, float v2, float v3, float curMeasure) {
+    V_1 = v1;
+    V_2 = v2;
+    V_3 = v3;
+    current_measure = curMeasure;
+}
+void SMPS::triggerUpdate(bool update) {
+    go = update;
+}
+void SMPS::return_status(int s) {
+    status = s;
+}
+
+*/
+
+  //Check for the SD Card
+  /*
+  Serial.println("\nInitializing SD card...");
+  if (!SD.begin(chipSelect)) {
+    Serial.println("* is a card inserted?");
+    while (true) {} //It will stick here FOREVER if no SD is in on boot
+  } else {
+    Serial.println("Wiring is correct and a card is present.");
+  }
+
+  // Diagnostic File
+  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
+    SD.remove("BatCycle.csv");
+  }
+  
+
+  // Batcurves stores the discharge and charge curves of the battery and compares it to the SoC
+  if (CELL == 1) {
+      discharge_SoC_filename = "dvSoc1.csv";
+      charge_SoC_filename = "cvSoc1.csv";
+  } else if (CELL == 2) {
+      discharge_SoC_filename = "dvSoC2.csv";
+      charge_SoC_filename = "cvSoC2.csv";
+  }  else if (CELL == 3) {
+      discharge_SoC_filename = "dvSoC3.csv";
+      charge_SoC_filename = "cvSoC3.csv";
+  } else {
+      Serial.println("\nWe only have 3 cells...");
+  }
+  */
+
+  // SoC Lookup Tables
+/*
+String discharge_SoC_filename = "dvSoc1.csv";
+String charge_SoC_filename = "cvSoc1.csv";
+float d_v[500] = {};
+float d_SoC[500] = {};
+float c_v[500] = {};
+float c_SoC[500] = {};
+// float V_Bat;
+*/
+
+    /*
+    dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure); //build a datastring for the CSV file
+    Serial.println(dataString); // send it to serial as well in case a computer is connected
+    File dataFile = SD.open("BatCycle.csv", FILE_WRITE); // open our CSV file
+    if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
+      dataFile.println(dataString); // print the data
+    } else {
+      Serial.println("File not open"); //otherwise print an error
+    }
+    dataFile.close(); // close the file
+    */
+
+
+
+        // These values are decided after reading the entire discharge or charge cycle (post recalibration, deterministic)
+        // float d_ocv_l_1 = 3100;
+        // float d_ocv_u_1 = 3200;
+        // float c_ocv_u_1 = 3400;
+        // float c_ocv_l_1 = 3300;
+
+        // float d_ocv_l_2 = 3100;
+        // float d_ocv_u_2 = 3200;
+        // float c_ocv_u_2 = 3400;
+        // float c_ocv_l_2 = 3300;
+
+        // float d_ocv_l_3 = 3100;
+        // float d_ocv_u_3 = 3200;
+        // float c_ocv_u_3 = 3400;
+        // float c_ocv_l_3 = 3300;
+
+
+    // Load threshold values
+    /*
+    if (SD.exists(threshold_filename)) {
+        myFile = SD.open(threshold_filename);
+        if (myFile) {
+            for (int i = 0; i < 5; i++) {
+                content = myFile.readStringUntil(',');
+                d_ocv_l_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_l_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_l_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_l_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_l_3 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_3 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_3 = content.toFloat();
+                content = myFile.readStringUntil('\n');
+                c_ocv_l_3 = content.toFloat();
+                Serial.println(
+                    "Cell1_Thresholds: " +
+                    String(d_ocv_l_1) + "," 
+                    + String(d_ocv_u_1) + "," 
+                    + String(c_ocv_u_1)  + "," 
+                    + String(c_ocv_l_1)
+                );
+                Serial.println(
+                    "Cell2_Thresholds: " +
+                    String(d_ocv_l_2) + "," 
+                    + String(d_ocv_u_2) + "," 
+                    + String(c_ocv_u_2)  + "," 
+                    + String(c_ocv_l_2)
+                );
+                Serial.println(
+                    "Cell3_Thresholds: " +
+                    String(d_ocv_l_3) + "," 
+                    + String(d_ocv_u_3) + "," 
+                    + String(c_ocv_u_3)  + "," 
+                    + String(c_ocv_l_3)
+                );
+                if (content == "") {
+                    Serial.println("Insertion Complete");    
+                    break;
+                }                 
+            }
+        }
+    } else {
+        Serial.println("File not open");
+    }
+    myFile.close();
+    */
+
+    /*
+    determine_cv_threshold();
+    determine_dv_threshold();
+    
+    if (SD.exists(threshold_filename)) {
+        SD.remove(threshold_filename);
+    }
+    
+    myFile = SD.open(threshold_filename, FILE_WRITE);
+    dataString =  String(d_ocv_l_1) + ","
+                + String(d_ocv_u_1) + ","
+                + String(c_ocv_u_1) + ","
+                + String(c_ocv_l_1) + ","
+                + String(d_ocv_l_2) + ","
+                + String(d_ocv_u_2) + ","
+                + String(c_ocv_u_2) + ","
+                + String(c_ocv_l_2) + ","
+                + String(d_ocv_l_3) + ","
+                + String(d_ocv_u_3) + ","
+                + String(c_ocv_u_3) + ","
+                + String(c_ocv_l_3) + ",";
+    Serial.println(dataString);
+    myFile.println(dataString);
+    myFile.close();
+    */

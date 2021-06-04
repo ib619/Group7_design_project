@@ -33,9 +33,9 @@ Testing criteria:
 
     - Non linear lookup tables that we characterise the battery cell (look at previous video before Battery Cell Balancing and SOC Estimation)
 
-    ## Moddeling Batteries
+    ## Modelling Batteries
 
-    1. Equivalent circuit (accouints for environmental conditions and SoC)
+    1. Equivalent circuit (accounts for environmental conditions and SoC)
     2. Parametrize equivalent circuit
     3. Refine estimation (more elaborate models) 
 
