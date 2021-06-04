@@ -76,7 +76,6 @@ void FPGAInterface::_setAddress(long addr)  {
     i2c->endTransmission();
 }
 
-
 void FPGAInterface::_setLEDRegister()   {
     i2c->beginTransmission(slave_address);
     i2c->write(LED_BASE>>24);
