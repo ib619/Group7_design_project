@@ -106,6 +106,10 @@ class SMPS {
         // FIXME: Instead of using voltage threshold use SoC threshold
         float SoC_LT = 20;
         float SoC_HT = 80;
+        float d_ocv_l = 3150;
+        float d_ocv_u = 3300;
+        float c_ocv_u = 3450;
+        float c_ocv_l = 3300;
 
         String discharge_SoC_filename = "dv_SoC.csv";
         String charge_SoC_filename = "cv_SoC.csv";

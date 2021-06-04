@@ -49,9 +49,12 @@ Rationale for SOC
 #include <SD.h>
 #include <MovingAverage.h>
 #include "Power.h"
+#include "ControlInterface.h"
 
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
+
 SMPS mySMPS;
+ControlInterface ci(&Serial1);
 
 // Which cell are we using?
 int CELL = 1;
@@ -96,6 +99,7 @@ unsigned int rest_timer;
 unsigned int rapid_timer;
 unsigned int loop_trigger;
 unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging.
+unsigned int sec_count = 0; // record curve once every 120 seconds (2 minutes)
 
 // Voltage PID Controller
 float ev=0,cv=0,ei=0; //internal signals // FIXME:
@@ -118,8 +122,6 @@ float pwm_out;
 // Series Batteries Variables
 float V_1 = 0, V_2 = 0, V_3 =0;
 float V_UPLIM = 3590;
-float V_UPBALLIM = 3300;
-float V_LOWBALLIM = 3100;
 float V_LOWLIM = 2500;
 
 // State Machine Stuff
@@ -144,6 +146,15 @@ bool relay_on = 0;
 // Use SoC for balancing
 float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0;
 
+// SoH
+float SoH_1 = 100, SoH_2 = 100, SoH_3 = 100;
+
+// From command reception
+int cmd;
+int speed; //PWM
+int pos_x;
+int pos_y;
+
 void setup() {
 
   //Some General Setup Stuff
@@ -166,7 +177,7 @@ void setup() {
   pinMode(PIN_REDLED, OUTPUT);
   pinMode(PIN_YELLED, OUTPUT);
 
-//Input for measurements of battery 1,2,3
+ //Input for measurements of battery 1,2,3
   pinMode(PIN_V1, INPUT);
   pinMode(PIN_V2, INPUT);
   pinMode(PIN_V3, INPUT);
@@ -192,39 +203,54 @@ void setup() {
 
   interrupts();  //enable interrupts.
   analogWrite(6, 120); //just a default state to start with
+
+  // Control Iinterface
+  ci.setBaudrate(115200);
+  ci.setTimeout(5);
+  ci.begin();
+  delay(3000);
+  ci.flushReadBuffer();
+  ci.writeSOH(0, mySMPS.get_SOH(1));
+  ci.writeSOH(1, mySMPS.get_SOH(2));
+  ci.writeSOH(2, mySMPS.get_SOH(3));
 }
 
 void loop() {
 
     //TODO: command reception loop
-    if (Serial.available() && mySMPS.command_running == 0 ) {
-        mySMPS.command_running = 1;
-        char message[30];
-        int amount = Serial.readBytesUntil(';', message, 30);
-        message[amount] = NULL;
+    if(ci.fetchData())  {
+      cmd = ci.getCommand();
+      speed = ci.getSpeed();
+      pos_x = ci.getPositionX();
+      pos_y = ci.getPositionY();
+      Serial.println("Command Received");
 
-        int data[10];
-        int count = 0;
-        char* offset = message;
-        while (true) {
-            data[count++] = atoi(offset);
-            offset = strchr(offset, ',');
-            if (offset) offset++;
-            else break;
-        }
+      mySMPS.decodeCommand(cmd, speed, pos_x, pos_y);
 
-        // mDistance = data[0];
-        // mSpeed = data[1];
-        // mDirection = data[2];
-
-        mySMPS.decode_command(); //TODO: Implement decoding
+      //TODO: example RESET is cmd 2
+      //TODO: deal with errors
+      if (mySMPS.command_running == 0 && mySMPS.error == 0) {
         next_state = mySMPS.get_state();
+      } else if (cmd == 2) {
+        next_state = IDLE;
+        mySMPS.command_running = 0;
+      }
+
+      // If in recalibration, do not halt recalibration
+      if (recalibrating == 0) {
         recalibrating = mySMPS.get_recalibrate();
-    }
+        next_state = mySMPS.get_state();
+        if (recalibrating == 1) {
+          // reset tables
+          mySMPS.clear_lookup();
+        }
+      }
+  }
 
 //In rests state, if command was running (but not calibration), command complete
   if (loop_trigger == 1){ // FAST LOOP (currently 200HZ)
       state_num = next_state; //state transition
+      ci.writeState(state_num);
        
       //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
       // V_Bat = analogRead(A0)*4.096/1.03;
@@ -357,6 +383,7 @@ void loop() {
                     next_state = RECAL_DONE;
                     digitalWrite(PIN_YELLED,false);
                     rest_timer = 0;
+                    discharged = 0;
                 } else { // Otherwise discharge
                     next_state = SLOW_DISCHARGE;
                     digitalWrite(PIN_YELLED,false);
@@ -379,24 +406,36 @@ void loop() {
                 dq1 = dq1 + (current_measure - V_1/150)/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
+                q1 = q1 + (current_measure - V_1/150)/1000;
+                q2 = q2 + current_measure/1000;
+                q3 = q3 + current_measure/1000;
             } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
                 Serial.println("Cell 2 lowest");
                 disc1 = 0, disc2 = 1, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + (current_measure - V_2/150)/1000;
                 dq3 = dq3 + current_measure/1000;
+                q1 = q1 + current_measure/1000;
+                q2 = q2 + (current_measure - V_2/150)/1000;
+                q3 = q3 + current_measure/1000;
             } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
                 Serial.println("Cell 3 lowest");
                 disc1 = 0, disc2 = 0, disc3 = 1;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + (current_measure - V_3/150)/1000;
+                q1 = q1 + current_measure/1000;
+                q2 = q2 + current_measure/1000;
+                q3 = q3 + (current_measure - V_3/150)/1000;
             } else {
               Serial.println("No balancing");
                 disc1 = 0, disc2 = 0, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
+                q1 = q1 + current_measure/1000;
+                q2 = q2 + current_measure/1000;
+                q3 = q3 + current_measure/1000;
             }
             digitalWrite(PIN_DISC1, disc1);
             digitalWrite(PIN_DISC2, disc2);
@@ -429,6 +468,7 @@ void loop() {
                 rest_timer++;
             } else { // When thats done, move back to charging (and light the green LED)
                 mySMPS.send_current_cap(q1, q2, q3); // coulomb counting during discharge
+                q1 = 0, q2 = 0, q3 = 0;
                 next_state = CHARGE;
                 digitalWrite(PIN_YELLED,true);
                 rest_timer = 0;
@@ -473,7 +513,15 @@ void loop() {
       case RECAL_DONE: { // 7 Recalibration Complete
           recalibrating = 0;
           discharged = 0;
-          //TODO: evaluate SOC stats
+
+          //Evaluate SOC stats
+          mySMPS.create_SoC_table();
+          
+          //Return SoH data
+          ci.writeSOH(0, mySMPS.get_SOH(1));
+          ci.writeSOH(1, mySMPS.get_SOH(2));
+          ci.writeSOH(2, mySMPS.get_SOH(3));
+
           break;
       }
       case DISCHARGE: { // 8 Normal discharge (-500mA)
@@ -631,12 +679,17 @@ void loop() {
       relay_on = 0;
     }
     
-    //TODO: Evaluate SOC every second, send to control every second
+    //NOTE: Evaluate SOC every second, send to control every second
     // SoC Measurement
     mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
     SoC_1 = mySMPS.get_SOC(1);
     SoC_2 = mySMPS.get_SOC(2);
     SoC_3 = mySMPS.get_SOC(3);
+    ci.writeSOC(1, static_cast<int>(SoC_1));
+    ci.writeSOC(2, static_cast<int>(SoC_2));
+    ci.writeSOC(3, static_cast<int>(SoC_3));
+
+    ci.sendUpdates();
   
     // Now Print all values to serial and SD
     dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
@@ -651,30 +704,18 @@ void loop() {
     dataFile.close();
 
     dq1 = 0; dq2 = 0; dq3 = 0;
-    int_count = 0; //FIXME:
+    int_count = 0; 
+    sec_count++;
   }
   
   // Only deal with SOC every 2 minutes
-  //TODO: Record curve every 2 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
-  if (int_count = 120000) {
+  //NOTE - Record curve every 3 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
+  if (sec_count = 180 && recalibrating == 1) {
       // OCV: Assume that voltage hasn't drastically changed within past 2 minutes
       // Coulomb counting: charge_diff is adding up the charge (current * time) within the 2 mins
       // adjust for difference when discharge circuit is ON
-      if (recalibrating) {
-          mySMPS.record_curve(state_num, V_1, V_2, V_3);
-      } else {
-          // The current is halted for a while when the relay is on.
-          if (relay_on == 1) {
-            dq1 = dq1*0.87;
-            dq2 = dq2*0.87;
-            dq3 = dq3*0.87;
-            relay_on = 0;
-          }
-          mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
-      }      
-      dq1 = 0; dq2 = 0; dq3 = 0;
-      int_count = 0; // reset the interrupt count so we dont come back here for 120,000ms (2 minutes)
-  }
+      mySMPS.record_curve(state_num, V_1, V_2, V_3);
+      sec_count = 0;
 }
 
 // Timer A CMP1 interrupt. Every 1000us the program enters this interrupt. This is the fast 1kHz loop

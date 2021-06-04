@@ -1,6 +1,0 @@
-clear; close all;
-
-import1 = readmatrix('BATCYCLE.CSV');
-import2 = readmatrix('DIAGNOSE.CSV');
-
-V_1 = import1(2,

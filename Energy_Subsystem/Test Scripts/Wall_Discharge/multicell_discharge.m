@@ -1,9 +1,9 @@
 clear; close all;
 
-import1 = readmatrix('BATCYCLE.CSV');
+import1 = readmatrix('BATCYCLE3.CSV');
 length = size(import1, 1);
 
-import2 = readmatrix('DIAGNOSE.CSV');
+import2 = readmatrix('DIAGNOSE3.CSV');
 import2 = import2(end-length:end, :);
 
 %% 

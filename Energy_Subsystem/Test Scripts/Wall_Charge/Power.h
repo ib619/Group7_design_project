@@ -103,6 +103,10 @@ class SMPS {
         // These values are decided after reading the entire discharge
         // or charge cycle (post recalibration, deterministic)
         // FIXME: Instead of using voltage threshold use SoC threshold
+        float d_ocv_l = 3100;
+        float d_ocv_u = 3300;
+        float c_ocv_u = 3450;
+        float c_ocv_l = 3300;
         float SoC_LT = 20;
         float SoC_HT = 80;
 

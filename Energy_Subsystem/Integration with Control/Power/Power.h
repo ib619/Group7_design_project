@@ -22,9 +22,7 @@ class SMPS {
     public:
         SMPS();
         void init(); // grab from SD card, sensors
-        Stats get_Stats(); // likely sent back to control
-        void write_stats(); // write stats to SD card
-
+    
         // collected from SMPS
         // void trigger_Update(bool update); //when count = 1000
         // void sendVI(float v1, float v2, float v3, float curMeasure);
@@ -36,8 +34,9 @@ class SMPS {
         // otherwise, SMPS will decide its state (determined by default state transitions)
         int get_state();
         
-        void decode_command(); //TODO:
+        void decode_command(int cmd, int speed, int pos_x, int pos_y);
         float estimate_range(float disTravelled, float SoC_drop);
+        float estimate_time();
         float estimate_chargeTime(); //TODO:
 
         //TODO: Need to consider balancing for charging as well. Handle in main Arduino file
@@ -51,6 +50,8 @@ class SMPS {
         void recalibrate_SOH(); //called by control     
         bool get_recalibrate(); // instruct Arduino to recalibrate.
         void send_current_cap(float q1, float q2, float q3); 
+        int get_SOH(int cell_num);
+        void clear_lookup();
         void record_curve(int state_num, float V_1, float V_2, float V_3);
         void create_SoC_table();
 
@@ -71,12 +72,12 @@ class SMPS {
         // to reset, call reset()
 
         int SD_CS = 10;
+        bool error = 0;
     
     private:
         int state;
         int prev_state = -1;
         bool recalibrating;
-        bool error;
 
         // float V_1, V_2, V_3;
         // float current_measure;
@@ -99,21 +100,10 @@ class SMPS {
         float SoC_1, SoC_2, SoC_3;
 
         // TODO: load these values from initialisation files
-        // These values are decided after reading the entire discharge or charge cycle (post recalibration, deterministic)
-        // float d_ocv_l_1 = 3100;
-        // float d_ocv_u_1 = 3200;
-        // float c_ocv_u_1 = 3400;
-        // float c_ocv_l_1 = 3300;
-
-        // float d_ocv_l_2 = 3100;
-        // float d_ocv_u_2 = 3200;
-        // float c_ocv_u_2 = 3400;
-        // float c_ocv_l_2 = 3300;
-
-        // float d_ocv_l_3 = 3100;
-        // float d_ocv_u_3 = 3200;
-        // float c_ocv_u_3 = 3400;
-        // float c_ocv_l_3 = 3300;
+        float d_ocv_l = 3150;
+        float d_ocv_u = 3300;
+        float c_ocv_u = 3450;
+        float c_ocv_l = 3300;
 
         //FIXME: Instead of using voltage threshold, use an SoC Threshold
         float SoC_LT = 20;
@@ -121,7 +111,7 @@ class SMPS {
 
         String discharge_SoC_filename = "dv_SoC.csv";
         String charge_SoC_filename = "cv_SoC.csv";
-        String threshold_filename = "thresholds.csv";
+
         String dataString;
         File myFile;
 

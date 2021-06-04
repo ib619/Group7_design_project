@@ -101,25 +101,13 @@ class SMPS {
         // TODO: load these values from initialisation files
         // These values are decided after reading the entire discharge
         // or charge cycle (post recalibration, deterministic)
-        float d_ocv_l_1 = 3150;
-        float d_ocv_u_1 = 3250;
-        float c_ocv_u_1 = 3450;
-        float c_ocv_l_1 = 3300;
+        float d_ocv_l = 3050;
+        float d_ocv_u = 3300;
+        float c_ocv_u = 3450;
+        float c_ocv_l = 3300;
 
         float SoC_LT = 20;
         float SoC_HT = 80;
-
-        /*
-        float d_ocv_l_2 = 3100;
-        float d_ocv_u_2 = 3200;
-        float c_ocv_u_2 = 3400;
-        float c_ocv_l_2 = 3300;
-
-        float d_ocv_l_3 = 3100;
-        float d_ocv_u_3 = 3200;
-        float c_ocv_u_3 = 3400;
-        float c_ocv_l_3 = 3300;
-        */
 
         String discharge_SoC_filename = "dv_SoC.csv";
         String charge_SoC_filename = "cv_SoC.csv";

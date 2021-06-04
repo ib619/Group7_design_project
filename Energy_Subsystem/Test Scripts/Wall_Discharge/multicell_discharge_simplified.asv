@@ -1,3 +1,0 @@
-clear; close all;
-
-% import = readmatrix('DIAGNOSE2.CSV');

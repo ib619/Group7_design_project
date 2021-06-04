@@ -96,3 +96,111 @@ float c_SoC[500] = {};
     }
     dataFile.close(); // close the file
     */
+
+
+
+        // These values are decided after reading the entire discharge or charge cycle (post recalibration, deterministic)
+        // float d_ocv_l_1 = 3100;
+        // float d_ocv_u_1 = 3200;
+        // float c_ocv_u_1 = 3400;
+        // float c_ocv_l_1 = 3300;
+
+        // float d_ocv_l_2 = 3100;
+        // float d_ocv_u_2 = 3200;
+        // float c_ocv_u_2 = 3400;
+        // float c_ocv_l_2 = 3300;
+
+        // float d_ocv_l_3 = 3100;
+        // float d_ocv_u_3 = 3200;
+        // float c_ocv_u_3 = 3400;
+        // float c_ocv_l_3 = 3300;
+
+
+    // Load threshold values
+    /*
+    if (SD.exists(threshold_filename)) {
+        myFile = SD.open(threshold_filename);
+        if (myFile) {
+            for (int i = 0; i < 5; i++) {
+                content = myFile.readStringUntil(',');
+                d_ocv_l_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_l_1 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_l_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_l_2 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_l_3 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                d_ocv_u_3 = content.toFloat();
+                content = myFile.readStringUntil(',');
+                c_ocv_u_3 = content.toFloat();
+                content = myFile.readStringUntil('\n');
+                c_ocv_l_3 = content.toFloat();
+                Serial.println(
+                    "Cell1_Thresholds: " +
+                    String(d_ocv_l_1) + "," 
+                    + String(d_ocv_u_1) + "," 
+                    + String(c_ocv_u_1)  + "," 
+                    + String(c_ocv_l_1)
+                );
+                Serial.println(
+                    "Cell2_Thresholds: " +
+                    String(d_ocv_l_2) + "," 
+                    + String(d_ocv_u_2) + "," 
+                    + String(c_ocv_u_2)  + "," 
+                    + String(c_ocv_l_2)
+                );
+                Serial.println(
+                    "Cell3_Thresholds: " +
+                    String(d_ocv_l_3) + "," 
+                    + String(d_ocv_u_3) + "," 
+                    + String(c_ocv_u_3)  + "," 
+                    + String(c_ocv_l_3)
+                );
+                if (content == "") {
+                    Serial.println("Insertion Complete");    
+                    break;
+                }                 
+            }
+        }
+    } else {
+        Serial.println("File not open");
+    }
+    myFile.close();
+    */
+
+    /*
+    determine_cv_threshold();
+    determine_dv_threshold();
+    
+    if (SD.exists(threshold_filename)) {
+        SD.remove(threshold_filename);
+    }
+    
+    myFile = SD.open(threshold_filename, FILE_WRITE);
+    dataString =  String(d_ocv_l_1) + ","
+                + String(d_ocv_u_1) + ","
+                + String(c_ocv_u_1) + ","
+                + String(c_ocv_l_1) + ","
+                + String(d_ocv_l_2) + ","
+                + String(d_ocv_u_2) + ","
+                + String(c_ocv_u_2) + ","
+                + String(c_ocv_l_2) + ","
+                + String(d_ocv_l_3) + ","
+                + String(d_ocv_u_3) + ","
+                + String(c_ocv_u_3) + ","
+                + String(c_ocv_l_3) + ",";
+    Serial.println(dataString);
+    myFile.println(dataString);
+    myFile.close();
+    */
