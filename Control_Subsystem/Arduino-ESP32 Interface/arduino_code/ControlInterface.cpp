@@ -53,15 +53,10 @@ int ControlInterface::fetchData()  {
 }
 
 void ControlInterface::sendUpdates()    {
-    send_integer(battery_level);
-    send_integer(rover_range);
-    send_integer(obstacle_detected);
     send_integer(alert);
     send_integer(x_axis);
     send_integer(y_axis);
     send_integer(rover_heading);
-    send_integer(battery_SOH);
-    send_integer(battery_state);
     send_integer(total_distance>>16);
     send_integer(total_distance&65535);
 }
@@ -100,18 +95,6 @@ int ControlInterface::getReset()   {  //sets the value of "reset" to 0 upon call
     return tmp;
 }
 
-void ControlInterface::writeBatterylevel(int batt) {
-    battery_level=batt;
-}
-
-void ControlInterface::writeRange(int rng)  {
-    rover_range=rng;
-}
-
-void ControlInterface::writeObstacle(int obs)   {
-    obstacle_detected=obs;
-}
-
 void ControlInterface::writeAlert(int alrt) {
     alert=alrt;
 }
@@ -126,14 +109,6 @@ void ControlInterface::writeAxisY(int y)    {
 
 void ControlInterface::writeRoverHeading(int heading)   {
     rover_heading=heading;
-}
-
-void ControlInterface::writeBatterySOH(int soh) {
-    battery_SOH=soh;
-}
-
-void ControlInterface::writeBatteryState(int state) {
-    battery_state=state;
 }
 
 void ControlInterface::writeTotalDistance(unsigned long dist)    {
