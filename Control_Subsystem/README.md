@@ -18,13 +18,13 @@ The local "config.h" file can be created using the "config_template.h" file prov
 <br>
 
 **FPGA LED Indicators**
-    * LEDR 9: WiFi Connected
-    * LEDR 8: MQTT Broker Connected
-    * LEDR 7: Main Loop entry
-    * LEDR 6: command execution status (on: busy, off: free)
-    * LEDR 2: drive_mode 2 engaged
-    * LEDR 1: drive_mode 1 engaged
-    * LEDR 0: collision avoidance routine engaged
+* LEDR 9: WiFi Connected
+* LEDR 8: MQTT Broker Connected
+* LEDR 7: Main Loop entry
+* LEDR 6: command execution status (on: busy, off: free)
+* LEDR 2: drive_mode 2 engaged
+* LEDR 1: drive_mode 1 engaged
+* LEDR 0: collision avoidance routine engaged
 
 (if LEDR 1 and LEDR 2 are off, drive_mode is 0)
 <br>
