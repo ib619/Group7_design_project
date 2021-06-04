@@ -96,7 +96,7 @@ void setup() {
   mqtt.setServer(mqttServer, mqttPort);
   mqtt.setCallback(mqtt_callback);
   
-  drive.setBaudrate(115200);
+  drive.setBaudrate(19200);
   drive.begin();
 
   energy.setBaudrate(38400);
@@ -245,6 +245,10 @@ void loop() {
           drive.writeDistance(rover.distance);
           drive.writeTargetX(rover.target_x);
           drive.writeTargetY(rover.target_y);
+        }
+        else  {
+          rover.drive_mode=0;
+          drive.writeDriveMode(rover.drive_mode);
         }
         drive.writeReset(rover.reset);
         drive.writeSystemTime(millis());
