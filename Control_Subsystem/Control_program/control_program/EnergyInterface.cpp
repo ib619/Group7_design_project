@@ -46,6 +46,8 @@ void EnergyInterface::sendUpdates() {
     send_integer(speed);
     send_integer(pos_x);
     send_integer(pos_y);
+    send_integer(total_distance>>16);
+    send_integer(total_distance&65535);
 }
 
 int EnergyInterface::getBatterySOC(int cell) const  {
@@ -78,6 +80,10 @@ void EnergyInterface::writePositionX(int x) {
 
 void EnergyInterface::writePositionY(int y) {
     pos_y=y;
+}
+
+void EnergyInterface::writeTotalDistance(long dist)    {
+    total_distance=dist;
 }
 
 void EnergyInterface::send_integer(int d)  {   // send integer MSB first

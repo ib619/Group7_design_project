@@ -124,6 +124,7 @@ void loop() {
         energy.writeSpeed(rover.speed);
         energy.writePositionX(rover.x_axis);
         energy.writePositionY(rover.y_axis);
+        energy.writeTotalDistance(drive.getTotalDistance());
         energy.sendUpdates();
 
         busyFlag=rover.alert;

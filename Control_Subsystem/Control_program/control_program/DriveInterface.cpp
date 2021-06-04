@@ -37,6 +37,7 @@ int DriveInterface::fetchData() {
         rover_heading=tmp[6];
         battery_SOH=tmp[7];
         battery_state=tmp[8];
+        total_distance = ((tmp[9]&65535)<<16) + (tmp[10]&65535);
         return 1;
     }
     else    {
@@ -122,6 +123,10 @@ int DriveInterface::getBatterySOH() const   {
 
 int DriveInterface::getBatteryState() const {
     return battery_state;
+}
+
+long DriveInterface::getTotalDistance() const   {
+    return total_distance;
 }
 
 void DriveInterface::send_integer(int d)    {

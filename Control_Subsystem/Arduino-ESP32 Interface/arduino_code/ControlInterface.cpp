@@ -62,6 +62,8 @@ void ControlInterface::sendUpdates()    {
     send_integer(rover_heading);
     send_integer(battery_SOH);
     send_integer(battery_state);
+    send_integer(total_distance>>16);
+    send_integer(total_distance&65535);
 }
 
 int ControlInterface::getDriveMode() const  {
@@ -132,6 +134,10 @@ void ControlInterface::writeBatterySOH(int soh) {
 
 void ControlInterface::writeBatteryState(int state) {
     battery_state=state;
+}
+
+void ControlInterface::writeTotalDistance(long dist)    {
+    total_distance=dist;
 }
 
 void ControlInterface::send_integer(int d)  {   // send integer MSB first
