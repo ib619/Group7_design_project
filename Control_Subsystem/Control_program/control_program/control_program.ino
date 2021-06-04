@@ -110,7 +110,6 @@ void loop() {
   if(WiFi.status()==WL_CONNECTED) {
     if(mqtt.connected()) { // MQTT broker connected
       if(drive.fetchData()) { // check if data available from Drive arduino
-        rover.obstacle_detected=drive.getObstacle();
         rover.alert=drive.getAlert();
         rover.x_axis=drive.getAxisX();
         rover.y_axis=drive.getAxisY();
