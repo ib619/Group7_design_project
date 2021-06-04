@@ -56,10 +56,11 @@ sudo apt update
 [ clone the git repo ]
 cd Group7_design_project/Command_Subsystem/server
 sudo curl -sSL https://get.docker.com/ | sh
-sudo docker build . -t mars_server:1.0 --file Dockerfile 
 ```
-6. Run this command to start up the docker image and link docker ports to server ports
+6. Then run `sudo docker build . -t mars_server:1.0 --file Dockerfile` (also run this whenever the Dockerfile changes)
+7. Run this command to start up the docker image and link docker ports to server ports
 `sudo docker run -it --rm -p 0.0.0.0:1883:1883 -p 0.0.0.0:8080:8080/tcp mars_server:1.0`
+
 ## Details
 1. Things to send back to ESP32
     - drive/discrete: discrete mode instructions 
