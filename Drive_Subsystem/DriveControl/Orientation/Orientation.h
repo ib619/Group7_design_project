@@ -26,6 +26,7 @@ public:
     void logRotation(); // logs the type of motion performed by the rover for debug
     float getTravelDistance();
     float getDirectionChangeAngle();
+    void resetData(int trigger);
 
     int exportPositionX(); //export current X coordinate for control subsystem
     int exportPositionY(); //export current Y coordinate for control subsystem

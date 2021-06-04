@@ -71,6 +71,9 @@ int drive_mode = 0;
 int targetX = 0;
 int targetY = 0;
 
+unsigned long period_time = 500;
+unsigned long send_timer;
+
 //initialising motor sketch variables
 
 
@@ -267,6 +270,7 @@ void setup() {
   myRightMotor.init(21, 5);
   marsRover.init(&myLeftMotor, &myRightMotor);
   marsRover.enablePID = 0;
+  send_timer = millis();
 
 
   //Basic pin setups
@@ -307,7 +311,7 @@ void setup() {
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
   
-  Serial.begin(115200);
+  Serial.begin(19200);
 
   if(mousecam_init()==-1)
   {
@@ -315,7 +319,7 @@ void setup() {
     while(1);
   } 
 
-  ci.setBaudrate(115200);
+  ci.setBaudrate(19200);
   ci.setTimeout(5);
   ci.begin();
   delay(3000);
@@ -333,6 +337,8 @@ void loop() {
     drive_mode = ci.getDriveMode(); //fetch new drive mode value
     targetX = ci.getTargetX();
     targetY = ci.getTargetY();
+
+    myOrientation.resetData(ci.getReset());
 
     Serial.println("Command Received");
     Serial.println("Drive Mode: " + String(drive_mode));
@@ -425,13 +431,22 @@ marsRover.sampleDirection(myOrientation.passDirX(), myOrientation.passDirY());
 
 marsRover.action(myOrientation.getTravelDistance(), myOrientation.getDirectionChangeAngle());
 
-if (myOrientation.position_changed) {
+if (millis()-send_timer >= period_time) {
   ci.writeRoverHeading(myOrientation.exportDirectionAngle());
   ci.writeAlert(marsRover.command_running);
   ci.writeAxisX(myOrientation.exportPositionX());
   ci.writeAxisY(myOrientation.exportPositionY());
   ci.writeTotalDistance(myOrientation.exportTotalRun());
   ci.sendUpdates(); //send new values to ESP32
+
+  send_timer = millis();
+
+    Serial.println("Data sent to ESP32");
+    Serial.println("Heading: " + String(myOrientation.exportDirectionAngle()));
+    Serial.println("Alert: " + String(marsRover.command_running));
+    Serial.println("X: " + String(myOrientation.exportPositionX()));
+    Serial.println("Y: " + String(myOrientation.exportPositionY()));
+    Serial.println("Total Distance: " + String(myOrientation.exportTotalRun()) + "\n");
 }
 
 }
