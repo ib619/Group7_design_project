@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useMqttState } from "mqtt-react-hooks";
 import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import Map from "../components/Map";
-import FormAlert from "../components/FormAlert";
+// import FormAlert from "../components/FormAlert";
 // import styled from "styled-components";
 
 const DiscretePage = () => {
@@ -76,9 +76,9 @@ const DiscretePage = () => {
     if (handleValidation()) {
       client.publish("drive/discrete", JSON.stringify(target));
       setTarget({ direction: "", speed: "", distance: "" });
+    } else {
+      setShow(true);
     }
-
-    setShow(true);
   };
 
   return (

@@ -62,9 +62,9 @@ const TargetPage = () => {
     if (handleValidation()) {
       client.publish("drive/t2c", JSON.stringify(target));
       setTarget({ x: "", y: "", speed: "" });
+    } else {
+      setShow(true);
     }
-
-    setShow(true);
   };
 
   return (
