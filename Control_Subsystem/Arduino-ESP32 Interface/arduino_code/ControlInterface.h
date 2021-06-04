@@ -24,15 +24,10 @@ class ControlInterface {
         unsigned long getSystemTime() const;    // 4 bytes
         int getReset();
 
-        void writeBatterylevel(int batt);
-        void writeRange(int rng);
-        void writeObstacle(int obs);
         void writeAlert(int alrt);
         void writeAxisX(int x);
         void writeAxisY(int y);
         void writeRoverHeading(int heading);
-        void writeBatterySOH(int soh);
-        void writeBatteryState(int state);
         void writeTotalDistance(unsigned long dist);
     
     private:
@@ -56,15 +51,10 @@ class ControlInterface {
         int reset=0;
 
         // data values
-        int battery_level=0;
-        int rover_range=0;
-        int obstacle_detected=0;
         int alert=0;
         int x_axis=0;
         int y_axis=0;
         int rover_heading=0;
-        int battery_SOH=0;
-        int battery_state=0;
         unsigned long total_distance=0;
 };
 
