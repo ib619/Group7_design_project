@@ -26,7 +26,7 @@ class EnergyInterface {
         void writeSpeed(int spd);
         void writePositionX(int x);
         void writePositionY(int y);
-        void writeTotalDistance(long dist);
+        void writeTotalDistance(unsigned long dist);
     
     private:
         void send_integer(int data);
@@ -40,7 +40,7 @@ class EnergyInterface {
         int speed=0;
         int pos_x=0;
         int pos_y=0;
-        long total_distance=0;  // 4 bytes
+        unsigned long total_distance=0;  // 4 bytes
 
         // data values
         int battery_soc[3]={0,0,0}; // cell number starts from 0

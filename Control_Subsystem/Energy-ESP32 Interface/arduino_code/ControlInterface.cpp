@@ -70,7 +70,7 @@ int ControlInterface::getPositionY() const  {
     return pos_y;
 }
 
-long ControlInterface::getTotalDistance() const {
+unsigned long ControlInterface::getTotalDistance() const {
     return total_distance;
 }
 

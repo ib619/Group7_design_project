@@ -136,7 +136,7 @@ void ControlInterface::writeBatteryState(int state) {
     battery_state=state;
 }
 
-void ControlInterface::writeTotalDistance(long dist)    {
+void ControlInterface::writeTotalDistance(unsigned long dist)    {
     total_distance=dist;
 }
 
