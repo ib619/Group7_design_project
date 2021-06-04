@@ -218,7 +218,7 @@ void Orientation::getDisplacement() {
      return (int)output;
  }
 
- int Orientation::exportTotalRun() {
+ unsigned long Orientation::exportTotalRun() {
      return total_distance_travelled;
  }
 
