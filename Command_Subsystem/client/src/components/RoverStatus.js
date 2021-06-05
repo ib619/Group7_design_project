@@ -6,19 +6,21 @@ import styled from "styled-components";
 const RoverStatus = () => {
   const { connectionStatus, client } = useMqttState();
   const { message } = useSubscription("rover/status");
-  const [drive, setDrive] = useState(0);
-  const [range, setRange] = useState(0);
+  const [status, setStatus] = useState({
+    drive_status: 0,
+    range: 0,
+    obstacle_detected: 0,
+  });
 
   useEffect(() => {
     if (message && message.topic === "rover/status") {
       let data = JSON.parse(message.message);
-      setDrive(data["drive_status"]);
-      setRange(data["range"]);
+      setStatus(data);
     }
   }, [message]);
 
   useEffect(() => {
-    if (drive === 2) {
+    if (status["drive_status"] === 2) {
       localStorage.removeItem("obstacles");
     }
   });
@@ -28,13 +30,13 @@ const RoverStatus = () => {
   };
 
   const mapStatus = () => {
-    var mapping = {
+    let mapping = {
       0: "Rover is chilling!",
       1: "Rover is driving!",
       2: "Rover is at home!",
     };
 
-    return mapping[drive];
+    return mapping[status["drive_status"]];
   };
 
   return (
@@ -42,7 +44,7 @@ const RoverStatus = () => {
       <p>MQTT: {connectionStatus}</p>
       {/* <img src={driving} alt="loading..." style={{ height: 50, width: 100 }} /> */}
       <p>{mapStatus()}</p>
-      <p>Remaining Range: {range} cm</p>
+      <p>Remaining Range: {status["range"]} cm</p>
       <Button name={1} variant="outline-light" onClick={handleClick}>
         Reset
       </Button>

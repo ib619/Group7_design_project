@@ -30,26 +30,19 @@ const Map = () => {
   // on message update
   useEffect(() => {
     if (message && message.topic === "obstacle/result") {
-      setObstacles(JSON.parse(message.message));
-      // localStorage.setItem("obstacles", message.message);
-    }
-  }, [message, setObstacles]);
-
-  // on position update
-  useEffect(() => {
-    if (message && message.topic === "position/update") {
-      setPos(JSON.parse(message.message));
-    }
-  }, [message, setPos]);
-
-  // on path update
-  useEffect(() => {
-    if (message && message.topic === "path") {
-      if (show === true) {
+      if (message.topic === "obstacle/result") {
+        // on obstacle update
+        setObstacles(JSON.parse(message.message));
+        // localStorage.setItem("obstacles", message.message);
+      } else if (message.topic === "position/update") {
+        // on position update
+        setPos(JSON.parse(message.message));
+      } else if (message.topic === "path") {
+        // on path update
         setPath(JSON.parse(message.message));
       }
     }
-  }, [message, show, setPath]);
+  }, [message, setObstacles, setPos, setPath]);
 
   return (
     <React.Fragment>
@@ -99,7 +92,7 @@ const Border = styled.div`
 
   .switch {
     position: absolute;
-    z-index: 2;
+    z-index: 1;
   }
 `;
 

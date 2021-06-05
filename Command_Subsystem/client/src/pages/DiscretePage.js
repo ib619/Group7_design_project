@@ -6,7 +6,6 @@ import FormAlert from "../components/FormAlert";
 // import styled from "styled-components";
 
 const DiscretePage = () => {
-  // for the game
   const [target, setTarget] = useState({
     direction: "",
     speed: "",
