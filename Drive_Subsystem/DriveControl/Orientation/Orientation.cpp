@@ -237,3 +237,16 @@ void Orientation::getDisplacement() {
  float Orientation::passDirY() {
      return currentDirection.y;
  }
+
+ void Orientation::resetData(int trigger) {
+     if (trigger == 1) {
+         lastPosition.x = 0; lastPosition.y = 0;
+         currentPosition.x = 0; currentPosition.y = 0;
+         truePosition.x = 0; truePosition.y = 0;
+
+         lastDirection.x = 0; lastDirection.y = 1;
+         currentDirection.x = 0; currentDirection.y = 1;
+
+         initial.x = 0; initial.y = 1;
+     }
+ }
