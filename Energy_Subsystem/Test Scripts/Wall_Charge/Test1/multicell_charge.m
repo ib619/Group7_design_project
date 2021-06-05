@@ -1,10 +1,11 @@
 clear; close all;
 
-import1 = readmatrix('BATCYCLE.CSV');
-import1 = import1(368:end, :);
+import1 = readmatrix('BATCYCLE2.CSV');
+% import1 = import1(368:end, :); % for BATCYCLE1.csv
+import1 = import1(1145:end,:);
 length = size(import1, 1);
 
-import2 = readmatrix('DIAGNOSE.CSV');
+import2 = readmatrix('DIAGNOSE2.CSV');
 import2 = import2(end-length:end, :);
 
 cvimport = readmatrix('cv_SoC.csv');
@@ -40,7 +41,7 @@ c_ocv_l = 3300;
 c_ocv_u = 3450;
 
 for i = 1:length
-    if (state(i,1) == 0) % calibrate initial SoC with voltage lookup
+    if (i==1 || state(i,1) == 0) % calibrate initial SoC with voltage lookup
         [c1, index1] = min(abs(cv1-V_1(i,1)));
         SOC1(i,1) = cSoC(index1);
         
@@ -100,6 +101,7 @@ plot(V_3);
 ylabel('Voltage (mV)');
 xlabel('Time (s)');
 legend('V_1','V_2','V_3','location','best');
+ylim([3200 3700]);
 
 subplot(3,1,2);
 plot(current_ref); hold on;
@@ -115,3 +117,4 @@ plot(SOC3);
 ylabel('SOC (%)');
 xlabel('Time (s)');
 legend('SOC1','SOC2','SOC3','location','best');
+ylim([60 110]);

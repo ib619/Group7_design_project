@@ -99,6 +99,11 @@ void SMPS::init() {
     */
    q1_now = q1_0;
 
+    if (SD.exists("Diagnose.csv")) {
+      SD.remove("Diagnose.csv");
+    }
+   
+
     // Initialise discharge and charge tables
     if (SD.exists(discharge_SoC_filename)) {
         myFile = SD.open(discharge_SoC_filename);

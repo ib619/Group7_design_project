@@ -192,18 +192,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
+            Serial.println("CC1");
         }
         if (V_2 > c_ocv_u || V_2 < c_ocv_l) { // LOOKUP
             temp2 = lookup_c_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING  
             temp2 = temp2 + charge_2/q2_now*100;
-            lookup = 0;n
+            lookup = 0;
+            Serial.println("CC2");
         }
         if (V_3 > c_ocv_u || V_3 < c_ocv_l) { // LOOKUP  
             temp3 = lookup_c_table(3, V_1, V_2, V_3);          
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
             lookup = 0;
+            Serial.println("CC3");
         }
     } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
         if (V_1 > d_ocv_u || V_1 < d_ocv_l) { // LOOKUP
@@ -211,18 +214,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
+            Serial.println("CC1");
         }
         if (V_2 > d_ocv_u || V_2 < d_ocv_l) { // LOOKUP           
             temp2 = lookup_d_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp2 = temp2 + charge_2/q2_now*100;
             lookup = 0;
+            Serial.println("CC2");
         }
         if (V_3 > d_ocv_u || V_3 < d_ocv_l) { // LOOKUP
             temp3 = lookup_d_table(3, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
             lookup = 0;
+            Serial.println("CC3");
         }
     } else if (state_num == 2) {
         temp1 = 100;
@@ -263,9 +269,12 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
       arr_size = arr_size + 1;     
     } else { // In most cases
       if (lookup == 1) {
-        SoC_1 = SoC_1_arr.push(temp1).get();
-        SoC_2 = SoC_2_arr.push(temp2).get();
-        SoC_3 = SoC_3_arr.push(temp3).get();
+        SoC_1_arr.push(temp1);
+        SoC_2_arr.push(temp2);
+        SoC_3_arr.push(temp3);
+        SoC_1 = SoC_1_arr.get();
+        SoC_2 = SoC_2_arr.get();
+        SoC_3 = SoC_3_arr.get();
       } else {
         SoC_1 = temp1;
         SoC_2 = temp2;
@@ -292,7 +301,6 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
     }
     myFile.close();
 }
-
 float SMPS::get_SOC(int cell_num) {
   if (cell_num == 1) {
     return SoC_1;

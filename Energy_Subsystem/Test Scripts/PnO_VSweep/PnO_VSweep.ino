@@ -9,8 +9,8 @@
 // 2: SWEEP COMPLETE
 
 // How bout we try to control the current on the output side?
-  // Panel connected to V_A
-  // 10R Resistor connected to V_B
+  // Panel connected to V_B
+  // 10R Resistor connected to V_A
   
 
 //Packages
@@ -39,7 +39,7 @@ float ev=0,cv=0,ei=0; //internal signals // FIXME:
   // ev: difference between V_ref and V_b
   // cv: current obtained from voltage PID controller. need to saturate it
   // ei: difference between desired and inductor current. error_amps in this case? FIXME:
-float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
+float kpv=0.0005024,kiv=15.78,kdv=0; // voltage pid divided by 100.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
 
@@ -124,9 +124,9 @@ void loop() {
   // FAST LOOP (1kHZ)
   if (loop_trigger == 1){
       state_num = next_state; //state transition
-      V_B = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
+      V_B = analogRead(A0)*4.096/1.03*2*1.5; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
       V_A = analogRead(A1)*4.096/1.03* 2.699;
-      if (V_B > 4700) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
+      if (V_B > 6000) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
           digitalWrite(7,true); //turn on the red LED
@@ -135,10 +135,10 @@ void loop() {
 
       ev = (vref - V_B)/1000;  //voltage error at this time
       cv = pidv(ev);  //voltage pid
-      cv = saturation(cv, current_limit, 0); //current demand saturation
-      ei = (cv - current_measure)/1000; //current error
-      closed_pwm = pidi(ei);  //current pid
-      closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
+      //cv = saturation(cv, current_limit, 0); //current demand saturation
+      //ei = (cv - current_measure)/1000; //current error
+      //closed_pwm = pidi(ei);  //current pid
+      closed_pwm = saturation(cv, 0.99, 0.01);  //duty_cycle saturation
       analogWrite(6, (int)(255 - closed_pwm * 255)); // write it out (inverting for the Buck here) //Not TODO: PWM Modulate Function
 
       // Update Flags
@@ -151,7 +151,7 @@ void loop() {
     input_switch = digitalRead(2); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case 0:{ // Start state (no current, no LEDs)
-        vref = 2500;
+        vref = 0;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
           next_state = 1;
@@ -183,7 +183,7 @@ void loop() {
           digitalWrite(8,false);
         }
 
-        if(vref = 4700){ // Sweeping complete
+        if(vref == 5200){ // Sweeping complete
           next_state = 2;
           digitalWrite(8,true);
           digitalWrite(7,true);
@@ -222,7 +222,7 @@ void loop() {
     
     // Print values to serial monitor and csv
     // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(V_B) + "," + String(current_ref) + ","+ String(current_measure) + "," + String(V_A); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(vref) + "," + String(V_B) + "," + String(current_ref) + ","+ String(current_measure); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
     File dataFile = SD.open("SweePnO.csv", FILE_WRITE); // open our CSV file

@@ -84,9 +84,9 @@ class SMPS {
 
         // Need to install Moving Average Library for this
         // Initialise within init method
-        MovingAverage<float> SoC_1_arr = MovingAverage<float>(5);
-        MovingAverage<float> SoC_2_arr = MovingAverage<float>(5);
-        MovingAverage<float> SoC_3_arr = MovingAverage<float>(5);
+        MovingAverage<float> SoC_1_arr = MovingAverage<float>(60);
+        MovingAverage<float> SoC_2_arr = MovingAverage<float>(60);
+        MovingAverage<float> SoC_3_arr = MovingAverage<float>(60);
         int arr_size = 0; // compute manually when FIFO not full
 
         float current_ref;
@@ -124,6 +124,9 @@ class SMPS {
 
         float d_SoC[100] = {};
         float c_SoC[100] = {};
+
+        float drive_speed[18] = {};
+        float drive_power[18] = {};
 
         int c_iterator = 0;
         int d_iterator = 0;
