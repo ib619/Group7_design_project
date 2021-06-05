@@ -286,26 +286,26 @@ void loop() {
             if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
                 disc1 = 0, disc2 = 1, disc3 = 1;
                 dq1 = dq1 + 250/1000;
-                dq2 = dq2 + (250 - V_2/150)/1000;
+                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
                 dq3 = dq3 + (250 - V_3/150)/1000;
                 Serial.println("Cell 1 Lowest");
             } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
                 disc1 = 1, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + (250 - V_1/150)/1000;
+                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
                 dq2 = dq2 + 250/1000;
-                dq3 = dq3 + (250 - V_3/150)/1000;
+                dq3 = dq3 + (250.0 - V_3/150.0)/1000.0;
                 Serial.println("Cell 2 Lowest");
             } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
                 disc1 = 1, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + (250 - V_1/150)/1000;
-                dq2 = dq2 + (250 - V_2/150)/1000;
-                dq3 = dq3 + 250/1000;
+                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
+                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
+                dq3 = dq3 + 250.0/1000.0;
                 Serial.println("Cell 3 Lowest");
             } else {
               disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + 250/1000;
-                dq2 = dq2 + 250/1000;
-                dq3 = dq3 + 250/1000;
+                dq1 = dq1 + 250.0/1000.0;
+                dq2 = dq2 + 250.0/1000.0;
+                dq3 = dq3 + 250.0/1000.0;
                 Serial.println("Not balancing");
             }
             digitalWrite(PIN_DISC1, disc1);
@@ -357,9 +357,9 @@ void loop() {
       case CV_CHARGE: { // 6 Charging with constant voltage (after state 1, before 2)
         vref = 3600;
         current_ref = 0;
-        q1 = q1 + 250/1000;
-        q2 = q2 + 250/1000;
-        q3 = q3 + 250/1000;
+        q1 = q1 + 250.0/1000.0;
+        q2 = q2 + 250.0/1000.0;
+        q3 = q3 + 250.0/1000.0;
         if (current_measure > 0) {
             next_state = CHARGE_REST;
             vref=0;

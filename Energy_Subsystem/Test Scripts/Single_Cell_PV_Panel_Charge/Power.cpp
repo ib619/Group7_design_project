@@ -160,69 +160,6 @@ void SMPS::init() {
     }
     myFile.close();
 
-    /*
-    // Load threshold values
-    if (SD.exists(threshold_filename)) {
-        myFile = SD.open(threshold_filename);
-        if (myFile) {
-            for (int i = 0; i < 5; i++) {
-                content = myFile.readStringUntil(',');
-                d_ocv_l_1 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                d_ocv_u_1 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                c_ocv_u_1 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                c_ocv_l_1 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                d_ocv_l_2 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                d_ocv_u_2 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                c_ocv_u_2 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                c_ocv_l_2 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                d_ocv_l_3 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                d_ocv_u_3 = content.toFloat();
-                content = myFile.readStringUntil(',');
-                c_ocv_u_3 = content.toFloat();
-                content = myFile.readStringUntil('\n');
-                c_ocv_l_3 = content.toFloat();
-                Serial.println(
-                    "Cell1_Thresholds: "
-                    String(d_ocv_l_1) + "," 
-                    + String(d_ocv_u_1) + "," 
-                    + String(c_ocv_u_1)  + "," 
-                    + String(c_ocv_l_1)
-                );
-                Serial.println(
-                    "Cell2_Thresholds: "
-                    String(d_ocv_l_2) + "," 
-                    + String(d_ocv_u_2) + "," 
-                    + String(c_ocv_u_2)  + "," 
-                    + String(c_ocv_l_2)
-                );
-                Serial.println(
-                    "Cell3_Thresholds: "
-                    String(d_ocv_l_3) + "," 
-                    + String(d_ocv_u_3) + "," 
-                    + String(c_ocv_u_3)  + "," 
-                    + String(c_ocv_l_3)
-                );
-                if (content == "") {
-                    Serial.println("Insertion Complete");    
-                    break;
-                }                 
-            }
-        }
-    } else {
-        Serial.println("File not open");
-    }
-    myFile.close();
-    */
-
 }
 
 void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3) {
@@ -256,20 +193,6 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        /*
-        if (V_2 > c_ocv_u_2 || V_2 < c_ocv_l_2) { // LOOKUP
-            temp2 = lookup_c_table(2);
-        } else { // COULOMB COUNTING  
-            temp2 = temp2 + charge_2/q2_now*100;
-            lookup = 0;
-        }
-        if (V_3 > c_ocv_u_3 || V_1 < c_ocv_l_3) { // LOOKUP  
-            temp3 = lookup_c_table(3);          
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
-            lookup = 0;
-        }
-        */
     } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
         if (V_1 > d_ocv_u_1 || V_1 < d_ocv_l_1) { // LOOKUP
             temp1 = lookup_d_table(1, V_1, V_2, V_3);
@@ -277,20 +200,6 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
         }
-        /*
-        if (V_2 > d_ocv_u_2 || V_2 < d_ocv_l_2) { // LOOKUP           
-            temp2 = lookup_d_table(2, V_1, V_2, V_3);
-        } else { // COULOMB COUNTING
-            temp2 = temp2 + charge_2/q2_now*100;
-            lookup = 0;
-        }
-        if (V_3 > d_ocv_u_3 || V_1 < d_ocv_l_3) { // LOOKUP
-            temp3 = lookup_d_table(3, V_1, V_2, V_3);
-        } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
-            lookup = 0;
-        }
-        */
     } else if (state_num == 2) {
         temp1 = 100;
         // temp2 = 100;
@@ -370,25 +279,6 @@ float SMPS::lookup_c_table(int cell_num, float V_1, float V_2, float V_3) {
             }
         }
     }
-    /*
-    } else if (cell_num == 2) {
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                return 1.0;
-            } else if (V_2 >= c_v_2[i] && V_2 < c_v_2[i+1]) {
-                return c_SoC[i];
-            }
-        }
-    } else if (cell_num == 3) {
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                return 1.0;
-            } else if (V_3 >= c_v_3[i] && V_3 < c_v_3[i+1]) {
-                return c_SoC[i];
-            }
-        }
-    } 
-    */
 }
 
 float SMPS::lookup_d_table(int cell_num, float V_1, float V_2, float V_3) {
@@ -403,23 +293,4 @@ float SMPS::lookup_d_table(int cell_num, float V_1, float V_2, float V_3) {
             }
         }
     }
-    /*
-    } else if (cell_num == 2) {
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                return 0.0;
-            } else if (V_2 <= d_v_2[i] && V_2 > d_v_2[i+1]) {
-                return d_SoC[i];
-            }
-        }
-    } else if (cell_num == 3) {
-        for (int i=0; i < 100; i++) {
-            if (i == 99) {
-                return 0.0;
-            } else if (V_3 <= d_v_3[i] && V_3 > d_v_3[i+1]) {
-                return d_SoC[i];
-            }
-        }
-    }
-    */
 }
