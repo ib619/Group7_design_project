@@ -7,7 +7,7 @@ const RoverStatus = () => {
   const { connectionStatus, client } = useMqttState();
   const { message } = useSubscription("rover/status");
   const [status, setStatus] = useState({
-    drive_status: 0,
+    drive_status: 2,
     range: 0,
     obstacle_detected: 0,
   });

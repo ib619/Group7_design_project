@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSubscription } from "mqtt-react-hooks";
+import GridLines from "react-gridlines";
 import { MapInteractionCSS } from "react-map-interaction";
 import BootstrapSwitchButton from "bootstrap-switch-button-react";
 import styled from "styled-components";
@@ -19,6 +20,9 @@ const Map = () => {
     "path",
   ]);
 
+  // for the map zooming features
+  // const [map, setMap] = useState({ scale: 1, translation: { x: 0, y: 0 } });
+
   // // on refresh
   // useEffect(() => {
   //   const obstacle = JSON.parse(localStorage.getItem("obstacles"));
@@ -29,7 +33,7 @@ const Map = () => {
 
   // on message update
   useEffect(() => {
-    if (message && message.topic === "obstacle/result") {
+    if (message) {
       if (message.topic === "obstacle/result") {
         // on obstacle update
         setObstacles(JSON.parse(message.message));
@@ -46,7 +50,7 @@ const Map = () => {
 
   return (
     <React.Fragment>
-      <Border className="map">
+      <Border>
         <BootstrapSwitchButton
           checked={false}
           width={120}
@@ -59,15 +63,28 @@ const Map = () => {
             setShow(checked);
           }}
         />
-        <MapInteractionCSS showControls={true} minScale={0.2} maxScale={2}>
-          <Center src={home} />
-          <Person src={pointerwhite} pos={pos} />
-          {obstacles &&
-            Array.from(obstacles).map((data, i) => (
-              <Obstacle key={i} coords={data} />
-            ))}
-          {show &&
-            Array.from(path).map((data, i) => <Point key={i} coords={data} />)}
+        <MapInteractionCSS
+          showControls={true}
+          minScale={0.5}
+          maxScale={2}
+          translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
+          // value={map}
+          // onChange={(val) => {
+          //   setMap(val);
+          // }}
+        >
+          <GridLines cellWidth={50} className="body">
+            <Center src={home} />
+            <Person src={pointerwhite} pos={pos} />
+            {obstacles &&
+              Array.from(obstacles).map((data, i) => (
+                <Obstacle key={i} coords={data} />
+              ))}
+            {show &&
+              Array.from(path).map((data, i) => (
+                <Point key={i} coords={data} />
+              ))}
+          </GridLines>
         </MapInteractionCSS>
       </Border>
 
@@ -94,18 +111,32 @@ const Border = styled.div`
     position: absolute;
     z-index: 1;
   }
+
+  .body {
+    display: flex;
+    height: 5000px;
+    width: 5000px;
+    position: relative;
+    right: 2500px;
+    bottom: 2500px;
+  }
 `;
 
 const Center = styled.img`
   position: relative;
-  left: 380px;
-  bottom: -230px;
+  left: 2880px;
+  bottom: -2730px;
+  height: 40px;
+  width: 40px;
 `;
+
+// left: 380px;
+// bottom: -230px;
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] + 390,
-    bottom: props.coords[2] - 155,
+    left: props.coords[1] + 2810,
+    bottom: props.coords[2] - 2740,
     opacity: 1 / props.coords[3],
     background: props.coords[0] === "blue" ? "turquoise" : props.coords[0],
   },
@@ -116,9 +147,12 @@ const Obstacle = styled.div.attrs((props) => ({
   transition: all 1s ease-out;
 `;
 
+// left: 390
+// bottom: -155
+
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] + 390,
+    left: props.coords[0] + 370,
     bottom: props.coords[1] - 155,
   },
 }))`
@@ -132,8 +166,8 @@ const Point = styled.div.attrs((props) => ({
 
 const Person = styled.img.attrs((props) => ({
   style: {
-    left: props.pos.x + 380, // hardcoded offset values :(
-    bottom: props.pos.y - 180,
+    left: props.pos.x + 2840, // hardcoded offset values :(
+    bottom: props.pos.y - 2700,
   },
 }))`
   position: relative;
@@ -143,6 +177,9 @@ const Person = styled.img.attrs((props) => ({
   transform: rotate(${({ pos }) => pos.heading}deg);
   transition: all 0.6s ease-out;
 `;
+
+// left: 340
+// bottom: -200
 
 const Coords = styled.p`
   background: ${({ theme }) => theme.background};
