@@ -15,3 +15,24 @@
 4. npm (https://www.npmjs.com/get-npm)
 5. Python 3.X.X (https://www.python.org/downloads/)
 6. Mosquitto MQTT Broker v2.0.10 (https://mosquitto.org/download/)
+
+
+<br />
+<br />  
+
+### ESP32 Settings for Arduino IDE:
+- Board Name/Type: ESP32 Dev Module
+- Partition: HUGE APP
+
+<br />
+<br />
+
+### Arduino Settings for Arduino IDE:
+- Board Name/Type: Arduino Nano Every
+
+<br />
+<br />
+
+### Known problems with rover setup:
+1. Arduino will not accept sketch uploads if SMPS is not powered
+2. ESP32 will not upload if UART cables are still plugged in
