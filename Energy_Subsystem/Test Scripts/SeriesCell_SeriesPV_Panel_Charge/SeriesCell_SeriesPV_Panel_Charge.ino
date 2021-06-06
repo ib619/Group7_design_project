@@ -1,65 +1,12 @@
-/* 
+// Charging a single cell with a PV panel
+  // No Discharging
+// Port A: PV Panel, voltage available at A0
+// Port B: A single battery
+// Aim: To maximise solar panel output while ensuring that the current is delievered at a safe level.
+  // Instead of using a reference voltage, alter PWM instead
+  // Asynchronous Buck
 
-NOTE: FOR THIS FILE, 
-- ASYNCHRONOUS 
-- CURRENT IS ON B SIDE
-
-initial state of charge for cells (coulombs)
-Cell 1: 1793
-Cell 2: 2000.5
-Cell 3: 1921.75
-
-FOR TESTING BALANCING ONLY: BOOST CHARGING
-  PORT B: 5V Wall Plug, 2.2R resistor
-  PORT A: 3 batteries
-
-Only Charging (Now also discharging)
-
-Extrapolate output current
-Assuming 100% efficiency (to be safe)
-
-Aim:
-This is a simplified variant of the master file.
-Obtain to allow charging and charging at designated speeds
-  Charging at 250mA (or 500mA short periods) from wall
-  Discharging at 500mA (or 1A short periods)
-Evaluates the SoC using the SoC voltage lookup table
-
-3 CELLS IN SERIES!!!!
-
-Flow chart
-typical: 0 > 1 > 6 > 2 > 8 > 4 > 1 > 6 > 2 > 8 > 4 > ......
-
-0 IDLE
-1 CHARGE (yellow LED)
-2 CHARGE REST (note: only records charge data after first discharge)
-3 SLOW DISCHARGE (250mA)
-4 DISCHARGE REST
-5 ERROR (red LED)(must go to 0 next and restart)
-6 CONSTANT VOLTAGE CHARGE (blinking yellow LED)
-7 RECALIBRATION COMPLETE
-8 NORMAL DISCHARGE (500mA)
-9 RAPID DISCHARGE (1A)
-10 RAPID CURRENT CHARGE (500mA)
-  Normal discharge (8), rapid discharge (1A) and rapid current charge (500mA) are currently called manually
-  In general rapid discharge and rapid current charge is not recommended for long periods.
-    Rapid discharge is disabled when SoC is below 30%. Also it is only valid for no more than 10 seconds.
-    Rapid charge is disabled when SoC is above 70%
-
-Rationale for SOC
-    SOC is only evaluated every 60 seconds, and not within the file.
-    If voltage is within a certain voltage threshold, then coulomb counting is used
-    If voltage is above or beyond a certain threshold, then open circuit voltage is used, alongside a moving average.
-*/
-
-#include <Wire.h>
-#include <INA219_WE.h>
-#include <SPI.h>
-#include <SD.h>
-#include <MovingAverage.h>
-#include "Power.h"
-
-INA219_WE ina219; // this is the instantiation of the library for the current sensor
+#define PIN_VA A0
 
 #define PIN_OLCL 2
 #define PIN_PWM 6
@@ -68,9 +15,9 @@ INA219_WE ina219; // this is the instantiation of the library for the current se
 #define PIN_V1 A1
 #define PIN_V2 A2
 #define PIN_V3 A3
-#define PIN_DISC1 A7
-#define PIN_DISC2 A6
-#define PIN_DISC3 A0
+#define PIN_DISC1 10
+#define PIN_DISC2 A7
+#define PIN_DISC3 A6
 #define PIN_RLY1 5
 #define PIN_RLY2 4
 #define PIN_RLY3 9
@@ -87,23 +34,35 @@ INA219_WE ina219; // this is the instantiation of the library for the current se
 #define RAPID_DISCHARGE 9
 #define RAPID_CHARGE 10
 
-// Setup SMPS
+#include <Wire.h>
+#include <INA219_WE.h>
+#include <SPI.h>
+#include <SD.h>
+#include <MovingAverage.h>
+#include "Power.h"
+
+INA219_WE ina219; // this is the instantiation of the library for the current sensor
 SMPS mySMPS;
 
 // set up variables using the SD utility library functions:
-const int chipSelect = 10; const int SD_CS = 10;
 Sd2Card card;
 SdVolume volume;
 SdFile root;
-String dataString;
 
-unsigned int rly_timer = 0;
+const int SD_CS = 10;
 unsigned int rest_timer;
-unsigned int rapid_timer;
 unsigned int loop_trigger;
 unsigned int int_count = 0; // a variables to count the interrupts. Used for program debugging.
 
-// Voltage PID Controller
+// Current Controller Stuff
+float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
+float ui_max = 1, ui_min = 0; //anti-windup limitation
+float kpi = 0.02512, kii = 39.4, kdi = 0; // current pid.
+float Ts = 0.001; //1 kHz control frequency.
+float current_measure, current_ref = 0, error_amps; // Current Control
+float pwm_out, closed_pwm;
+
+// Voltage PID Controller Stuff
 float ev=0,cv=0,ei=0; //internal signals // FIXME:
   // ev: difference between V_ref and V_b
   // cv: current obtained from voltage PID controller. need to saturate it
@@ -111,15 +70,6 @@ float ev=0,cv=0,ei=0; //internal signals // FIXME:
 float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
-float vref=0;
-
-// Current PID Controller
-float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
-float ui_max = 1, ui_min = 0; //anti-windup limitation
-float kpi = 0.02512, kii = 39.4, kdi = 0; // current pid.
-float Ts = 0.001; //1 kHz control frequency.
-float current_measure, current_ref = 0, error_amps; // Current Control
-float pwm_out;
 
 // Series Batteries Variables
 float V_1 = 0, V_2 = 0, V_3 =0;
@@ -127,28 +77,32 @@ float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0;
 float V_UPLIM = 3590;
 float V_LOWLIM = 2500;
 
-// State Machine Stuff
+float V_PD;
 boolean input_switch;
-int state_num = 0,next_state, prev_state = -1;
-bool recalibrating = 0; bool discharged = 0;
-bool stop = 0;
+int state_num=0,next_state, prev_state;
+String dataString;
 
-// Blinking LED for state 6
-boolean blink = 0;
+// PV Panel Limits
+float vref;
+float I_in;
+float current_limit = 230;
+float V_limit = 5000;
+float v0, v1; // current and previous voltage values
+float p0, p1; // current and previous power values
+float i0, i1; // current and previous current values
+float p_diff, v_diff;
 
 // Current Capacity: Only calculated during discharge process
 float q1 = 0, q2 = 0, q3 = 0;
 
 // Stores the amount of charge added/removed within the past 2 minutes. Reset after.
 float dq1 = 0, dq2 = 0, dq3 = 0;
-
-// Account for difference in current when relay is on;
-bool disc1 = 0, disc2 = 0, disc3 = 0;
+bool disc1 = 0, disc2 = 0, disc3 = 0; // Account for difference in current when relay is on;
 bool relay_on = 0;
 
 void setup() {
-
   //Some General Setup Stuff
+
   Wire.begin(); // We need this for the i2c comms for the current sensor
   Wire.setClock(700000); // set the comms speed for i2c
   ina219.init(); // this initiates the current sensor
@@ -156,10 +110,10 @@ void setup() {
 
   mySMPS.init();
 
-  if (SD.exists("BatCycle.csv")) { // Wipe the datalog when starting
-    SD.remove("BatCycle.csv");
+  if (SD.exists("PVCELLS.CSV")) {
+      SD.remove("PVCELLS.CSV");
   }
-
+ 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
 
@@ -187,7 +141,10 @@ void setup() {
   pinMode(PIN_RLY2, OUTPUT);
   pinMode(PIN_RLY3, OUTPUT);
 
-  // TimerA0 initialization for (NOW) 0.2kHz control-loop interrupt.
+  // Voltage reading at port A
+  pinMode(PIN_VA, INPUT);
+
+  // TimerA0 initialization for 200Hz control-loop interrupt.
   TCA0.SINGLE.PER = 4999; //
   TCA0.SINGLE.CMP1 = 4999; //
   TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV16_gc | TCA_SINGLE_ENABLE_bm; //16 prescaler, 1M.
@@ -197,15 +154,15 @@ void setup() {
   TCB0.CTRLA = TCB_CLKSEL_CLKDIV1_gc | TCB_ENABLE_bm; //62.5kHz
 
   interrupts();  //enable interrupts.
-  analogWrite(PIN_PWM, 120); //just a default state to start with
-  
+  analogWrite(6, 120); //just a default state to start with
+
 }
 
 void loop() {
-
-//In rests state, if command was running (but not calibration), command complete
-  if (loop_trigger == 1){ // FAST LOOP (0.2kHZ)
+  if (loop_trigger == 1){ // FAST LOOP (200HZ)
       state_num = next_state; //state transition
+      
+      V_PD = analogRead(PIN_VA)*4.096/1.03* 4.1626; //mannual correction for potential divider
       
       //Checking for Error states (individual battery voltages defined)
       if ((V_1 > 3700 || V_1 < 2400) || (V_2 > 3700 || V_2 < 2400) || (V_3 > 3700 || V_3 < 2400)) { 
@@ -215,26 +172,14 @@ void loop() {
           current_ref = 0; // no current
       }
       current_measure = (ina219.getCurrent_mA()); // sample the inductor current (via the sensor chip)
-     
-      // Use constant voltage with respect to battery 1
-      // Use voltage then current PID controller for constant voltage (only in state 6)
-      if (vref == 3600) { 
-        ev = (vref - V_1)/1000;  //voltage error at this time
-        pwm_out = pidv(ev);  //voltage pid
-        // cv = saturation(cv, 0.25, 0); //current demand saturation
-        // ei = (cv - current_measure)/1000; ; //current error
-        // pwm_out = pidi(ei);  //current pid
-      } else if (vref == 0) { // Use Current PID controller in all other scenarios
-        error_amps = (current_ref - current_measure) / 1000; //PID error calculation
-        pwm_out = pidi(error_amps); //Perform the PID controller calculation       
-      }
-      pwm_out = saturation(pwm_out, 0.99, 0.01); //duty_cycle saturation. NOT FIXME: PWM Modulate
-      analogWrite(PIN_PWM, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
+      
+      //TODO: determine current in
+      pwm_out = saturation(pwm_out, 0.99, 0.01);  //duty_cycle saturation
+      analogWrite(6, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
       int_count++; //count how many interrupts since this was last reset to zero
-      rly_timer++;
       loop_trigger = 0; //reset the trigger and move on with life
   }
-  
+
   // Relay timer is reset every second. Like int_count, it also increments per millisecond.
   // Only switch on relay 1 time per second, and switch on them consecutively
   if (int_count == 100) { // Relay switching is 10ms. Double for safety
@@ -257,27 +202,54 @@ void loop() {
     digitalWrite(9,false);
     relay_on = 1;
   }
- 
-  // This still runs every 1 second
-  if (int_count % 200 == 0) { // SLOW LOOP (0.2Hz)
+  
+  if (int_count % 200 == 0) { // SLOW LOOP (1Hz)
     input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
-      case IDLE:{ // 0 Idle state (no current, no LEDs)
+      case 0:{ // Start state (no current, no LEDs)
         current_ref = 0;
         q1 = 0; q2 = 0; q3 = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
+        pwm_out = 0;
         if (input_switch == 1) { // if switch, move to charge
-          next_state = CHARGE;
+          // First time, so reset voltage panel values
+          pwm_out = 0.5; // initial pwm value
+          
+          v1 = V_PD;
+          i1 = current_measure;
+          p1 = v1*i1;
+          pwm_out = pwm_out + 0.03;
+
+          next_state = 1;
           digitalWrite(PIN_YELLED,true);
         } else { // otherwise stay put
-          next_state = IDLE;
+          next_state = 0;
           digitalWrite(PIN_YELLED,false);
         }
         break;
       }
-      case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        current_ref = -600;
-        vref = 0;
+      case 1:{ // Charge state (250mA and a green LED)
+
+        // Assign values
+        v0 = V_PD;
+        i0 = current_measure;
+        
+        p0 = v0 * i0; // directly use I_out as a proxy indicator for I_in
+        p_diff = p0-p1;  
+        v_diff = v0-v1;
+
+        // in general increasing PWM means decreasing PV voltage
+
+        // PnO algorithm
+        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1))) {
+          // vref = vref + 100;
+          pwm_out = pwm_out - 0.03;
+        } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
+          // vref = vref - 100;
+          pwm_out = pwm_out + 0.03;
+        } else {
+          Serial.println("No increment");
+        }
+
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
@@ -285,98 +257,69 @@ void loop() {
             //Connect to discharging relay if a battery is significantly lower  
             if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
                 disc1 = 0, disc2 = 1, disc3 = 1;
-                dq1 = dq1 + 250.0/1000.0;
-                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
-                dq3 = dq3 + (250.0 - V_3/150.0)/1000.0;
+                dq1 = dq1 + current_measure/1000.0;
+                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
+                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
                 Serial.println("Cell 1 Lowest");
             } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
                 disc1 = 1, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
-                dq2 = dq2 + 250.0/1000.0;
-                dq3 = dq3 + (250.0 - V_3/150.0)/1000.0;
+                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
+                dq2 = dq2 + current_measure/1000.0;
+                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
                 Serial.println("Cell 2 Lowest");
             } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
                 disc1 = 1, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
-                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
-                dq3 = dq3 + 250.0/1000.0;
+                dq1 = dq1 + (current_measure- V_1/150.0)/1000.0;
+                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
+                dq3 = dq3 + current_measure/1000.0;
                 Serial.println("Cell 3 Lowest");
             } else {
               disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + 250.0/1000.0;
-                dq2 = dq2 + 250.0/1000.0;
-                dq3 = dq3 + 250.0/1000.0;
+                dq1 = dq1 + current_measure/1000.0;
+                dq2 = dq2 + current_measure/1000.0;
+                dq3 = dq3 + current_measure/1000.0;
                 Serial.println("Not balancing");
             }
             digitalWrite(PIN_DISC1, disc1);
             digitalWrite(PIN_DISC2, disc2);
             digitalWrite(PIN_DISC3, disc3);
-        } else { // otherwise go to constant voltage charge
-          next_state = CV_CHARGE;
+        } else { // otherwise go to IDLE
+          next_state = 2;
           digitalWrite(PIN_YELLED,false);
-        }      
+        }         
+
+        // Reset values for next round
+        p1 = p0;
+        v1 = v0;
+        
         if(input_switch == 0){
-          next_state = IDLE;
+          next_state = 0;
           digitalWrite(PIN_YELLED,false);
         }
         break;
       }
-      case CHARGE_REST:{ // 2 Charge Rest, green LED is off and no current
+      case 2:{ // Charge Rest, green LED is off and no current
         current_ref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
-        if(input_switch == 0){
-          next_state = IDLE;
-          rest_timer = 0;
-          digitalWrite(PIN_YELLED,false);
-        }
-        if (rest_timer < 30) { // Stay here if timer < 30
-            next_state = CHARGE_REST;
-            digitalWrite(PIN_YELLED,false);
-            rest_timer++;
-        } else { // Move to completion state if battery has already been discharged
-            next_state = IDLE;
-            rest_timer = 0;
-            digitalWrite(PIN_YELLED,false);
+        if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
+          next_state = 0;
+          digitalWrite(8,false);
+        } else {
+          next_state = 2;
+          digitalWrite(8,false);
         }
         break;        
       }
-      case ERROR: { // 5 ERROR state RED led and no current
+      case 5: { // ERROR state RED led and no current
         current_ref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
-        if(input_switch == 0){
-          next_state = IDLE;
-          digitalWrite(PIN_REDLED,false);
-          digitalWrite(PIN_YELLED,false);
-        } else {
-          next_state = ERROR;
-          digitalWrite(PIN_REDLED,true);
-          digitalWrite(PIN_YELLED,false);
+        next_state = 5; // Always stay here
+        digitalWrite(7,true);
+        digitalWrite(8,false);
+        if(input_switch == 0){ //UNLESS the switch = 0, then go back to start
+          next_state = 0;
+          digitalWrite(7,false);
         }
         break;
-      }
-      case CV_CHARGE: { // 6 Charging with constant voltage (after state 1, before 2)
-        vref = 3600;
-        current_ref = 0;
-        q1 = q1 + 250.0/1000.0;
-        q2 = q2 + 250.0/1000.0;
-        q3 = q3 + 250.0/1000.0;
-        if (current_measure > 0) {
-            next_state = CHARGE_REST;
-            vref=0;
-        }
-        if (blink == 1) { // Blink LED in state 6
-            digitalWrite(PIN_YELLED,true);
-            blink = 0;
-        } else {
-            digitalWrite(PIN_YELLED,false);
-            blink = 1;
-        }
-        if(input_switch == 0){
-          next_state = IDLE;
-          digitalWrite(PIN_YELLED,false);
-        }
-        break;
-      }
+      }     
     }
 
     // The current is halted for a while when the relay is on.
@@ -386,18 +329,18 @@ void loop() {
       dq3 = dq3*0.9;
       relay_on = 0;
     }
-    
+
     // SoC Measurement
     mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
     SoC_1 = mySMPS.get_SOC(1);
     SoC_2 = mySMPS.get_SOC(2);
     SoC_3 = mySMPS.get_SOC(3);
-  
+    
     // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3) + "," + String(V_PD) + "," + String(pwm_out) + "," + String(p0/1000000);
     Serial.println(dataString);
     
-    File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
+    File dataFile = SD.open("PVCELLS.CSV", FILE_WRITE);
     if (dataFile){ 
       dataFile.println(dataString);
     } else {
@@ -405,7 +348,6 @@ void loop() {
     }
     dataFile.close();
 
-    rly_timer = 0;
     dq1 = 0; dq2 = 0; dq3 = 0;
   }
 
@@ -427,8 +369,7 @@ float saturation( float sat_input, float uplim, float lowlim) { // Saturation fu
   return sat_input;
 }
 
-// Current PID function
-float pidi(float pid_input) { 
+float pidi(float pid_input) { // discrete PID function
   float e_integration;
   e0i = pid_input;
   e_integration = e0i;
@@ -453,7 +394,7 @@ float pidi(float pid_input) {
 }
 
 // Voltage PID Controller
-float pidv(float pid_input){
+float pidv( float pid_input){
   float e_integration;
   e0v = pid_input;
   e_integration = e0v;
