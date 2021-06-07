@@ -292,7 +292,7 @@ int main()
             if  ((area2 <20000 ) & (centroid_x2 < 640) & (centroid_y2 < 480) & (h2 < 150) &  (w2 < 150)) {
                 printf("Decided on Colour 2: ");
                 updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
-            } else if (w2 < 150) {
+            } else if (w2 < 150  & (centroid_x2 < 640) & (centroid_y2 < 480)) {
                 printf("Decided on Colour 2 assume reflection: ");
                 updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
             } else if ((area1 <20000 ) & (centroid_x1 < 640) & (centroid_y1 < 480) & (h1 < 150) &  (w1 < 150)){
