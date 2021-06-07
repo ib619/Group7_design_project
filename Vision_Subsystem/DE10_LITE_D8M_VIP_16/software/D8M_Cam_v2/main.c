@@ -284,35 +284,52 @@ int main()
                 printf("H_W: (%d,%d), ",h2, w2);
             }
 
+
             //////////////////////////////////////////////////////////////////////
             // Send info to esp32 via i2C
             // Error in detection if area is more than a 20000 or if it is too high up the image
             // Check Colour 2 first because it is likely to be nearer to the camera
             if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
-                printf("Decided on Colour 2: ");
-                angle = estimate_angle(centroid_x2);
-                dist = estimate_dist(centroid_y2);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else if (w2 < 150) {
-                printf("Decided on Colour 2 assume reflection: ");
-                angle = estimate_angle(centroid_x2);
-                dist = estimate_dist(centroid_y2 - h2/4);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
-                printf("Decided on Colour 1: ");
-                angle = estimate_angle(centroid_x1);
-                dist = estimate_dist(centroid_y1);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else {
-                printf("Not Detected/Error");
-                updateColour(0x40000,  0, 0, 0, i);
-            }
-            printf(";\n");
-        }
-        printf("\n");
+                            printf("Decided on Colour 2: ");
+                            updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
+                        } else if (w2 < 150) {
+                            printf("Decided on Colour 2 assume reflection: ");
+                            updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
+                        } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+                            printf("Decided on Colour 1: ");
+                            updateColour(0x40000,  1, centroid_x1, centroid_y1,i);
+                        } else {
+                            printf("Not Detected/Error");
+                            updateColour(0x40000,  0, 0, 0, i);
+                        }
+                        printf(";\n");
+                    }
+                    printf("\n");
+//            if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
+//                printf("Decided on Colour 2: ");
+//                angle = estimate_angle(centroid_x2);
+//                dist = estimate_dist(centroid_y2);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else if (w2 < 150) {
+//                printf("Decided on Colour 2 assume reflection: ");
+//                angle = estimate_angle(centroid_x2);
+//                dist = estimate_dist(centroid_y2 - h2/4);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+//                printf("Decided on Colour 1: ");
+//                angle = estimate_angle(centroid_x1);
+//                dist = estimate_dist(centroid_y1);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else {
+//                printf("Not Detected/Error");
+//                updateColour(0x40000,  0, 0, 0, i);
+//            }
+//            printf(";\n");
+//        }
+//        printf("\n");
 
         //////////////////////////////////////////////////////////////////////
         // Auto Brightness
