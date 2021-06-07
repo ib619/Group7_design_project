@@ -114,6 +114,7 @@ void loop() {
         rover.x_axis=drive.getAxisX();
         rover.y_axis=drive.getAxisY();
         rover.rover_heading=drive.getRoverHeading();
+        rover.total_distance=drive.getTotalDistance();
         
         // send rover data to MQTT broker
         publishPosition(&mqtt, &rover);
@@ -144,18 +145,18 @@ void loop() {
         vision_update=1;        
       }
       ColourObject obj;             // fetch data from FPGA
-      for(int i=0;i<5;i++)  {
-        obj=fpga.readByIndex(i);
-        if(obj.detected>0)  {
-          if(obj.distance>0&&collisionFlag==0&&obj.distance<COLLISION_THRESHOLD)  {
-//            collisionFlag=1;
-          }
-          if(vision_update) {
-            Obstacle obs = convertObjectToObstacle(&rover, obj, i);
-            publishObstacle(&mqtt, obs);
-          }
-        }
-      }
+//      for(int i=0;i<5;i++)  {
+//        obj=fpga.readByIndex(i);
+//        if(obj.detected>0)  {
+//          if(obj.distance>0&&collisionFlag==0&&obj.distance<COLLISION_THRESHOLD)  {
+////            collisionFlag=1;
+//          }
+//          if(vision_update) {
+//            Obstacle obs = convertObjectToObstacle(&rover, obj, i);
+//            publishObstacle(&mqtt, obs);
+//          }
+//        }
+//      }
       if(vision_update) {
         vision_ptime=millis();
         vision_update=0;

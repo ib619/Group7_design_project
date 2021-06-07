@@ -94,6 +94,7 @@ int publishRoverStatus(PubSubClient *client, RoverDataStructure *data)  {
     obj["drive_status"] = data->alert;
     obj["range"] = data->rover_range;
     obj["obstacle_detected"] = data->obstacle_detected;
+    obj["distance_travelled"] = data->total_distance;
     char buffer[256];
     size_t n = serializeJson(doc, buffer);
     if(client->publish("rover/status", buffer, n)==true)    {
