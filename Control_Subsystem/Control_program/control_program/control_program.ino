@@ -10,7 +10,7 @@
 #define BASE_ADDRESS 0x40000
 #define FPGA_I2C_ADDRESS 0x55
 
-#define COLLISION_THRESHOLD 20  // currently in cm cos object distance comes in cm
+#define COLLISION_THRESHOLD 70  // currently in cm cos object distance comes in cm
 
 #define RSSI_UPDATE_INTERVAL 100
 #define VISION_UPDATE_INTERVAL 500
@@ -144,16 +144,19 @@ void loop() {
       if(millis()-vision_ptime>=VISION_UPDATE_INTERVAL)  {  //throttle vision update
         vision_update=1;        
       }
+
+      fpga.writeLED(3,0);
       ColourObject obj;             // fetch data from FPGA
       for(int i=0;i<5;i++)  {
         obj=fpga.readByIndex(i);
         if(obj.detected>0)  {
-//          if(obj.distance>0&&collisionFlag==0&&obj.distance<COLLISION_THRESHOLD)  {
-////            collisionFlag=1;
-//          }
+          fpga.writeLED(3,1);
+          Obstacle obs = cartesianToObstacle(&rover, obj, i);
           if(vision_update) {
-            Obstacle obs = cartesianToObstacle(&rover, obj, i);
             publishObstacle(&mqtt, obs);
+          }
+          if(collisionFlag==0&&obs.distance<COLLISION_THRESHOLD)  {
+            collisionFlag=1;
           }
         }
       }
@@ -168,73 +171,73 @@ void loop() {
       }
 
       mqtt.loop();    //check for messages from Command
-//      if(collisionFlag>0) {   //collision detected
-//        switch(collisionFlag) {
-//          case 1:
-//            fpga.writeLED(0,1);
-//            if(busyFlag==0) {
-//              collisionFlag=2;
-//            }
-//            else  {
-//              if(rover.drive_mode==2) { //save target coordinates/speed if in t2c mode
-//                command_holder.drive_mode=2;
-//                command_holder.target_x=rover.target_x;
-//                command_holder.target_y=rover.target_y;
-//                command_holder.speed=rover.speed;
-//              }
-//              rover.drive_mode=0;
-//              updateFlag=1;
-//            }
-//            break;
-//           case 2:              //turn right 90 degrees then move 250mm
-//            rover.drive_mode=1;
-//            rover.direction=90;
-//            rover.speed=150;
-//            rover.distance=250;
-//            updateFlag=1;
-//            collisionFlag=3;
-//            break;
-//           case 3:
-//            if(busyFlag==1) {   //wait for the rover to start moving
-//              collisionFlag=4;
-//            }
-//            break;
-//           case 4:
-//            if(busyFlag==0) { //turn left 90 degrees then move 400mm
-//              rover.drive_mode=1;
-//              rover.direction=-90;
-//              rover.speed=150;
-//              rover.distance=400;
-//              updateFlag=1;
-//              collisionFlag=5;
-//            }
-//            break;
-//            case 5:
-//              if(busyFlag==1) {
-//                collisionFlag=6;
-//              }
-//              break;
-//             case 6:
-//              if(busyFlag==0) {   //exit collision avoidance routine
-//                fpga.writeLED(0,0);
-//                if(command_holder.drive_mode==2)  { //restore t2c if available
-//                  rover.drive_mode=2;
-//                  rover.target_x=command_holder.target_x;
-//                  rover.target_y=command_holder.target_y;
-//                  rover.speed=command_holder.speed;
-//                  updateFlag=1;
-//                  command_holder.drive_mode=0;
-//                  command_holder.target_x=0;
-//                  command_holder.target_y=0;
-//                  command_holder.speed=0;
-//                }
-//                collisionFlag=0;
-//              }
-//              break;
-//             default: //sinkhole
-//              break;
-//        }
-//      }
+      if(collisionFlag>0) {   //collision detected
+        switch(collisionFlag) {
+          case 1:
+            fpga.writeLED(0,1);
+            if(busyFlag==0) {
+              collisionFlag=2;
+            }
+            else  {
+              if(rover.drive_mode==2) { //save target coordinates/speed if in t2c mode
+                command_holder.drive_mode=2;
+                command_holder.target_x=rover.target_x;
+                command_holder.target_y=rover.target_y;
+                command_holder.speed=rover.speed;
+              }
+              rover.drive_mode=0;
+              updateFlag=1;
+            }
+            break;
+           case 2:              //turn right 90 degrees then move 250mm
+            rover.drive_mode=1;
+            rover.direction=90;
+            rover.speed=150;
+            rover.distance=250;
+            updateFlag=1;
+            collisionFlag=3;
+            break;
+           case 3:
+            if(busyFlag==1) {   //wait for the rover to start moving
+              collisionFlag=4;
+            }
+            break;
+           case 4:
+            if(busyFlag==0) { //turn left 90 degrees then move 400mm
+              rover.drive_mode=1;
+              rover.direction=-90;
+              rover.speed=150;
+              rover.distance=400;
+              updateFlag=1;
+              collisionFlag=5;
+            }
+            break;
+            case 5:
+              if(busyFlag==1) {
+                collisionFlag=6;
+              }
+              break;
+             case 6:
+              if(busyFlag==0) {   //exit collision avoidance routine
+                fpga.writeLED(0,0);
+                if(command_holder.drive_mode==2)  { //restore t2c if available
+                  rover.drive_mode=2;
+                  rover.target_x=command_holder.target_x;
+                  rover.target_y=command_holder.target_y;
+                  rover.speed=command_holder.speed;
+                  updateFlag=1;
+                  command_holder.drive_mode=0;
+                  command_holder.target_x=0;
+                  command_holder.target_y=0;
+                  command_holder.speed=0;
+                }
+                collisionFlag=0;
+              }
+              break;
+             default: //sinkhole
+              break;
+        }
+      }
       if(updateFlag==1) { // send data to drive arduino
         fpga.writeLED(4,rover.reset);
         if(rover.speed==0)  {

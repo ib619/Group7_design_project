@@ -12,6 +12,7 @@ struct Obstacle {
     String colour;
     int x=0;
     int y=0;
+    int distance=0;
 };
 
 struct RoverDataStructure {

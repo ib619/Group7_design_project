@@ -29,7 +29,7 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
 
 Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int index)    {
     double c_x = (co.x - 320)/20;
-    double c_y = ((480 - co.y)/20*8)+30;
+    double c_y = ((480 - co.y)/20*8)+20;
 
     double angle = atan2(c_x, c_y) + ((double)rover->rover_heading*DEG_TO_RAD); //in radians
     double distance = sqrt(sq(c_x) + sq(c_y));
@@ -37,6 +37,7 @@ Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int ind
     Obstacle tmp;
     tmp.x = (int)((distance*10*sin(angle)) + rover->x_axis);
     tmp.y = (int)((distance*10*cos(angle)) + rover->y_axis);
+    tmp.distance = (int)distance;
 
     switch(index)   {
         case 0:
