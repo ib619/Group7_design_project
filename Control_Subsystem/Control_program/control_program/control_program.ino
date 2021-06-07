@@ -137,6 +137,7 @@ void loop() {
         for(int i=0;i<3;i++)  { //send cell info (3 cells) to MQTT broker
           publishBatteryStatus(&mqtt,i,energy.getBatterySOC(i),energy.getBatterySOH(i),rover.battery_state);
         }
+        publishRoverStatus(&mqtt, &rover);
       }
 
       if(millis()-vision_ptime>=VISION_UPDATE_INTERVAL)  {  //throttle vision update
