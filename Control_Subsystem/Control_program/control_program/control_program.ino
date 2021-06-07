@@ -114,6 +114,7 @@ void loop() {
         rover.x_axis=drive.getAxisX();
         rover.y_axis=drive.getAxisY();
         rover.rover_heading=drive.getRoverHeading();
+        rover.total_distance=drive.getTotalDistance();
         
         // send rover data to MQTT broker
         publishPosition(&mqtt, &rover);
