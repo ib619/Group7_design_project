@@ -19,10 +19,10 @@
 #define EEE_IMGPROC_ID 2
 #define EEE_IMGPROC_BBCOL 3
 
-#define EXPOSURE_INIT 0x002000
+#define EXPOSURE_INIT 0x002200
 #define EXPOSURE_STEP 0x100
 #define GAIN_INIT 0x380
-#define GAIN_STEP 0x080
+#define GAIN_STEP 0x060
 #define DEFAULT_LEVEL 3
 
 #define MIPI_REG_PHYClkCtl		0x0056
@@ -100,14 +100,14 @@ bool MIPI_Init(void){
     return bSuccess;
 }
 alt_16 estimate_dist(alt_16 y_coord){
-    if (y_coord < 330){
+    if (y_coord < 297){
         return 200 ;
-    } else if  (y_coord < 345){
-        return -3 * (y_coord - 330) + 200;
-    } else 	if (y_coord < 365){
-        return -2 * (y_coord - 330) + 185;
-    } else 	if  (y_coord < 430){
-        return -( y_coord-330)  + 150;
+    } else if  (y_coord < 305){
+        return -5 * y_coord  + 1658;
+    } else 	if (y_coord < 325){
+        return -2 * y_coord + 760;
+    } else 	if  (y_coord < 380){
+        return -y_coord  + 435;
     } else {
         return 50;
     }
@@ -125,8 +125,8 @@ int main()
     // Initialising Camera
     fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 
-    printf("DE10-LITE D8M VGA Demo\n");
-    printf("Imperial College EEE2 Project version\n");
+//    printf("DE10-LITE D8M VGA Demo\n");
+//    printf("Imperial College EEE2 Project version\n");
     IOWR(MIPI_PWDN_N_BASE, 0x00, 0x00);
     IOWR(MIPI_RESET_N_BASE, 0x00, 0x00);
 
@@ -135,7 +135,7 @@ int main()
     usleep(2000);
     IOWR(MIPI_RESET_N_BASE, 0x00, 0xFF);
 
-    printf("Image Processor ID: %x\n",IORD(0x42000,EEE_IMGPROC_ID));
+//    printf("Image Processor ID: %x\n",IORD(0x42000,EEE_IMGPROC_ID));
 
     usleep(2000);
 
@@ -156,7 +156,7 @@ int main()
 
     alt_u16 bb [10][4];
     alt_u16 bin_level = DEFAULT_LEVEL;
-//    alt_u8  manual_focus_step = 10;
+    alt_u8  manual_focus_step = 10;
     alt_u16  current_focus = 300;
 //    int boundingBoxColour = 0;
     alt_u32 exposureTime = EXPOSURE_INIT;
@@ -199,7 +199,6 @@ int main()
             int word = IORD(0x42000,EEE_IMGPROC_MSG); 			//Get next word from message buffer
             if (word == EEE_IMGPROC_MSG_START){ 					//Newline on message identifier
                 printf("Collecting Message\n");
-                printf("\n");
             }
             if (color ==  10){
                 printf("Getting Colour\n");
@@ -213,11 +212,11 @@ int main()
                 x =(word & 0xffff0000)>> 16;
                 y = (word & 0x0000ffff);
                 if (idx == 1){
-                    bb[color][0] = x;
-                    bb[color][1] = y;
-                } else if (idx == 2){
-                    bb[color][2] =x;
+                    bb[color][2] = x;
                     bb[color][3] = y;
+                } else if (idx == 2){
+                    bb[color][0] =x;
+                    bb[color][1] = y;
                     idx = 0;
                     color += 1;
                 }
@@ -285,57 +284,74 @@ int main()
                 printf("H_W: (%d,%d), ",h2, w2);
             }
 
+
             //////////////////////////////////////////////////////////////////////
             // Send info to esp32 via i2C
             // Error in detection if area is more than a 20000 or if it is too high up the image
             // Check Colour 2 first because it is likely to be nearer to the camera
             if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
-                printf("Decided on Colour 2: ");
-                angle = estimate_angle(centroid_x2);
-                dist = estimate_dist(centroid_y2);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else if (w2 < 150) {
-                printf("Decided on Colour 2 assume reflection: ");
-                angle = estimate_angle(centroid_x2);
-                dist = estimate_dist(centroid_y2 - h2/4);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
-                printf("Decided on Colour 1: ");
-                angle = estimate_angle(centroid_x1);
-                dist = estimate_dist(centroid_y1);
-                printf("Dist: %d, Angle: %d", dist, angle);
-                updateColour(0x40000,  1, angle, dist, i);
-            } else {
-                printf("Not Detected/Error");
-                updateColour(0x40000,  0, 0, 0, i);
-            }
-            printf(";\n");
-        }
-        printf("\n");
+                            printf("Decided on Colour 2: ");
+                            updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
+                        } else if (w2 < 150) {
+                            printf("Decided on Colour 2 assume reflection: ");
+                            updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
+                        } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+                            printf("Decided on Colour 1: ");
+                            updateColour(0x40000,  1, centroid_x1, centroid_y1,i);
+                        } else {
+                            printf("Not Detected/Error");
+                            updateColour(0x40000,  0, 0, 0, i);
+                        }
+                        printf(";\n");
+                    }
+                    printf("\n");
+//            if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
+//                printf("Decided on Colour 2: ");
+//                angle = estimate_angle(centroid_x2);
+//                dist = estimate_dist(centroid_y2);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else if (w2 < 150) {
+//                printf("Decided on Colour 2 assume reflection: ");
+//                angle = estimate_angle(centroid_x2);
+//                dist = estimate_dist(centroid_y2 - h2/4);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
+//                printf("Decided on Colour 1: ");
+//                angle = estimate_angle(centroid_x1);
+//                dist = estimate_dist(centroid_y1);
+//                printf("Dist: %d, Angle: %d", dist, angle);
+//                updateColour(0x40000,  1, angle, dist, i);
+//            } else {
+//                printf("Not Detected/Error");
+//                updateColour(0x40000,  0, 0, 0, i);
+//            }
+//            printf(";\n");
+//        }
+//        printf("\n");
 
         //////////////////////////////////////////////////////////////////////
         // Auto Brightness
         printf("Number of bright pixels: %d\n ",bright_pix_count);
-        if (time_delay == 0){
-            if (bright_pix_count < 30000){
-                if (gain < 2500) {
-                    gain += GAIN_STEP;
-                    OV8865SetGain(gain);
-                    printf("Increasing Gain to %x\n", gain);
-                }
-            }
-            if (bright_pix_count > 70000){
-                if (gain > 180) {
-                    gain -= GAIN_STEP;
-                    OV8865SetGain(gain);
-                    printf("Decreasing Gain to %x\n", gain);
-                }
-            }
-        }
+//        if (time_delay == 0){
+//            if (bright_pix_count < 10000){
+//                if (gain < 2500) {
+//                    gain += GAIN_STEP;
+//                    OV8865SetGain(gain);
+//                    printf("Increasing Gain to %x\n", gain);
+//                }
+//            }
+//            if (bright_pix_count > 30000){
+//                if (gain > 180) {
+//                    gain -= GAIN_STEP;
+//                    OV8865SetGain(gain);
+//                    printf("Decreasing Gain to %x\n", gain);
+//                }
+//            }
+//        }
         time_delay += 1;
-        if ( time_delay == 10) {
+        if ( time_delay == 5) {
             time_delay = 0;
         }
 
@@ -362,22 +378,22 @@ int main()
        		   OV8865SetGain(gain);
        		   printf("\nGain = %x\n", gain);
        	   	   break;}
-//       	   case 'r': {
-//        	   current_focus += manual_focus_step;
-//        	   if(current_focus >1023) current_focus = 1023;
-//        	   OV8865_FOCUS_Move_to(current_focus);
-//        	   printf("\nFocus = %x\n",current_focus);
-//       	   	   break;}
-//       	   case 'f': {
-//        	   if(current_focus > manual_focus_step) current_focus -= manual_focus_step;
-//        	   OV8865_FOCUS_Move_to(current_focus);
-//        	   printf("\nFocus = %x\n ",current_focus);
-//       	   	   break;}
+       	   case 'r': {
+        	   current_focus += manual_focus_step;
+        	   if(current_focus >1023) current_focus = 1023;
+        	   OV8865_FOCUS_Move_to(current_focus);
+        	   printf("\nFocus = %x\n",current_focus);
+       	   	   break;}
+       	   case 'f': {
+        	   if(current_focus > manual_focus_step) current_focus -= manual_focus_step;
+        	   OV8865_FOCUS_Move_to(current_focus);
+        	   printf("\nFocus = %x\n ",current_focus);
+       	   	   break;}
        }
 
 
 	   //Main loop delay
-	   usleep(100000);
+	   usleep(500000);
 
    };
   return 0;

@@ -135,7 +135,7 @@ module Qsys_mm_interconnect_1_router
     // during address decoding
     // -------------------------------------------------------
     localparam PAD0 = log2ceil(64'h40000 - 64'h20000); 
-    localparam PAD1 = log2ceil(64'h41000 - 64'h40000); 
+    localparam PAD1 = log2ceil(64'h40400 - 64'h40000); 
     localparam PAD2 = log2ceil(64'h42000 - 64'h41800); 
     localparam PAD3 = log2ceil(64'h42020 - 64'h42000); 
     localparam PAD4 = log2ceil(64'h42040 - 64'h42020); 
@@ -213,7 +213,7 @@ module Qsys_mm_interconnect_1_router
             src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 11;
     end
 
-    // ( 0x40000 .. 0x41000 )
+    // ( 0x40000 .. 0x40400 )
     if ( {address[RG:PAD1],{PAD1{1'b0}}} == 19'h40000   ) begin
             src_channel = 15'b100000000000000;
             src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 3;

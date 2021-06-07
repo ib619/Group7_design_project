@@ -212,7 +212,6 @@ colour_threshold c_th (
     .saturation(saturation),
     .value_b(value_b), 
     .valid_in(valid_rgbhsv),
-//	 .pixel_addr(pixel_addr_interm),
     .erosion_mode(erosion_mode),
 	 .dilation_mode(dilation_mode),
     .red_detect(red_detect),
@@ -225,7 +224,6 @@ colour_threshold c_th (
 	 .green_edge_detect(green_edge_detect),
 	 .grey_edge_detect(grey_edge_detect),
 	 .yellow_edge_detect(yellow_edge_detect)
-//	 .pixel_addr_out(pixel_addr_obstacle)
 );
 
 
@@ -275,6 +273,9 @@ assign y_bb_active = (x == y_left) | (x == y_right) | (y == y_top) | (y == y_bot
 assign y2_bb_active = (x == y_left2) | (x == y_right2) | (y == y_top2) | (y == y_bottom2);
 
 assign new_image = (r_bb_active|r2_bb_active) ? {8'hff, 8'h0, 8'h0} : 
+//						 (r2_bb_active) ? {8'h0, 8'hff, 8'h0} : 
+//						 (g_bb_active) ? {8'hCC, 8'hff, 8'hff} : 
+//						 (g2_bb_active) ? {8'hff, 8'hff, 8'h0} : 
                    (b_bb_active|b2_bb_active) ? {8'hCC, 8'hff, 8'hff} :
                    (g_bb_active|g2_bb_active) ? {8'h0, 8'hff, 8'h0} :
                    (gr_bb_active|gr2_bb_active) ? {8'd223, 8'd0, 8'd254}:
@@ -300,10 +301,10 @@ reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
 reg [10:0] r_x_min2, r_y_min2, r_x_max2, r_y_max2;
 wire [11:0] r_x_mid = (r_x_min + r_x_max) >>1;
 //wire [11:0] r_y_mid =  (r_y_min + r_y_max)>>1;
-wire [10:0] r_x_diff1 = r_x_mid - x;
-wire [10:0] r_x_diff2 = x - r_x_mid;
-wire [10:0] r_x_diff = (r_x_diff1[10]) ? r_x_diff2 : r_x_diff1;
+wire [10:0] r_x_diff =  x - r_x_max;
+//wire [10:0] r_x_diff3 = x - r_x_max3;
 wire [10:0] r_y_diff = y - r_y_max;
+wire [10:0] r_y_diff2 = y - r_y_max2;
 
 reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
 reg [10:0] g_x_min2, g_y_min2, g_x_max2, g_y_max2;
@@ -327,10 +328,10 @@ reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] gr_x_min2, gr_y_min2, gr_x_max2, gr_y_max2;
 wire [11:0] gr_x_mid = (gr_x_min + gr_x_max) >>1;
 //wire [11:0] gr_y_mid =  (gr_y_min + gr_y_max)>>1;
-wire [10:0] gr_x_diff1 = gr_x_mid - x;
-wire [10:0] gr_x_diff2 = x - gr_x_mid;
-wire [10:0] gr_x_diff = (gr_x_diff1[10]) ? gr_x_diff2 : gr_x_diff1;
+wire [10:0] gr_x_diff =  x - gr_x_max;
+//wire [10:0] gr_x_diff3 = x - gr_x_max3;
 wire [10:0] gr_y_diff = y - gr_y_max;
+wire [10:0] gr_y_diff2 = y - gr_y_max2;
 
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 reg [10:0] y_x_min2, y_y_min2, y_x_max2, y_y_max2;
@@ -341,113 +342,257 @@ wire [10:0] y_x_diff2 = x - y_x_mid;
 wire [10:0] y_x_diff = (y_x_diff1[10]) ? y_x_diff2 : y_x_diff1;
 wire [10:0] y_y_diff = y - y_y_max;
 
+reg [2:0] r_bb_state;
+reg [2:0] g_bb_state;
+reg [2:0] b_bb_state;
+reg [2:0] gr_bb_state;
+reg [2:0] y_bb_state;
+always @(posedge clk) begin
+	if (~reset_n) begin
+		gr_bb_state <= 3'd0;
+	end
+	case (gr_bb_state)
+		3'd0: begin
+			if (grey_detect & in_valid) begin
+				if (x < gr_x_min) gr_x_min <= x;
+				if (x > gr_x_max) gr_x_max <= x;
+				if (y < gr_y_min) gr_y_min <= y;
+				gr_y_max <= y;
+			end
+			if ((y > 11'd100) & (gr_y_min != IMAGE_H-11'h1) & (gr_y_diff > 11'd60) & (gr_y_diff2 > 11'd60)) begin
+				gr_bb_state <= 3'd1;
+			end
+		end
+		3'd1: begin
+			if (grey_detect & in_valid) begin
+				if (x < gr_x_min2) gr_x_min2 <= x;
+				if (x > gr_x_max2) gr_x_max2 <= x;
+				if (y < gr_y_min2) gr_y_min2 <= y;
+				gr_y_max2 <= y;
+			end
+		end
+		default: gr_bb_state <= 3'd0;
+	endcase
+	if (sop_in) begin
+		gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1;
+		gr_x_max <= 0;gr_x_max2 <= 0;
+		gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1;
+		gr_y_max <= 0;gr_y_max2 <= 0;
+		gr_bb_state <= 3'd0;
+	end
+end
+always @(posedge clk) begin
+	if (~reset_n) begin
+		r_bb_state <= 3'd0;
+	end
+	case (r_bb_state)
+		3'd0: begin
+			if (red_detect & in_valid) begin
+				if (x < r_x_min) r_x_min <= x;
+				if (x > r_x_max) r_x_max <= x;
+				if (y < r_y_min) r_y_min <= y;
+				r_y_max <= y;
+			end
+			if ((y > 11'd100) & (r_y_min != IMAGE_H-11'h1) & (r_y_diff > 11'd60)) begin
+				r_bb_state <= 3'd1;
+			end
+		end
+		3'd1: begin
+			if (red_detect & in_valid) begin
+				if (x < r_x_min2) r_x_min2 <= x;
+				if (x > r_x_max2) r_x_max2 <= x;
+				if (y < r_y_min2) r_y_min2 <= y;
+				r_y_max2 <= y;
+			end
+		end
+		default: r_bb_state <= 3'd0;
+	endcase
+	if (sop_in) begin
+		r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1; 
+		r_x_max <= 0;r_x_max2 <= 0; 
+		r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
+		r_y_max <= 0;r_y_max2 <= 0; 
+		r_bb_state <= 3'd0;
+	end
+end
+always @(posedge clk) begin
+	if (~reset_n) begin
+		g_bb_state <= 3'd0;
+	end
+	case (g_bb_state)
+		3'd0: begin
+			if (green_detect & in_valid) begin
+				if (x < g_x_min) g_x_min <= x;
+				if (x > g_x_max) g_x_max <= x;
+				if (y < g_y_min) g_y_min <= y;
+				g_y_max <= y;
+			end
+			if ((y > 11'd100) & (g_y_min != IMAGE_H-11'h1) & (g_y_diff > 11'd60)) begin
+				g_bb_state <= 3'd1;
+			end
+		end
+		3'd1: begin
+			if (green_detect & in_valid) begin
+				if (x < g_x_min2) g_x_min2 <= x;
+				if (x > g_x_max2) g_x_max2 <= x;
+				if (y < g_y_min2) g_y_min2 <= y;
+				g_y_max2 <= y;
+			end
+		end
+		default: g_bb_state <= 3'd0;
+	endcase
+	if (sop_in) begin
+		g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
+		g_x_max <= 0;g_x_max2 <= 0; 
+		g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
+		g_y_max <= 0;g_y_max2 <= 0;
+		g_bb_state <= 3'd0;
+	end
+end
+always @(posedge clk) begin
+	if (~reset_n) begin
+		b_bb_state <= 3'd0;
+	end
+	case (b_bb_state)
+		3'd0: begin
+			if (blue_detect & in_valid) begin
+				if (x < b_x_min) b_x_min <= x;
+				if (x > b_x_max) b_x_max <= x;
+				if (y < b_y_min) b_y_min <= y;
+				b_y_max <= y;
+			end
+			if ((y > 11'd100) & (b_y_min != IMAGE_H-11'h1) & (b_y_diff > 11'd60)) begin
+				b_bb_state <= 3'd1;
+			end
+		end
+		3'd1: begin
+			if (blue_detect & in_valid) begin
+				if (x < b_x_min2) b_x_min2 <= x;
+				if (x > b_x_max2) b_x_max2 <= x;
+				if (y < b_y_min2) b_y_min2 <= y;
+				b_y_max2 <= y;
+			end
+		end
+		default: b_bb_state <= 3'd0;
+	endcase
+	if (sop_in) begin
+		b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1; 
+		b_x_max <= 0;b_x_max2 <= 0;
+		b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
+		b_y_max <= 0;b_y_max2 <= 0;
+		b_bb_state <= 3'd0;
+	end
+end
+always @(posedge clk) begin
+	if (~reset_n) begin
+		y_bb_state <= 3'd0;
+	end
+	case (y_bb_state)
+		3'd0: begin
+			if (yellow_detect & in_valid) begin
+				if (x < y_x_min) y_x_min <= x;
+				if (x > y_x_max) y_x_max <= x;
+				if (y < y_y_min) y_y_min <= y;
+				y_y_max <= y;
+			end
+			if ((y > 11'd100) & (y_y_min != IMAGE_H-11'h1) & (y_y_diff > 11'd60)) begin
+				y_bb_state <= 3'd1;
+			end
+		end
+		3'd1: begin
+			if (yellow_detect & in_valid) begin
+				if (x < y_x_min2) y_x_min2 <= x;
+				if (x > y_x_max2) y_x_max2 <= x;
+				if (y < y_y_min2) y_y_min2 <= y;
+				y_y_max2 <= y;
+			end
+		end
+		default: y_bb_state <= 3'd0;
+	endcase
+	if (sop_in) begin
+		y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1; 
+		y_x_max <= 0;y_x_max2 <= 0;
+		y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1; 
+		y_y_max <= 0;y_y_max2 <= 0; 
+		y_bb_state <= 3'd0;
+	end
+end
+
 always@(posedge clk) begin
-    if ( in_valid ) begin        
-			// Count the number of pixels with Value_b higher than 128, Used for auto brightness
-        if (value_b[7] == 1'b1) begin
-            bright_pix_count <= bright_pix_count + 20'd1;
-        end
-        if (y > 11'd100 & x > 11'd10) begin
-            if (red_detect) begin	//Update bounds when the pixel is red
-					  if  (r_y_diff < 11'd30) begin
-							if (x < r_x_min) r_x_min <= x;
-							if (x > r_x_max) r_x_max <= x;
-							if (y < r_y_min) r_y_min <= y;
-							r_y_max <= y;
-					  end
-					  else begin
-							if (x < r_x_min2) r_x_min2 <= x;
-							if (x > r_x_max2) r_x_max2 <= x;
-							if (y < r_y_min2) r_y_min2 <= y;
-							r_y_max2 <= y;
-					  end
-            end
-            else if (blue_detect ) begin	//Update bounds when the pixel is blue
-					  if (b_y_diff < 11'd60) begin //|( b_x_diff < 11'd120)
-							if (x < b_x_min) b_x_min <= x;
-							if (x >  b_x_max) b_x_max <= x;
-							if (y < b_y_min) b_y_min <= y;
-							b_y_max <= y;
-					  end
-					  else begin
-							if (x < b_x_min2) b_x_min2 <= x;
-							if (x >  b_x_max2) b_x_max2 <= x;
-							if (y < b_y_min2) b_y_min2 <= y;
-							b_y_max2 <= y;
-					  end
-            end 
-            else if (green_detect ) begin	//Update bounds when the pixel is green
-					  if (g_y_diff < 11'd60) begin
-							if (x < g_x_min) g_x_min <= x;
-							if (x > g_x_max) g_x_max <= x;
-							if (y < g_y_min) g_y_min <= y;
-							g_y_max <= y;
-					  end
-					  else begin
-							if (x < g_x_min2) g_x_min2 <= x;
-							if (x > g_x_max2) g_x_max2 <= x;
-							if (y < g_y_min2) g_y_min2 <= y;
-							g_y_max2 <= y;
-					  end
-            end
-            else if (grey_detect) begin	//Update bounds when the pixel is grey
-					  if  (gr_y_diff < 11'd60)  begin
-							if (x < gr_x_min) gr_x_min <= x;
-							if (x > gr_x_max) gr_x_max <= x;
-							if (y < gr_y_min) gr_y_min <= y;
-							gr_y_max <= y;
-					  end
-					  else begin
-							if (x < gr_x_min2) gr_x_min2 <= x;
-							if (x >  gr_x_max2) gr_x_max2 <= x;
-							if (y < gr_y_min2) gr_y_min2 <= y;
-							gr_y_max2 <= y;
-					  end
-            end
-            else if (yellow_detect) begin	//Update bounds when the pixel is yellow
-					  if (y_y_diff < 11'd60) begin
-							if (x < y_x_min) y_x_min <= x;
-							if (x > y_x_max) y_x_max <= x;
-							if (y < y_y_min) y_y_min <= y;
-							y_y_max <= y;
-					  end
-					  else begin
-							if (x < y_x_min2) y_x_min2 <= x;
-							if (x > y_x_max2) y_x_max2 <= x;
-							if (y < y_y_min2) y_y_min2 <= y;
-							y_y_max2 <= y;
-					  end
-            end
-        end
-    end
+		// Count the number of pixels with Value_b higher than 128, Used for auto brightness
+	  if (in_valid & (value_b[7] == 1'b1)) begin
+			bright_pix_count <= bright_pix_count + 20'd1;
+	  end
     if (sop_in) begin	//Reset bounds on start of packet
-        r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1;
-        b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1;
-        g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
-        gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1;
-        y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1;
-        
-        r_x_max <= 0; r_x_max2 <= 0;
-        b_x_max <= 0; b_x_max2 <= 0;
-        g_x_max <= 0; g_x_max2 <= 0;
-        gr_x_max <= 0;gr_x_max2 <= 0;
-        y_x_max <= 0; y_x_max2 <= 0;
-        
-        r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
-        b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
-        g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
-        gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1;
-        y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1;
-        
-        r_y_max <= 0; r_y_max2 <= 0;
-        b_y_max <= 0;b_y_max2 <= 0;
-        g_y_max <= 0; g_y_max2 <= 0;
-        gr_y_max <= 0;gr_y_max2 <= 0;
-        y_y_max <= 0; y_y_max2 <= 0;
-        
         bright_pix_count <= 20'd0;
     end
 end
+
+//always@(posedge clk) begin
+//    if ( in_valid ) begin        
+//			// Count the number of pixels with Value_b higher than 128, Used for auto brightness
+//        if (value_b[7] == 1'b1) begin
+//            bright_pix_count <= bright_pix_count + 20'd1;
+//        end
+//        if (x > 11'd10) begin
+//            if (blue_detect ) begin	//Update bounds when the pixel is blue
+//					  if (b_y_diff < 11'd60) begin //|( b_x_diff < 11'd120)
+//							if (x < b_x_min) b_x_min <= x;
+//							if (x >  b_x_max) b_x_max <= x;
+//							if (y < b_y_min) b_y_min <= y;
+//							b_y_max <= y;
+//					  end
+//					  else begin
+//							if (x < b_x_min2) b_x_min2 <= x;
+//							if (x >  b_x_max2) b_x_max2 <= x;
+//							if (y < b_y_min2) b_y_min2 <= y;
+//							b_y_max2 <= y;
+//					  end
+//            end 
+//            else if (yellow_detect) begin	//Update bounds when the pixel is yellow
+//					  if (y_y_diff < 11'd60) begin
+//							if (x < y_x_min) y_x_min <= x;
+//							if (x > y_x_max) y_x_max <= x;
+//							if (y < y_y_min) y_y_min <= y;
+//							y_y_max <= y;
+//					  end
+//					  else begin
+//							if (x < y_x_min2) y_x_min2 <= x;
+//							if (x > y_x_max2) y_x_max2 <= x;
+//							if (y < y_y_min2) y_y_min2 <= y;
+//							y_y_max2 <= y;
+//					  end
+//            end
+//        end
+//    end
+//    if (sop_in) begin	//Reset bounds on start of packet
+////        r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1;
+//        b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1;
+//        g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
+////        gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1; gr_x_min3 <= IMAGE_W-11'h1; gr_x_min4 <= IMAGE_W-11'h1;
+//        y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1;
+//        
+////        r_x_max <= 0; r_x_max2 <= 0;
+//        b_x_max <= 0; b_x_max2 <= 0;
+//        g_x_max <= 0; g_x_max2 <= 0;
+////        gr_x_max <= 0;gr_x_max2 <= 0; gr_x_max3 <= 0;gr_x_max4 <= 0;
+//        y_x_max <= 0; y_x_max2 <= 0;
+//        
+////        r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
+//        b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
+//        g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
+////        gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1; gr_y_min3 <= IMAGE_H-11'h1; gr_y_min4 <= IMAGE_H-11'h1;
+//        y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1;
+//        
+////        r_y_max <= 0; r_y_max2 <= 0;
+//        b_y_max <= 0;b_y_max2 <= 0;
+//        g_y_max <= 0; g_y_max2 <= 0;
+////        gr_y_max <= 0;gr_y_max2 <= 0; gr_y_max3 <= 0;gr_y_max4 <= 0;
+//        y_y_max <= 0; y_y_max2 <= 0;
+//        
+//        bright_pix_count <= 20'd0;
+//    end
+//end
 
 //Process bounding box at the end of the frame.
 reg [4:0] msg_state;
@@ -473,55 +618,55 @@ reg [7:0] frame_count;
 always@(posedge clk) begin
     if (eop_in & in_valid & packet_video) begin  //Ignore non-video packets
         //Latch edges for display overlay on next frame
-        r_left <= (r_x_min == IMAGE_W-11'h1) ? r_x_min: r_x_min - 11'd7;
-        r_right <= (r_x_max == 0) ? r_x_max : r_x_max - 11'd7; // 3 + 2 + 2 
-        r_top <= (r_y_min == IMAGE_H-11'h1) ? r_y_min : r_y_min - 11'd4 ; // 2 + 2
-        r_bottom <= (r_y_max == 0) ? r_y_max : r_y_max - 11'd4;
+        r_left <= (r_x_min < 11'd7) ? r_x_min: r_x_min - 11'd7;
+        r_right <= (r_x_max < 11'd7) ? r_x_max : r_x_max - 11'd7; // 3 + 2 + 2 
+        r_top <= (r_y_min  < 11'd4) ? r_y_min : r_y_min - 11'd4 ; // 2 + 2
+        r_bottom <= (r_y_max < 11'd4) ? r_y_max : r_y_max - 11'd4;
 
-        r_left2 <= (r_x_min2 == IMAGE_W-11'h1) ? r_x_min2: r_x_min2 - 11'd7;
-        r_right2 <= (r_x_max2 == 0) ? r_x_max2 : r_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
-        r_top2 <= (r_y_min2 == IMAGE_H-11'h1) ? r_y_min2 : r_y_min2 - 11'd4 ; //4 + 2 + 2
-        r_bottom2 <= (r_y_max2 == 0) ? r_y_max2 : r_y_max2 - 11'd4;
-            
-        g_left <= (g_x_min == IMAGE_W-11'h1) ? g_x_min: g_x_min - 11'd7;
-        g_right <= (g_x_max == 0) ? g_x_max : g_x_max - 11'd7; // 3 + 3 + 2 + 2 
-        g_top <= (g_y_min == IMAGE_H-11'h1) ? g_y_min : g_y_min - 11'd4 ; //4 + 2 + 2
-        g_bottom <= (g_y_max == 0) ? g_y_max : g_y_max - 11'd4;
+        r_left2 <= (r_x_min2 < 11'd7) ? r_x_min2: r_x_min2 - 11'd7;
+        r_right2 <= (r_x_max2  < 11'd7) ? r_x_max2 : r_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        r_top2 <= (r_y_min2  < 11'd4) ? r_y_min2 : r_y_min2 - 11'd4 ; //4 + 2 + 2
+        r_bottom2 <= (r_y_max2 < 11'd4) ? r_y_max2 : r_y_max2 - 11'd4;
+		  
+        g_left <= (g_x_min < 11'd7) ? g_x_min: g_x_min - 11'd7;
+        g_right <= (g_x_max  < 11'd7) ? g_x_max : g_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        g_top <= (g_y_min  < 11'd4) ? g_y_min : g_y_min - 11'd4 ; //4 + 2 + 2
+        g_bottom <= (g_y_max < 11'd4) ? g_y_max : g_y_max - 11'd4;
 
-        g_left2 <= (g_x_min2 == IMAGE_W-11'h1) ? g_x_min2: g_x_min2 - 11'd7;
-        g_right2 <= (g_x_max2 == 0) ? g_x_max2 : g_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
-        g_top2 <= (g_y_min2 == IMAGE_H-11'h1) ? g_y_min2 : g_y_min2 - 11'd4 ; //4 + 2 + 2
-        g_bottom2 <= (g_y_max2 == 0) ? g_y_max2 : g_y_max2 - 11'd4;
+        g_left2 <= (g_x_min2 < 11'd7) ? g_x_min2: g_x_min2 - 11'd7;
+        g_right2 <= (g_x_max2  < 11'd7) ? g_x_max2 : g_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        g_top2 <= (g_y_min2  < 11'd4) ? g_y_min2 : g_y_min2 - 11'd4 ; //4 + 2 + 2
+        g_bottom2 <= (g_y_max2 < 11'd4) ? g_y_max2 : g_y_max2 - 11'd4;
 
-        b_left <= (b_x_min == IMAGE_W-11'h1) ? b_x_min: b_x_min - 11'd7;
-        b_right <= (b_x_max == 0) ? b_x_max : b_x_max - 11'd7; // 3 + 3 + 2 + 2 
-        b_top <= (b_y_min == IMAGE_H-11'h1) ? b_y_min : b_y_min - 11'd4 ; //4 + 2 + 2
-        b_bottom <= (b_y_max == 0) ? b_y_max : b_y_max - 11'd4;
+        b_left <= (b_x_min < 11'd7) ? b_x_min: b_x_min - 11'd7;
+        b_right <= (b_x_max  < 11'd7) ? b_x_max : b_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        b_top <= (b_y_min  < 11'd4) ? b_y_min : b_y_min - 11'd4 ; //4 + 2 + 2
+        b_bottom <= (b_y_max < 11'd4) ? b_y_max : b_y_max - 11'd4;
 
-        b_left2 <= (b_x_min2 == IMAGE_W-11'h1) ? b_x_min2: b_x_min2 - 11'd7;
-        b_right2 <= (b_x_max2 == 0) ? b_x_max2 : b_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
-        b_top2 <= (b_y_min2 == IMAGE_H-11'h1) ? b_y_min2 : b_y_min2 - 11'd4 ; //4 + 2 + 2
-        b_bottom2 <= (b_y_max2 == 0) ? b_y_max2 : b_y_max2 - 11'd4;
+        b_left2 <= (b_x_min2 < 11'd7) ? b_x_min2: b_x_min2 - 11'd7;
+        b_right2 <= (b_x_max2  < 11'd7) ? b_x_max2 : b_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        b_top2 <= (b_y_min2  < 11'd4) ? b_y_min2 : b_y_min2 - 11'd4 ; //4 + 2 + 2
+        b_bottom2 <= (b_y_max2 < 11'd4) ? b_y_max2 : b_y_max2 - 11'd4;
 	
-        gr_left <= (gr_x_min == IMAGE_W-11'h1) ? gr_x_min: gr_x_min - 11'd7;
-        gr_right <= (gr_x_max == 0) ? gr_x_max : gr_x_max - 11'd7; // 3 + 3 + 2 + 2 
-        gr_top <= (gr_y_min == IMAGE_H-11'h1) ? gr_y_min : gr_y_min - 11'd4 ; //4 + 2 + 2
-        gr_bottom <= (gr_y_max == 0) ? gr_y_max : gr_y_max - 11'd4;
+        gr_left <= (gr_x_min < 11'd7) ? gr_x_min: gr_x_min - 11'd7;
+        gr_right <= (gr_x_max < 11'd7) ? gr_x_max : gr_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        gr_top <= (gr_y_min < 11'd4) ? gr_y_min : gr_y_min - 11'd4 ; //4 + 2 + 2
+        gr_bottom <= (gr_y_max < 11'd4) ? gr_y_max : gr_y_max - 11'd4;
 
-        gr_left2 <= (gr_x_min2 == IMAGE_W-11'h1) ? gr_x_min2: gr_x_min2 - 11'd7;
-        gr_right2 <= (gr_x_max2 == 0) ? gr_x_max2 : gr_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
-        gr_top2 <= (gr_y_min2 == IMAGE_H-11'h1) ? gr_y_min2 : gr_y_min2 - 11'd4 ; //4 + 2 + 2
-        gr_bottom2 <= (gr_y_max2 == 0) ? gr_y_max2 : gr_y_max2 - 11'd4;
+        gr_left2 <= (gr_x_min2 < 11'd7) ? gr_x_min2: gr_x_min2 - 11'd7;
+        gr_right2 <= (gr_x_max2 < 11'd7) ? gr_x_max2 : gr_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        gr_top2 <= (gr_y_min2 < 11'd4) ? gr_y_min2 : gr_y_min2 - 11'd4 ; //4 + 2 + 2
+        gr_bottom2 <= (gr_y_max2 < 11'd4) ? gr_y_max2 : gr_y_max2 - 11'd4;
 
-        y_left <= (y_x_min == IMAGE_W-11'h1) ? y_x_min: y_x_min - 11'd7;
-        y_right <= (y_x_max == 0) ? y_x_max : y_x_max - 11'd7; // 3 + 3 + 2 + 2 
-        y_top <= (y_y_min == IMAGE_H-11'h1) ? y_y_min : y_y_min - 11'd4 ; //4 + 2 + 2
-        y_bottom <= (y_y_max == 0) ? y_y_max : y_y_max - 11'd4;
+        y_left <= (y_x_min < 11'd7) ? y_x_min: y_x_min - 11'd7;
+        y_right <= (y_x_max  < 11'd7) ? y_x_max : y_x_max - 11'd7; // 3 + 3 + 2 + 2 
+        y_top <= (y_y_min  < 11'd4) ? y_y_min : y_y_min - 11'd4 ; //4 + 2 + 2
+        y_bottom <= (y_y_max < 11'd4) ? y_y_max : y_y_max - 11'd4;
 
-        y_left2 <= (y_x_min2 == IMAGE_W-11'h1) ? y_x_min2: y_x_min2 - 11'd7;
-        y_right2 <= (y_x_max2 == 0) ? y_x_max2 : y_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
-        y_top2 <= (y_y_min2 == IMAGE_H-11'h1) ? y_y_min2 : y_y_min2 - 11'd4 ; //4 + 2 + 2
-        y_bottom2 <= (y_y_max2 == 0) ? y_y_max2 : y_y_max2 - 11'd4;
+        y_left2 <= (y_x_min2 < 11'd7) ? y_x_min2: y_x_min2 - 11'd7;
+        y_right2 <= (y_x_max2  < 11'd7) ? y_x_max2 : y_x_max2 - 11'd7; // 3 + 3 + 2 + 2 
+        y_top2 <= (y_y_min2  < 11'd4) ? y_y_min2 : y_y_min2 - 11'd4 ; //4 + 2 + 2
+        y_bottom2 <= (y_y_max2 < 11'd4) ? y_y_max2 : y_y_max2 - 11'd4;
 
         bright_pix_count_reg <= bright_pix_count;
             
@@ -542,6 +687,68 @@ always@(posedge clk) begin
         end
 end
 
+//////////////////////////////////////////////////////////////////
+//Perspective Transform
+
+reg [10:0] centroid_x;
+reg [10:0] centroid_y;
+wire [10:0] centroid_x_adj;
+wire [10:0] centroid_y_adj;
+
+perspective_transform_cycle p_tf(
+	.clk(clk),
+	.rst_n(reset_n),
+	.x_coord(centroid_x),
+	.y_coord(centroid_y),
+	.x_coord_adj(centroid_x_adj),
+	.y_coord_adj(centroid_y_adj)
+);
+
+always @(posedge clk)
+	begin
+		case(msg_state)
+			5'd0: begin
+				centroid_x <= (r_left + r_right) >>1;
+				centroid_y <= (r_top + r_bottom)>>1;
+			end
+			5'd1: begin
+				centroid_x <= (r_left2 + r_right2) >>1;
+				centroid_y <= (r_top2 + r_bottom2)>>1;
+			end
+			5'd3: begin
+				centroid_x <= (g_left + g_right) >>1;
+				centroid_y <= (g_top + g_bottom)>>1;
+			end
+			5'd5: begin
+				centroid_x <= (g_left2 + g_right2) >>1;
+				centroid_y <= (g_top2 + g_bottom2)>>1;
+			end			
+			5'd7: begin
+				centroid_x <= (b_left + b_right) >>1;
+				centroid_y <= (b_top + b_bottom)>>1;
+			end
+			5'd9: begin
+				centroid_x <= (b_left2 + b_right2) >>1;
+				centroid_y <= (b_top2 + b_bottom2)>>1;
+			end			
+			5'd11: begin
+				centroid_x <= (gr_left + gr_right) >>1;
+				centroid_y <= (gr_top + gr_bottom)>>1;
+			end
+			5'd13: begin
+				centroid_x <= (gr_left2 + gr_right2) >>1;
+				centroid_y <= (gr_top2 + gr_bottom2)>>1;
+			end
+			5'd15: begin
+				centroid_x <= (y_left + y_right) >>1;
+				centroid_y <= (y_top + y_bottom)>>1;
+			end
+			5'd17: begin
+				centroid_x <= (y_left2 + y_right2) >>1;
+				centroid_y <= (y_top2 + y_bottom2)>>1;
+			end
+		endcase
+	end
 //Generate output messages for CPU
 reg [31:0] msg_buf_in; 
 wire [31:0] msg_buf_out;
@@ -564,89 +771,89 @@ always@(*) begin	//Write words to FIFO as state machine advances
         end
         // Red
         5'd2: begin
-            msg_buf_in = {5'b0, (r_left + r_right) >>1 , 5'b0, (r_top + r_bottom)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, r_bottom - r_top , 5'b0, r_right - r_left};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         5'd3: begin
-            msg_buf_in = {5'b0, r_bottom - r_top, 5'b0, r_right - r_left}; //Bottom right coordinate
+            msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         5'd4: begin
-            msg_buf_in = {5'b0, (r_left2 + r_right2) >>1 , 5'b0, (r_top2 + r_bottom2)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, r_bottom2 - r_top2 , 5'b0, r_right2 - r_left2};	//Top left coordinate
             msg_buf_wr = 1'b1;
         end
         5'd5: begin
-            msg_buf_in = {5'b0, r_bottom2 - r_top2, 5'b0, r_right2 - r_left2}; //Bottom right coordinate
+            msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         // Green
         5'd6: begin
-            msg_buf_in = {5'b0, (g_left + g_right) >>1 , 5'b0, (g_top + g_bottom)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, g_bottom - g_top , 5'b0, g_right - g_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd7: begin
-            msg_buf_in = {5'b0, g_bottom - g_top, 5'b0, g_right - g_left}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         5'd8: begin
-            msg_buf_in = {5'b0, (g_left2 + g_right2) >>1 , 5'b0, (g_top2 + g_bottom2)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, g_bottom2 - g_top2, 5'b0, g_right2 - g_left2}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd9: begin
-            msg_buf_in = {5'b0, g_bottom2 - g_top2, 5'b0, g_right2 - g_left2}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         // Blue
         5'd10: begin
-            msg_buf_in = {5'b0, (b_left + b_right) >>1 , 5'b0, (b_top + b_bottom)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, b_bottom - b_top , 5'b0, b_right - b_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd11: begin
-            msg_buf_in = {5'b0, b_bottom - b_top, 5'b0, b_right - b_left}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
 		  
 		  5'd12: begin
-            msg_buf_in = {5'b0, (b_left2 + b_right2) >>1 , 5'b0, (b_top2 + b_bottom2)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, b_bottom2 - b_top2, 5'b0, b_right2 - b_left2}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd13: begin
-            msg_buf_in = {5'b0, b_bottom2 - b_top2, 5'b0, b_right2 - b_left2}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         // Grey
         5'd14: begin
-            msg_buf_in = {5'b0, (gr_left + gr_right) >>1 , 5'b0, (gr_top + gr_bottom)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, gr_bottom - gr_top , 5'b0, gr_right - gr_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd15: begin
-            msg_buf_in = {5'b0, gr_bottom - gr_top, 5'b0, gr_right - gr_left}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
 		  
         5'd16: begin
-            msg_buf_in = {5'b0, (gr_left2 + gr_right2) >>1 , 5'b0, (gr_top2 + gr_bottom2)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, gr_bottom2 - gr_top2, 5'b0, gr_right2 - gr_left2}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd17: begin
-            msg_buf_in = {5'b0, gr_bottom2 - gr_top2, 5'b0, gr_right2 - gr_left2}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         // Yellow
         5'd18: begin
-            msg_buf_in = {5'b0, (y_left + y_right) >>1 , 5'b0, (y_top + y_bottom)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, y_bottom - y_top , 5'b0, y_right - y_left}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd19: begin
-            msg_buf_in = {5'b0, y_bottom - y_top, 5'b0, y_right - y_left}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         5'd20: begin
-            msg_buf_in = {5'b0, (y_left2 + y_right2) >>1 , 5'b0, (y_top2 + y_bottom2)>>1};	//Top left coordinate
+            msg_buf_in = {5'b0, y_bottom2 - y_top2, 5'b0, y_right2 - y_left2}; //Bottom right coordinate
             msg_buf_wr = 1'b1;
         end
         5'd21: begin
-            msg_buf_in = {5'b0, y_bottom2 - y_top2, 5'b0, y_right2 - y_left2}; //Bottom right coordinate
+				msg_buf_in = {5'b0, centroid_x_adj, 5'b0, centroid_y_adj}; //Scaled Centroid
             msg_buf_wr = 1'b1;
         end
         // Bright Pix Count

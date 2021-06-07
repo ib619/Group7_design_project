@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2' in SOPC Builder design 'Qsys'
  * SOPC Builder design path: ../../Qsys.sopcinfo
  *
- * Generated: Thu May 20 21:00:02 SGT 2021
+ * Generated: Sat Jun 05 17:05:57 SGT 2021
  */
 
 /*
@@ -52,7 +52,7 @@ MEMORY
 {
     reset : ORIGIN = 0x20000, LENGTH = 32
     onchip_memory2_0 : ORIGIN = 0x20020, LENGTH = 99968
-    data_mem : ORIGIN = 0x40000, LENGTH = 4096
+    data_mem : ORIGIN = 0x40000, LENGTH = 1024
 }
 
 /* Define symbols for each memory base-address */

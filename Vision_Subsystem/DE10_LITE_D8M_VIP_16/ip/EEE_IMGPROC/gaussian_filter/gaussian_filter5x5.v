@@ -34,5 +34,29 @@ separableconvolution5x5_gaussian #(.DATA_WIDTH(8)) filter_green(
 	.o_pixel(o_convolved_data_green)
 );
 
+//convolution5x5_gaussian #(.DATA_WIDTH(8)) filter_red(
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(i_pixel_red),
+//	.i_pixel_valid(i_pixel_valid),
+//	.o_pixel(o_convolved_data_red)
+//);
+//
+//convolution5x5_gaussian #(.DATA_WIDTH(8)) filter_blue(
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(i_pixel_blue),
+//	.i_pixel_valid(i_pixel_valid),
+//	.o_pixel(o_convolved_data_blue)
+//);
+//
+//convolution5x5_gaussian #(.DATA_WIDTH(8)) filter_green(
+//	.clk(clk),
+//	.rst_n(rst_n),
+//	.i_pixel(i_pixel_green),
+//	.i_pixel_valid(i_pixel_valid),
+//	.o_pixel(o_convolved_data_green)
+//);
+
 
 endmodule

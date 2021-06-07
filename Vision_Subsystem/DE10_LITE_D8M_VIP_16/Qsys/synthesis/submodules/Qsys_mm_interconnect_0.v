@@ -18,7 +18,7 @@ module Qsys_mm_interconnect_0 (
 		output wire        i2cslave_to_avlmm_bridge_0_avalon_master_readdatavalid,       //                                                       .readdatavalid
 		input  wire        i2cslave_to_avlmm_bridge_0_avalon_master_write,               //                                                       .write
 		input  wire [31:0] i2cslave_to_avlmm_bridge_0_avalon_master_writedata,           //                                                       .writedata
-		output wire [9:0]  data_mem_s2_address,                                          //                                            data_mem_s2.address
+		output wire [7:0]  data_mem_s2_address,                                          //                                            data_mem_s2.address
 		output wire        data_mem_s2_write,                                            //                                                       .write
 		input  wire [31:0] data_mem_s2_readdata,                                         //                                                       .readdata
 		output wire [31:0] data_mem_s2_writedata,                                        //                                                       .writedata
@@ -312,7 +312,7 @@ module Qsys_mm_interconnect_0 (
 	);
 
 	altera_merlin_slave_translator #(
-		.AV_ADDRESS_W                   (10),
+		.AV_ADDRESS_W                   (8),
 		.AV_DATA_W                      (32),
 		.UAV_DATA_W                     (32),
 		.AV_BURSTCOUNT_W                (1),

@@ -33,6 +33,7 @@ struct RoverDataStructure {
         int rover_heading=0;
         int battery_SOH=0;
         int battery_state=0;
+        unsigned long total_distance=0;
 };
 
 void initWiFi(const char *ssid, const char *password);
