@@ -3,7 +3,6 @@ import time
 import json 
 import threading
 import logging
-from collections import deque
 import serial
 
 arduino = serial.Serial('/dev/cu.usbmodem1461301', 9600, timeout=.1)
@@ -32,7 +31,7 @@ class MqttServer:
 
         # threads 
         self.mqtt_thread = threading.Thread(name="mqtt-thread", target=self.start_server_handler, daemon=True)
-        self.energy_thread = threading.Thread(name="obstacle-thread", target=self.handle_energy, daemon=True)
+        self.energy_thread = threading.Thread(name="energy-thread", target=self.handle_energy, daemon=True)
 
     def connect(self):
         try:
@@ -57,7 +56,7 @@ class MqttServer:
             client.subscribe("drive/discrete ", qos=1)
             client.subscribe("drive/t2c ", qos=1)
         else:
-            logging.debug("Obstacle failed to connect")
+            logging.debug("Energy failed to connect")
 
     def on_publish_energy(self, client, userdata, mid):
         logging.debug("energy data published")
@@ -83,10 +82,10 @@ class MqttServer:
         
     ### Event Handlers
     def start_server_handler(self):
-        logging.debug("Started backend server")
+        logging.debug("Started energy python script")
         self.energy_client.loop_start()
 
-    def handle_obstacle(self):
+    def handle_energy(self):
         while True:
             # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
             time.sleep(1)
@@ -118,7 +117,7 @@ class MqttServer:
                         "battery_state":state_num
                     }
                     json_data = json.dumps(cell1_res)
-                    self.obstacle_server.publish("battery/status", json_data, qos=1)
+                    self.energy_client.publish("battery/status", json_data, qos=1)
 
                     cell2_res = {
                         "cell":1, 
@@ -127,7 +126,7 @@ class MqttServer:
                         "battery_state":state_num
                     }
                     json_data = json.dumps(cell2_res)
-                    self.obstacle_server.publish("battery/status", json_data, qos=1)
+                    self.energy_client.publish("battery/status", json_data, qos=1)
 
                     cell3_res = {
                         "cell":2, 
@@ -136,13 +135,10 @@ class MqttServer:
                         "battery_state":state_num
                     }
                     json_data = json.dumps(cell3_res)
-                    self.obstacle_server.publish("battery/status", json_data, qos=1)
+                    self.energy_client.publish("battery/status", json_data, qos=1)
 
-                    range_res = {
-                        "range":range
-                    }
-                    json_data = json.dumps(range_res)
-                    self.obstacle_server.publish("battery/status", json_data, qos=1)
+                    # range can just be a number, not a json
+                    self.energy_client.publish("rover/status/range", range, qos=1)
                     
 
 def main():
