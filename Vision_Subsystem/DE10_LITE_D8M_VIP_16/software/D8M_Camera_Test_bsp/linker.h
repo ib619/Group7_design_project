@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2' in SOPC Builder design 'Qsys'
  * SOPC Builder design path: ../../Qsys.sopcinfo
  *
- * Generated: Thu May 20 21:00:02 SGT 2021
+ * Generated: Sat Jun 05 17:05:57 SGT 2021
  */
 
 /*
@@ -66,7 +66,7 @@
  */
 
 #define DATA_MEM_REGION_BASE 0x40000
-#define DATA_MEM_REGION_SPAN 4096
+#define DATA_MEM_REGION_SPAN 1024
 #define ONCHIP_MEMORY2_0_REGION_BASE 0x20020
 #define ONCHIP_MEMORY2_0_REGION_SPAN 99968
 #define RESET_REGION_BASE 0x20000

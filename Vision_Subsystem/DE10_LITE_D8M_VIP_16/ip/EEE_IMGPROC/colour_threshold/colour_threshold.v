@@ -31,7 +31,6 @@ assign green_detect = (dilation_mode) ? dilation_green_detect: (erosion_mode) ? 
 assign grey_detect = (dilation_mode) ? dilation_grey_detect: (erosion_mode) ? erosion_grey_detect: pf_grey_detect;
 assign yellow_detect = (dilation_mode) ? dilation_yellow_detect: (erosion_mode) ? erosion_yellow_detect: pf_yellow_detect;
 
-
 assign pf_red_detect = (hue < 8'd25) & (hue > 8'd0)
                         & (saturation < 8'd200) & ( saturation > 8'd70) 
                         & (value_b < 8'd255 ) & ( value_b > 8'd0);

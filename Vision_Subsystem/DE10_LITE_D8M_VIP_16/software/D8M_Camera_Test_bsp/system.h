@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2' in SOPC Builder design 'Qsys'
  * SOPC Builder design path: ../../Qsys.sopcinfo
  *
- * Generated: Fri Jun 04 02:26:02 SGT 2021
+ * Generated: Mon Jun 07 17:34:00 SGT 2021
  */
 
 /*
@@ -254,8 +254,8 @@
 #define DATA_MEM_READ_DURING_WRITE_MODE "DONT_CARE"
 #define DATA_MEM_SINGLE_CLOCK_OP 0
 #define DATA_MEM_SIZE_MULTIPLE 1
-#define DATA_MEM_SIZE_VALUE 4096
-#define DATA_MEM_SPAN 4096
+#define DATA_MEM_SIZE_VALUE 1024
+#define DATA_MEM_SPAN 1024
 #define DATA_MEM_TYPE "altera_avalon_onchip_memory2"
 #define DATA_MEM_WRITABLE 1
 
@@ -466,7 +466,7 @@
 #define SYSID_QSYS_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_NAME "/dev/sysid_qsys"
 #define SYSID_QSYS_SPAN 8
-#define SYSID_QSYS_TIMESTAMP 1622744209
+#define SYSID_QSYS_TIMESTAMP 1623057775
 #define SYSID_QSYS_TYPE "altera_avalon_sysid_qsys"
 
 

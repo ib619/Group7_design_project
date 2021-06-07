@@ -93,7 +93,7 @@ module Qsys (
 	wire  [31:0] mm_interconnect_0_led_s1_writedata;                                // mm_interconnect_0:led_s1_writedata -> led:writedata
 	wire         mm_interconnect_0_data_mem_s2_chipselect;                          // mm_interconnect_0:data_mem_s2_chipselect -> data_mem:chipselect2
 	wire  [31:0] mm_interconnect_0_data_mem_s2_readdata;                            // data_mem:readdata2 -> mm_interconnect_0:data_mem_s2_readdata
-	wire   [9:0] mm_interconnect_0_data_mem_s2_address;                             // mm_interconnect_0:data_mem_s2_address -> data_mem:address2
+	wire   [7:0] mm_interconnect_0_data_mem_s2_address;                             // mm_interconnect_0:data_mem_s2_address -> data_mem:address2
 	wire   [3:0] mm_interconnect_0_data_mem_s2_byteenable;                          // mm_interconnect_0:data_mem_s2_byteenable -> data_mem:byteenable2
 	wire         mm_interconnect_0_data_mem_s2_write;                               // mm_interconnect_0:data_mem_s2_write -> data_mem:write2
 	wire  [31:0] mm_interconnect_0_data_mem_s2_writedata;                           // mm_interconnect_0:data_mem_s2_writedata -> data_mem:writedata2
@@ -186,7 +186,7 @@ module Qsys (
 	wire  [31:0] mm_interconnect_1_eee_imgproc_0_s1_writedata;                      // mm_interconnect_1:EEE_IMGPROC_0_s1_writedata -> EEE_IMGPROC_0:s_writedata
 	wire         mm_interconnect_1_data_mem_s1_chipselect;                          // mm_interconnect_1:data_mem_s1_chipselect -> data_mem:chipselect
 	wire  [31:0] mm_interconnect_1_data_mem_s1_readdata;                            // data_mem:readdata -> mm_interconnect_1:data_mem_s1_readdata
-	wire   [9:0] mm_interconnect_1_data_mem_s1_address;                             // mm_interconnect_1:data_mem_s1_address -> data_mem:address
+	wire   [7:0] mm_interconnect_1_data_mem_s1_address;                             // mm_interconnect_1:data_mem_s1_address -> data_mem:address
 	wire   [3:0] mm_interconnect_1_data_mem_s1_byteenable;                          // mm_interconnect_1:data_mem_s1_byteenable -> data_mem:byteenable
 	wire         mm_interconnect_1_data_mem_s1_write;                               // mm_interconnect_1:data_mem_s1_write -> data_mem:write
 	wire  [31:0] mm_interconnect_1_data_mem_s1_writedata;                           // mm_interconnect_1:data_mem_s1_writedata -> data_mem:writedata

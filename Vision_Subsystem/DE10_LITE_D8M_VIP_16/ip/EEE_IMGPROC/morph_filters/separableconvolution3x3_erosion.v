@@ -114,7 +114,7 @@ always @(posedge clk)
 			pixel1<= first_conv_out;
 			pixel2<= pixel1;
 			pixel3<= pixel2;
-            first_conv_out <= i_pixel & tap0 & tap1 ; 
+			first_conv_out <= i_pixel & tap0 & tap1 ; 
 		end
 	end
 
