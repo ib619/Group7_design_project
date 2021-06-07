@@ -289,22 +289,22 @@ int main()
             // Send info to esp32 via i2C
             // Error in detection if area is more than a 20000 or if it is too high up the image
             // Check Colour 2 first because it is likely to be nearer to the camera
-            if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
-                            printf("Decided on Colour 2: ");
-                            updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
-                        } else if (w2 < 150) {
-                            printf("Decided on Colour 2 assume reflection: ");
-                            updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
-                        } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
-                            printf("Decided on Colour 1: ");
-                            updateColour(0x40000,  1, centroid_x1, centroid_y1,i);
-                        } else {
-                            printf("Not Detected/Error");
-                            updateColour(0x40000,  0, 0, 0, i);
-                        }
-                        printf(";\n");
-                    }
-                    printf("\n");
+            if  ((area2 <20000 ) & (centroid_x2 < 640) & (centroid_y2 < 480) & (h2 < 150) &  (w2 < 150)) {
+                printf("Decided on Colour 2: ");
+                updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
+            } else if (w2 < 150) {
+                printf("Decided on Colour 2 assume reflection: ");
+                updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
+            } else if ((area1 <20000 ) & (centroid_x1 < 640) & (centroid_y1 < 480) & (h1 < 150) &  (w1 < 150)){
+                printf("Decided on Colour 1: ");
+                updateColour(0x40000,  1, centroid_x1, centroid_y1,i);
+            } else {
+                printf("Not Detected/Error");
+                updateColour(0x40000,  0, 0, 0, i);
+            }
+            printf(";\n");
+        }
+        printf("\n");
 //            if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
 //                printf("Decided on Colour 2: ");
 //                angle = estimate_angle(centroid_x2);
