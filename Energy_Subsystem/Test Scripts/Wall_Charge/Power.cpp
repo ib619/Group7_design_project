@@ -301,6 +301,7 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
     }
     myFile.close();
 }
+
 float SMPS::get_SOC(int cell_num) {
   if (cell_num == 1) {
     return SoC_1;

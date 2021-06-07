@@ -127,7 +127,7 @@ float V_LOWLIM = 2500;
 // State Machine Stuff
 boolean input_switch;
 int state_num = 0,next_state;
-bool recalibrating = 0; bool discharged = 0;
+bool recalibrating = 0; bool started_discharge = 0;
 bool stop = 0;
 
 // Blinking LED for state 6
@@ -401,11 +401,11 @@ void loop() {
                 digitalWrite(PIN_YELLED,false);
                 rest_timer++;
             } else { // Move to completion state if battery has already been discharged
-                if (discharged == 1) {
+                if (started_discharge == 1) {
                     next_state = RECAL_DONE;
                     digitalWrite(PIN_YELLED,false);
                     rest_timer = 0;
-                    discharged = 0;
+                    started_discharge = 0;
                 } else { // Otherwise discharge
                     next_state = SLOW_DISCHARGE;
                     digitalWrite(PIN_YELLED,false);
@@ -483,7 +483,7 @@ void loop() {
           mySMPS.command_running = 0;
         }
         if (recalibrating == 1) {
-            discharged = 1;
+            started_discharge = 1;
             if (rest_timer < 30) { // Rest here for 30s like before
                 next_state = DISCHARGE_REST;
                 digitalWrite(PIN_YELLED,false);
@@ -534,11 +534,13 @@ void loop() {
       }
       case RECAL_DONE: { // 7 Recalibration Complete
           recalibrating = 0;
-          discharged = 0;
+          started_discharge = 0;
 
           //Evaluate SOC stats
+          noInterrupts();
           mySMPS.create_SoC_table();
-          
+          interrupts();
+
           //Return SoH data
           ci.writeSOH(0, mySMPS.get_SOH(1));
           ci.writeSOH(1, mySMPS.get_SOH(2));
@@ -704,13 +706,16 @@ void loop() {
     
     //NOTE: Evaluate SOC every second, send to control every second
     // SoC Measurement
-    mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
-    SoC_1 = mySMPS.get_SOC(1);
-    SoC_2 = mySMPS.get_SOC(2);
-    SoC_3 = mySMPS.get_SOC(3);
-    ci.writeSOC(1, static_cast<int>(SoC_1));
-    ci.writeSOC(2, static_cast<int>(SoC_2));
-    ci.writeSOC(3, static_cast<int>(SoC_3));
+
+    if (recalibrating == 0) {
+      mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
+      SoC_1 = mySMPS.get_SOC(1);
+      SoC_2 = mySMPS.get_SOC(2);
+      SoC_3 = mySMPS.get_SOC(3);
+      ci.writeSOC(1, static_cast<int>(SoC_1));
+      ci.writeSOC(2, static_cast<int>(SoC_2));
+      ci.writeSOC(3, static_cast<int>(SoC_3));
+    }
 
     ci.sendUpdates();
   
@@ -733,11 +738,15 @@ void loop() {
   
   // Only deal with SOC every 2 minutes
   //NOTE - Record curve every 3 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
-  if (sec_count = 180 && recalibrating == 1) {
+  if (sec_count == 180) {
       // OCV: Assume that voltage hasn't drastically changed within past 2 minutes
       // Coulomb counting: charge_diff is adding up the charge (current * time) within the 2 mins
       // adjust for difference when discharge circuit is ON
-      mySMPS.record_curve(state_num, V_1, V_2, V_3);
+
+      if (recalibrating == 1 && started_discharge == 1) {
+        mySMPS.record_curve(state_num, V_1, V_2, V_3);
+      }
+      
       sec_count = 0;
 }
 

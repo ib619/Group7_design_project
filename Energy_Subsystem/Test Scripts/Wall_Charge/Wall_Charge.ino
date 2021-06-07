@@ -276,7 +276,7 @@ void loop() {
         break;
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        current_ref = -600;
+        current_ref = -580;
         vref = 0;
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;

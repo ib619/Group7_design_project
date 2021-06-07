@@ -133,6 +133,7 @@ class SMPS {
 
         // Range Estimation
         float x1 = 0, y1 = 0;
+        float SoC_1_start=100, SoC_2_start=100, SoC_3_start=100;
 };
 
 #endif

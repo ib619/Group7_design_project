@@ -24,6 +24,7 @@ subplot(2,1,1);
 plot(v_a, current, 'bx','Linewidth', 2, 'MarkerSize', 8);
 ylabel('I_{PV} (mA)');
 xlabel('V_{PV} (mV)');
+xlim([0 5800]);
 set(gca,'LineWidth',2)
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
@@ -32,6 +33,7 @@ subplot(2,1,2);
 plot(v_a, power, 'bx','Linewidth', 2, 'MarkerSize', 8);
 ylabel('P_{PV} (W)');
 xlabel('V_{PV} (mV)');
+xlim([0 5800]);
 set(gca,'LineWidth',2)
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')

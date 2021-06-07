@@ -213,12 +213,20 @@ void SMPS::decode_command(int cmd, int speed, int pos_x, int pos_y) {
     }
 }
 
-float SMPS::estimate_range(float x0, float y0, bool atCharger) {
+float SMPS::estimate_range(float x0, float y0, float distance, bool atCharger) {
     if ((x0 ==0 && y0 == 0) || atCharger == 1) {
         x0 = 0, y0 = 0;
-    } else {
-
+        return 0;
+    } else if ((x0 != 0 || y0 != 0) && (x1 ==0 && y1 == 0)) { // Left charger
+        SoC_1_start = SoC_1;
+        SoC_2_start = SoC_2;
+        SoC_3_start = SoC_3;
+    } else if  ((SoC_1_start - SoC_1 > 20) && (SoC_2_start - SoC_2 > 20) & (SoC_3_start - SoC_3 > 20)) {
+        float grossSoCDrop = (SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3);
+        float grossSoC = SoC_1 + SoC_2 + SoC_3;
+        return distance*grossSoC/grossSoC;        
     }
+    x1 = x0, y1 = y0;
 }
 
 float SMPS::estimate_time() {
@@ -593,7 +601,7 @@ void SMPS::create_SoC_table() {
         // Serial.println(dataString);
         myFile.println(dataString);
         d_SoC[i] = d_SoC_1; // insert value into array
-        d_SoC_1 = d_SoC_1 - 1/d_size;
+        d_SoC_1 = d_SoC_1 - 1/d_size*100;
     }
     myFile.close();
 
@@ -603,14 +611,14 @@ void SMPS::create_SoC_table() {
     myFile = SD.open(charge_SoC_filename, FILE_WRITE);
     for(int i = 0; i < c_iterator; i++){
         if (i == c_iterator - 1) {
-            dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(1);
+            dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(100);
         } else {
             dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(c_SoC_1);      
         }
         // Serial.println(dataString);
         myFile.println(dataString);
         c_SoC[i] = c_SoC_1; // insert value into array
-        c_SoC_1 = c_SoC_1 + 1/c_size;
+        c_SoC_1 = c_SoC_1 + 1/c_size*100;
     }
     myFile.close();
 
