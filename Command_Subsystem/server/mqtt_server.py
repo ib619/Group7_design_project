@@ -65,7 +65,6 @@ class MqttServer:
     def on_connect_obstacle(self, client, obj, flags, rc):
         if rc == 0:
             logging.debug("obstacle client connected")
-            client.subscribe("obstacle/get", qos=1)
             client.subscribe("obstacle/update", qos=1)
         else:
             logging.debug("Obstacle failed to connect")
@@ -75,7 +74,7 @@ class MqttServer:
 
     # callback for getting a messsage on opstacle topics
     def on_message_obstacle(self, client, userdata, msg):
-        db = create_connection('db/marsrover.db')
+        # db = create_connection('db/marsrover.db')
         if msg.topic == 'obstacle/update':
             # new obstacle data from esp
             data = str(msg.payload.decode("utf-8", "ignore"))

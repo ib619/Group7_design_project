@@ -4,7 +4,7 @@ import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes";
 import useDarkMode from "./hooks/useDarkMode";
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import RoverStatus from "./components/RoverStatus";
 import HomeNavBar from "./components/HomeNavBar";
 import MapPage from "./pages/MapPage";

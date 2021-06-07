@@ -73,7 +73,7 @@ const Map = () => {
           //   setMap(val);
           // }}
         >
-          <GridLines cellWidth={50} className="body">
+          <GridLines lineColor="grey" cellWidth={50} className="body">
             <Center src={home} />
             <Person src={pointerwhite} pos={pos} />
             {obstacles &&
