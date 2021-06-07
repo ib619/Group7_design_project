@@ -28,8 +28,8 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
 }
 
 Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int index)    {
-    double c_x = ((double)co.x - 320)/20;
-    double c_y = (480 - (double)co.y)/20*8;
+    double c_x = (co.x - 320)/20;
+    double c_y = ((480 - co.y)/20*8)+30;
 
     double angle = atan2(c_x, c_y) + ((double)rover->rover_heading*DEG_TO_RAD); //in radians
     double distance = sqrt(sq(c_x) + sq(c_y));
@@ -58,6 +58,7 @@ Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int ind
             tmp.colour="unknown";
             break;
     }
+    ESP_LOGE(TAG, "Obstacle-> x: %d  y: %d  index: %d", tmp.x, tmp.y, index);
     return tmp;
 }
 

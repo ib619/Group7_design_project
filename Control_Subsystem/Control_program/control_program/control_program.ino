@@ -84,7 +84,7 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length) {
 
 void setup() {
   // put your setup code here, to run once:  
-  fpga.setBusFrequency(1000000);
+  fpga.setBusFrequency(400000);
   fpga.setSlaveAddress(FPGA_I2C_ADDRESS);
   fpga.setBaseAddress(BASE_ADDRESS);
   fpga.begin(GPIO_NUM_13, GPIO_NUM_12);
