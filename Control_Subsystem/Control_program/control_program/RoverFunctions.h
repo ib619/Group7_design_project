@@ -2,6 +2,7 @@
 #define ROVER_FUNCTIONS_API_H
 
 #include "Arduino.h"
+#include "math.h"
 #include "WiFi.h"
 #include "PubSubClient.h"
 #include "ArduinoJson.h"
@@ -38,7 +39,8 @@ struct RoverDataStructure {
 
 void initWiFi(const char *ssid, const char *password);
 int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_password);
-Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index);
+Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int index);
+// Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index);
 
 int publishPosition(PubSubClient *client, RoverDataStructure *data);
 int publishBatteryStatus(PubSubClient *client, int cell, int soc, int soh, int state);

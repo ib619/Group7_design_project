@@ -27,11 +27,17 @@ int connectMQTT(PubSubClient *client, const char *mqtt_user, const char * mqtt_p
     ESP_LOGD(TAG, "MQTT broker connected!");
 }
 
-Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index) {
+Obstacle cartesianToObstacle(RoverDataStructure *rover, ColourObject co, int index)    {
+    double c_x = ((double)co.x - 320)/20;
+    double c_y = (480 - (double)co.y)/20*8;
+
+    double angle = atan2((double)c_x, (double)c_y) + ((double)rover->rover_heading*DEG_TO_RAD); //in radians
+    double distance = sqrt(sq(c_x) + sq(c_y));
+
     Obstacle tmp;
-    int angle=rover->rover_heading + co.angle;      // this is in DEGREES, cos/sin function takes in RADIANS
-    tmp.x = (co.distance*10*sin(angle*DEG_TO_RAD)) + rover->x_axis;
-    tmp.y = (co.distance*10*cos(angle*DEG_TO_RAD)) + rover->y_axis;
+    tmp.x = (int)((distance*10*sin(angle)) + rover->x_axis);
+    tmp.y = (int)((distance*10*cos(angle)) + rover->y_axis);
+
     switch(index)   {
         case 0:
             tmp.colour="red";
@@ -54,6 +60,34 @@ Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int
     }
     return tmp;
 }
+
+// Obstacle convertObjectToObstacle(RoverDataStructure *rover, ColourObject co, int index) {
+//     Obstacle tmp;
+//     int angle=rover->rover_heading + co.angle;      // this is in DEGREES, cos/sin function takes in RADIANS
+//     tmp.x = (co.distance*10*sin(angle*DEG_TO_RAD)) + rover->x_axis;
+//     tmp.y = (co.distance*10*cos(angle*DEG_TO_RAD)) + rover->y_axis;
+//     switch(index)   {
+//         case 0:
+//             tmp.colour="red";
+//             break;
+//         case 1:
+//             tmp.colour="green";
+//             break;
+//         case 2:
+//             tmp.colour="blue";
+//             break;
+//         case 3:
+//             tmp.colour="grey";
+//             break;
+//         case 4:
+//             tmp.colour="yellow";
+//             break;
+//         default:
+//             tmp.colour="unknown";
+//             break;
+//     }
+//     return tmp;
+// }
 
 int publishPosition(PubSubClient *client, RoverDataStructure *data)   {
     StaticJsonDocument<256> doc;
