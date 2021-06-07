@@ -307,21 +307,21 @@ void loop() {
           if ((SoC_2 - SoC_1) > 3  && (SoC_3 - SoC_1) > 3) {  // Cell 1 Lowest
                 Serial.println("Cell 1 lowest");
                 disc1 = 1, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + (current_measure + V_1/150)/1000;
+                dq1 = dq1 + (current_measure + V_1/150/1000)/1000;
                 dq2 = dq2 + current_measure/1000;
                 dq3 = dq3 + current_measure/1000;
             } else if ((SoC_1 - SoC_2) > 3 && (SoC_3 - SoC_2) > 3) { // Cell 2 Lowest
                 Serial.println("Cell 2 lowest");
                 disc1 = 0, disc2 = 1, disc3 = 0;
                 dq1 = dq1 + current_measure/1000;
-                dq2 = dq2 + (current_measure + V_2/150)/1000;
+                dq2 = dq2 + (current_measure + V_2/150/1000)/1000;
                 dq3 = dq3 + current_measure/1000;
             } else if ((SoC_1 - SoC_3) > 3 && (SoC_2 - SoC_3) > 3) { // Cell 3 Lowest
                 Serial.println("Cell 3 lowest");
                 disc1 = 0, disc2 = 0, disc3 = 1;
                 dq1 = dq1 + current_measure/1000;
                 dq2 = dq2 + current_measure/1000;
-                dq3 = dq3 + (current_measure + V_3/150)/1000;
+                dq3 = dq3 + (current_measure + V_3/150/1000)/1000;
             } else {
               Serial.println("No balancing");
                 disc1 = 0, disc2 = 0, disc3 = 0;

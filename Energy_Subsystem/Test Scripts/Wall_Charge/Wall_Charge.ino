@@ -276,35 +276,37 @@ void loop() {
         break;
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        current_ref = -600;
+        current_ref = -580;
         vref = 0;
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
-            next_state = CHARGE;
-            digitalWrite(PIN_YELLED,true);
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
             // Rationale: Discharge current in the more higher charged cells
             //Connect to discharging relay if a battery is significantly lower  
             if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
                 disc1 = 0, disc2 = 1, disc3 = 1;
-                dq1 = dq1 + 250/1000;
-                dq2 = dq2 + (250 - V_2/150)/1000;
-                dq3 = dq3 + (250 - V_3/150)/1000;
+                dq1 = dq1 + 250.0/1000.0;
+                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
+                dq3 = dq3 + (250.0 - V_3/150.0)/1000.0;
+                Serial.println("Cell 1 Lowest");
             } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
                 disc1 = 1, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + (250 - V_1/150)/1000;
-                dq2 = dq2 + 250/1000;
-                dq3 = dq3 + (250 - V_3/150)/1000;
+                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
+                dq2 = dq2 + 250.0/1000.0;
+                dq3 = dq3 + (250.0 - V_3/150.0)/1000.0;
+                Serial.println("Cell 2 Lowest");
             } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
                 disc1 = 1, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + (250 - V_1/150)/1000;
-                dq2 = dq2 + (250 - V_2/150)/1000;
-                dq3 = dq3 + 250/1000;
+                dq1 = dq1 + (250.0 - V_1/150.0)/1000.0;
+                dq2 = dq2 + (250.0 - V_2/150.0)/1000.0;
+                dq3 = dq3 + 250.0/1000.0;
+                Serial.println("Cell 3 Lowest");
             } else {
               disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + 250/1000;
-                dq2 = dq2 + 250/1000;
-                dq3 = dq3 + 250/1000;
+                dq1 = dq1 + 250.0/1000.0;
+                dq2 = dq2 + 250.0/1000.0;
+                dq3 = dq3 + 250.0/1000.0;
+                Serial.println("Not balancing");
             }
             digitalWrite(PIN_DISC1, disc1);
             digitalWrite(PIN_DISC2, disc2);
@@ -332,77 +334,11 @@ void loop() {
             digitalWrite(PIN_YELLED,false);
             rest_timer++;
         } else { // Move to completion state if battery has already been discharged
-            next_state = SLOW_DISCHARGE;
+            next_state = IDLE;
             rest_timer = 0;
             digitalWrite(PIN_YELLED,false);
         }
         break;        
-      }
-      case SLOW_DISCHARGE: { // 3 Slow discharge (-500mA)
-        current_ref = +600;
-        if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
-          next_state = SLOW_DISCHARGE;
-          digitalWrite(PIN_YELLED,false);
-          
-          if ((SoC_2 - SoC_1) > 3  && (SoC_3 - SoC_1) > 3) {  // Cell 1 Lowest
-                Serial.println("Cell 1 lowest");
-                // NOTE: manual coulomb counting
-                disc1 = 1, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + (-250 + V_1/150)/1000;
-                dq2 = dq2 -250/1000;
-                dq3 = dq3 -250/1000;
-            } else if ((SoC_1 - SoC_2) > 3 && (SoC_3 - SoC_2) > 3) { // Cell 2 Lowest
-                Serial.println("Cell 2 lowest");
-                disc1 = 0, disc2 = 1, disc3 = 0;
-                dq1 = dq1 -250 /1000;
-                dq2 = dq2 + (-250 + V_2/150)/1000;
-                dq3 = dq3 -250 /1000;
-            } else if ((SoC_1 - SoC_3) > 3 && (SoC_2 - SoC_3) > 3) { // Cell 3 Lowest
-                Serial.println("Cell 3 lowest");
-                disc1 = 0, disc2 = 0, disc3 = 1;
-                dq1 = dq1 -250/1000;
-                dq2 = dq2 -250/1000;
-                dq3 = dq3 + (-250 + V_3/150)/1000;
-            } else {
-              Serial.println("No balancing");
-                disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 -250/1000;
-                dq2 = dq2 -250/1000;
-                dq3 = dq3 -250/1000;
-            }
-            digitalWrite(PIN_DISC1, disc1);
-            digitalWrite(PIN_DISC2, disc2);
-            digitalWrite(PIN_DISC3, disc3);
-
-        } else { // If we reach full discharged, move to rest
-          next_state = DISCHARGE_REST;
-          digitalWrite(PIN_YELLED,false);
-        }
-        if(input_switch == 0){
-          next_state = IDLE;
-          digitalWrite(PIN_YELLED,false);
-        }
-        break;
-      }
-      case DISCHARGE_REST:{ // 4 Discharge rest, no LEDs no current
-        current_ref = 0;
-        vref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
-        if(input_switch == 0){
-          next_state = IDLE;
-          rest_timer = 0;
-          digitalWrite(PIN_YELLED,false);
-        }
-        if (rest_timer < 30) { // Stay here if timer < 30
-            next_state = DISCHARGE_REST;
-            digitalWrite(PIN_YELLED,false);
-            rest_timer++;
-        } else { // Move to completion state if battery has already been discharged
-            next_state = CHARGE;
-            rest_timer = 0;
-            digitalWrite(PIN_YELLED,false);
-        }
-        break;
       }
       case ERROR: { // 5 ERROR state RED led and no current
         current_ref = 0;
@@ -421,9 +357,9 @@ void loop() {
       case CV_CHARGE: { // 6 Charging with constant voltage (after state 1, before 2)
         vref = 3600;
         current_ref = 0;
-        q1 = q1 + 250/1000;
-        q2 = q2 + 250/1000;
-        q3 = q3 + 250/1000;
+        q1 = q1 + 250.0/1000.0;
+        q2 = q2 + 250.0/1000.0;
+        q3 = q3 + 250.0/1000.0;
         if (current_measure > 0) {
             next_state = CHARGE_REST;
             vref=0;

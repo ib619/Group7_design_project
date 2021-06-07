@@ -156,6 +156,29 @@ void SMPS::init() {
         Serial.println("File not open");
     }
     myFile.close();
+
+    if (SD.exists("drive_power.csv")) {
+        myFile = SD.open("drive_power.csv");
+        if (myFile) {
+            for (int i = 0; i < 18; i++) {
+                content = myFile.readStringUntil(',');
+                drive_speed[i] = content.toFloat();
+                content = myFile.readStringUntil('\n');
+                drive_power[i] = content.toFloat();
+                Serial.println(
+                    String(drive_speed[i]) + "," + String(drive_power[i])
+                );
+                if (content == "") {
+                    Serial.println("Insertion Complete");    
+                    break;
+                    
+                }                 
+            }
+        }
+    } else {
+        Serial.println("File not open");
+    }
+    myFile.close();
 }
 
 void SMPS::triggerError() {
@@ -190,12 +213,20 @@ void SMPS::decode_command(int cmd, int speed, int pos_x, int pos_y) {
     }
 }
 
-float SMPS::estimate_range(float x0, float y0, bool atCharger) {
+float SMPS::estimate_range(float x0, float y0, float distance, bool atCharger) {
     if ((x0 ==0 && y0 == 0) || atCharger == 1) {
         x0 = 0, y0 = 0;
-    } else {
-
+        return 0;
+    } else if ((x0 != 0 || y0 != 0) && (x1 ==0 && y1 == 0)) { // Left charger
+        SoC_1_start = SoC_1;
+        SoC_2_start = SoC_2;
+        SoC_3_start = SoC_3;
+    } else if  ((SoC_1_start - SoC_1 > 20) && (SoC_2_start - SoC_2 > 20) & (SoC_3_start - SoC_3 > 20)) {
+        float grossSoCDrop = (SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3);
+        float grossSoC = SoC_1 + SoC_2 + SoC_3;
+        return distance*grossSoC/grossSoC;        
     }
+    x1 = x0, y1 = y0;
 }
 
 float SMPS::estimate_time() {
@@ -319,18 +350,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
+            Serial.println("CC1");
         }
         if (V_2 > c_ocv_u || V_2 < c_ocv_l) { // LOOKUP
             temp2 = lookup_c_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING  
             temp2 = temp2 + charge_2/q2_now*100;
             lookup = 0;
+            Serial.println("CC2");
         }
         if (V_3 > c_ocv_u || V_3 < c_ocv_l) { // LOOKUP  
             temp3 = lookup_c_table(3, V_1, V_2, V_3);          
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
             lookup = 0;
+            Serial.println("CC3");
         }
     } else if (state_num == 3 || state_num == 8 || state_num == 9) { // DISCHARGE
         if (V_1 > d_ocv_u || V_1 < d_ocv_l) { // LOOKUP
@@ -338,18 +372,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         } else { // COULOMB COUNTING
             temp1 = temp1 + charge_1/q1_now*100;
             lookup = 0;
+            Serial.println("CC1");
         }
         if (V_2 > d_ocv_u || V_2 < d_ocv_l) { // LOOKUP           
             temp2 = lookup_d_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp2 = temp2 + charge_2/q2_now*100;
             lookup = 0;
+            Serial.println("CC2");
         }
         if (V_3 > d_ocv_u || V_3 < d_ocv_l) { // LOOKUP
             temp3 = lookup_d_table(3, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
             temp3 = temp3 + charge_3/q3_now*100;
             lookup = 0;
+            Serial.println("CC3");
         }
     } else if (state_num == 2) {
         temp1 = 100;
@@ -390,9 +427,12 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
       arr_size = arr_size + 1;     
     } else { // In most cases
       if (lookup == 1) {
-        SoC_1 = SoC_1_arr.push(temp1).get();
-        SoC_2 = SoC_2_arr.push(temp2).get();
-        SoC_3 = SoC_3_arr.push(temp3).get();
+        SoC_1_arr.push(temp1);
+        SoC_2_arr.push(temp2);
+        SoC_3_arr.push(temp3);
+        SoC_1 = SoC_1_arr.get();
+        SoC_2 = SoC_2_arr.get();
+        SoC_3 = SoC_3_arr.get();
       } else {
         SoC_1 = temp1;
         SoC_2 = temp2;
@@ -561,7 +601,7 @@ void SMPS::create_SoC_table() {
         // Serial.println(dataString);
         myFile.println(dataString);
         d_SoC[i] = d_SoC_1; // insert value into array
-        d_SoC_1 = d_SoC_1 - 1/d_size;
+        d_SoC_1 = d_SoC_1 - 1/d_size*100;
     }
     myFile.close();
 
@@ -571,14 +611,14 @@ void SMPS::create_SoC_table() {
     myFile = SD.open(charge_SoC_filename, FILE_WRITE);
     for(int i = 0; i < c_iterator; i++){
         if (i == c_iterator - 1) {
-            dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(1);
+            dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(100);
         } else {
             dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(c_SoC_1);      
         }
         // Serial.println(dataString);
         myFile.println(dataString);
         c_SoC[i] = c_SoC_1; // insert value into array
-        c_SoC_1 = c_SoC_1 + 1/c_size;
+        c_SoC_1 = c_SoC_1 + 1/c_size*100;
     }
     myFile.close();
 

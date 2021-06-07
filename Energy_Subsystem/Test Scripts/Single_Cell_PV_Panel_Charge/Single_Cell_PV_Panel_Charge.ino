@@ -3,7 +3,8 @@
 // Port A: PV Panel, voltage available at A0
 // Port B: A single battery
 // Aim: To maximise solar panel output while ensuring that the current is delievered at a safe level.
-  // Subaim: to Determine the input current at port A accurately
+  // Instead of using a reference voltage, alter PWM instead
+  // Asynchronous Buck
 
 #include <Wire.h>
 #include <INA219_WE.h>
@@ -55,7 +56,7 @@ float V_limit = 5000;
 float v0, v1; // current and previous voltage values
 float p0, p1; // current and previous power values
 float i0, i1; // current and previous current values
-float p_diff, v_diff;
+float p_diff, v_diff, i_diff;
 float dq1;
 
 int arr_size = 0;
@@ -67,6 +68,10 @@ void setup() {
   Wire.setClock(700000); // set the comms speed for i2c
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
+
+  if (SD.exists("MPPT_PVC.csv")) {
+      SD.remove("MPPT_PVC.csv");
+    }
 
   mySMPS.init();
  
@@ -102,8 +107,8 @@ void setup() {
 void loop() {
   if (loop_trigger == 1){ // FAST LOOP (200HZ)
       state_num = next_state; //state transition
-      V_Bat = analogRead(A0)*4.096/1.03; //check the battery voltage (1.03 is a correction for measurement error, you need to check this works for you)
-      V_PD = analogRead(A1)*4.096/1.03 * 2.699; // obtained via trial and error
+      V_Bat = analogRead(A0)*4.096/1.03*3; //manual correction for potential divider
+      V_PD = analogRead(A1)*4.096/1.03* 4.1626; //mannual correction for potential divider
       if ((V_Bat > 3700 || V_Bat < 2400)) { //Checking for Error states (just battery voltage for now)
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
@@ -115,12 +120,12 @@ void loop() {
       //TODO: determine current in
       I_in = V_Bat * current_measure / V_PD * 0.5; // assuming 50% efficiency
       
-      ev = (vref - V_PD)/1000;  //voltage error at this time
-      cv = pidv(ev);  //voltage pid
-      cv = saturation(cv, current_limit, 0); //current demand saturation
-      ei = (cv - I_in)/1000; //current error
-      closed_pwm = pidi(ei);  //current pid
-      closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
+//      ev = (vref - V_PD)/1000;  //voltage error at this time
+//      cv = pidv(ev);  //voltage pid
+//      cv = saturation(cv, current_limit, 0); //current demand saturation
+//      ei = (cv - I_in)/1000; //current error
+//      closed_pwm = pidi(ei);  //current pid
+      pwm_out = saturation(pwm_out, 0.99, 0.01);  //duty_cycle saturation
       analogWrite(6, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
       int_count++; //count how many interrupts since this was last reset to zero
       loop_trigger = 0; //reset the trigger and move on with life
@@ -131,11 +136,16 @@ void loop() {
     switch (state_num) { // STATE MACHINE (see diagram)
       case 0:{ // Start state (no current, no LEDs)
         current_ref = 0;
+        pwm_out = 0;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
+          pwm_out = 0.5; // initial pwm value
+          
           v1 = V_PD;
           i1 = current_measure;
           p1 = v1*i1;
+          pwm_out = pwm_out + 0.03;
+
           next_state = 1;
           digitalWrite(8,true);
         } else { // otherwise stay put
@@ -146,18 +156,42 @@ void loop() {
       }
       case 1:{ // Charge state (250mA and a green LED)
 
-        // Determine reference threshold voltage for panels
-        p0 = V_PD * I_in;
+        // Assign values
+        v0 = V_PD;
+        i0 = current_measure;
+        
+        p0 = v0 * i0; // directly use I_out as a proxy indicator for I_in
         p_diff = p0-p1;
-        v0 =PD;
+        
+        v_diff = v0-v1;
+        i_diff = i0-i1;
 
-        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1)) && (vref+100<V_limit)) {
-          vref = vref + 100;
+        // in general increasing PWM means decreasing PV voltage
+
+        // PnO algorithm
+        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1))) {
+          // vref = vref + 100;
+          pwm_out = pwm_out - 0.03;
         } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
-          vref = vref - 100;
+          // vref = vref - 100;
+          pwm_out = pwm_out + 0.03;
+        } else {
+          Serial.println("No increment");
+        }
+        
+
+        // Incremental Conductance Algorithm
+        /*
+        if (((abs(v_diff) >= 10) && (i_diff/v_diff > -i0/v0) || (abs(v_diff) < 10) && (i_diff > 0))) {
+          // vref = vref + 100;
+          pwm_out = pwm_out - 0.05;
+        } else if ((abs(v_diff) >= 10) && (i_diff/v_diff <= -i0/v0) || (abs(v_diff) < 10) && (i_diff <= 0)) {
+          // vref = vref - 100;
+          pwm_out = pwm_out + 0.05;
         } else {
           Serial.println("Not incrementing or decrementing");
         }
+        */
         
         if (V_Bat < 3600) { // if not charged, stay put
           next_state = 1;
@@ -212,9 +246,9 @@ void loop() {
     // SoC Measurement
     mySMPS.compute_SOC(state_num, V_Bat, 0, 0, dq1, 0, 0);
     
-    dataString = String(state_num) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(pwm_out) + "," + String(V_Bat) + "," + String(current_ref) + "," + String(current_measure) + "," + String(V_PD) + "," + String(V_PD*current_measure/1000000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
-    File dataFile = SD.open("MPPT_PnO.csv", FILE_WRITE); // open our CSV file
+    File dataFile = SD.open("MPPT_PVC.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
       dataFile.println(dataString); // print the data
     } else {
