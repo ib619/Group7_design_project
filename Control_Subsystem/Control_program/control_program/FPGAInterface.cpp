@@ -42,6 +42,7 @@ ColourObject FPGAInterface::readByIndex(int index)  {
     uint32_t coords = (d_high<<16) + (d_mid<<8) + d_low;
     tmp.x = coords>>12;
     tmp.y = coords&4095;
+    ESP_LOGE(TAG, "Rx x: %d  Rx y: %d", tmp.x, tmp.y);
     return tmp;
 }
 
