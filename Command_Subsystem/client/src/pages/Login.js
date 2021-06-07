@@ -79,6 +79,7 @@ const Login = (props) => {
             <Form.Control
               name="password"
               size="text"
+              type="password"
               value={props.mqtt.password}
               placeholder="password"
               onChange={handleChange}
