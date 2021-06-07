@@ -33,12 +33,16 @@ ColourObject FPGAInterface::readByIndex(int index)  {
     char d_low=0;
     _setAddress((4*index) + base_address);
     i2c->requestFrom(slave_address,4);
-    while(i2c->available()) {
-        tmp.detected=i2c->read();
-        d_low=i2c->read();
-        d_mid=i2c->read();
-        d_high=i2c->read();
-    }
+    tmp.detected=i2c->read();
+    d_low=i2c->read();
+    d_mid=i2c->read();
+    d_high=i2c->read();
+    // while(i2c->available()) {
+    //     tmp.detected=i2c->read();
+    //     d_low=i2c->read();
+    //     d_mid=i2c->read();
+    //     d_high=i2c->read();
+    // }
     uint32_t coords = (d_high<<16) + (d_mid<<8) + d_low;
     tmp.x = coords>>12;
     tmp.y = coords&4095;
