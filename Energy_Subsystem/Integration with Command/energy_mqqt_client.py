@@ -78,7 +78,7 @@ class MqttServer:
             self.speed = data["speed"]
             
         # TODO: write to arduino
-        arduino.write((",".join(self.cmd, self.x, self.y, self.dist_travelled, self.drive_status, self.speed)).encode('utf-8'))
+        arduino.write((",".join(self.cmd, self.x, self.y, self.dist_travelled, self.drive_status, self.speed) + "\n").encode('utf-8'))
         
     ### Event Handlers
     def start_server_handler(self):
