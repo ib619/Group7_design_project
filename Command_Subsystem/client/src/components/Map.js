@@ -135,8 +135,8 @@ const Center = styled.img`
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] + 2810,
-    bottom: props.coords[2] - 2740,
+    left: props.coords[1] * 0.2 + 2810,
+    bottom: props.coords[2] * 0.2 - 2740,
     opacity: 1 / props.coords[3],
     background: props.coords[0] === "blue" ? "turquoise" : props.coords[0],
   },
@@ -152,8 +152,8 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] + 370,
-    bottom: props.coords[1] - 155,
+    left: props.coords[0] * 0.2 + 370,
+    bottom: props.coords[1] * 0.2 - 155,
   },
 }))`
   background: white;
@@ -166,8 +166,8 @@ const Point = styled.div.attrs((props) => ({
 
 const Person = styled.img.attrs((props) => ({
   style: {
-    left: props.pos.x + 2840, // hardcoded offset values :(
-    bottom: props.pos.y - 2700,
+    left: props.pos.x * 0.2 + 2840, // hardcoded offset values :(
+    bottom: props.pos.y * 0.2 - 2730,
   },
 }))`
   position: relative;
