@@ -42,10 +42,10 @@ module signed_divide_delay (
 
 	input	  aclr;
 	input	  clock;
-	input	[23:0]  denom;
-	input	[23:0]  numer;
-	output	[23:0]  quotient;
-	output	[23:0]  remain;
+	input	[27:0]  denom;
+	input	[27:0]  numer;
+	output	[27:0]  quotient;
+	output	[27:0]  remain;
 
 endmodule
 
@@ -65,20 +65,20 @@ endmodule
 // Retrieval info: CONSTANT: LPM_NREPRESENTATION STRING "SIGNED"
 // Retrieval info: CONSTANT: LPM_PIPELINE NUMERIC "1"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "LPM_DIVIDE"
-// Retrieval info: CONSTANT: LPM_WIDTHD NUMERIC "24"
-// Retrieval info: CONSTANT: LPM_WIDTHN NUMERIC "24"
+// Retrieval info: CONSTANT: LPM_WIDTHD NUMERIC "28"
+// Retrieval info: CONSTANT: LPM_WIDTHN NUMERIC "28"
 // Retrieval info: USED_PORT: aclr 0 0 0 0 INPUT NODEFVAL "aclr"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT NODEFVAL "clock"
-// Retrieval info: USED_PORT: denom 0 0 24 0 INPUT NODEFVAL "denom[23..0]"
-// Retrieval info: USED_PORT: numer 0 0 24 0 INPUT NODEFVAL "numer[23..0]"
-// Retrieval info: USED_PORT: quotient 0 0 24 0 OUTPUT NODEFVAL "quotient[23..0]"
-// Retrieval info: USED_PORT: remain 0 0 24 0 OUTPUT NODEFVAL "remain[23..0]"
+// Retrieval info: USED_PORT: denom 0 0 28 0 INPUT NODEFVAL "denom[27..0]"
+// Retrieval info: USED_PORT: numer 0 0 28 0 INPUT NODEFVAL "numer[27..0]"
+// Retrieval info: USED_PORT: quotient 0 0 28 0 OUTPUT NODEFVAL "quotient[27..0]"
+// Retrieval info: USED_PORT: remain 0 0 28 0 OUTPUT NODEFVAL "remain[27..0]"
 // Retrieval info: CONNECT: @aclr 0 0 0 0 aclr 0 0 0 0
 // Retrieval info: CONNECT: @clock 0 0 0 0 clock 0 0 0 0
-// Retrieval info: CONNECT: @denom 0 0 24 0 denom 0 0 24 0
-// Retrieval info: CONNECT: @numer 0 0 24 0 numer 0 0 24 0
-// Retrieval info: CONNECT: quotient 0 0 24 0 @quotient 0 0 24 0
-// Retrieval info: CONNECT: remain 0 0 24 0 @remain 0 0 24 0
+// Retrieval info: CONNECT: @denom 0 0 28 0 denom 0 0 28 0
+// Retrieval info: CONNECT: @numer 0 0 28 0 numer 0 0 28 0
+// Retrieval info: CONNECT: quotient 0 0 28 0 @quotient 0 0 28 0
+// Retrieval info: CONNECT: remain 0 0 28 0 @remain 0 0 28 0
 // Retrieval info: GEN_FILE: TYPE_NORMAL signed_divide_delay.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL signed_divide_delay.inc FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL signed_divide_delay.cmp FALSE

@@ -2,14 +2,15 @@ import cv2
 import numpy as np
 from rig.type_casts import float_to_fp, fp_to_float
 
-pts1 = np.float32([[275, 310], [390, 310], [640, 480], [0, 480]])
+pts1 = np.float32([[270, 300], [380, 300], [640, 480], [0, 480]])
+# pts1 = np.float32([[250, 248], [390, 248], [640, 480], [0, 480]])
 # pts1 = np.float32([[250, 240], [390, 240], [640, 480], [0, 480]])
 pts2 = np.float32([[0, 0],[640, 0],[640, 480],[0, 480]])
 
 M = cv2.getPerspectiveTransform(pts1, pts2)
 
 def get_fixed_point():
-    ftp = float_to_fp(signed=True, n_bits=24, n_frac=12)
+    ftp = float_to_fp(signed=True, n_bits=28, n_frac=16)
     print("M1:", M[0][0], "Fixed Point(absolute):", hex(int(ftp(abs(M[0][0])))))
     print("M2:", M[0][1], "Fixed Point(absolute):", hex(int(ftp(abs(M[0][1])))))
     print("M3:", M[0][2], "Fixed Point(absolute):", hex(int(ftp(abs(M[0][2])))))
@@ -25,8 +26,8 @@ def get_fixed_point():
 def image_perspective(image_path = '../images/perspective.jpg'):
     frame = cv2.imread(image_path)
     frame = cv2.resize(frame, (640, 480))
-    x1, y1 = 251, 376
-    x2, y2 = 192, 396
+    x1, y1 = 482, 58
+    x2, y2 = 401, 393
     x3, y3 = 250, 375
     x4, y4 = 316, 237
     cv2.circle(frame,(x1,y1),4,(0, 0, 255), 3)    

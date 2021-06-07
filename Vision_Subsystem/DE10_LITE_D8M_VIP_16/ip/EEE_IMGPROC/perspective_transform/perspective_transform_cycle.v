@@ -5,43 +5,43 @@ module perspective_transform_cycle(
 	input [10:0] y_coord,
 	output [10:0] x_coord_adj,
 	output [10:0] y_coord_adj,
-	output [23:0] x_coord_temp_check,
-	output [23:0] y_coord_temp_check,
-	output [23:0] x_coord_temp2_check,
-	output [23:0] y_coord_temp2_check,
-	output [47:0] M1_temp_check,
-	output [47:0] M2_temp_check,
-	output [47:0] M4_temp_check,
-	output [47:0] M5_temp_check,
-	output [47:0] M7_temp_check,
-	output [47:0] M8_temp_check,
-	output [23:0] w_check
+	output [27:0] x_coord_temp_check,
+	output [27:0] y_coord_temp_check,
+	output [27:0] x_coord_temp2_check,
+	output [27:0] y_coord_temp2_check,
+	output [55:0] M1_temp_check,
+	output [55:0] M2_temp_check,
+	output [55:0] M4_temp_check,
+	output [55:0] M5_temp_check,
+	output [55:0] M7_temp_check,
+	output [55:0] M8_temp_check,
+	output [27:0] w_check
 );
+localparam M1 = 28'hd3dc;//6645
+localparam M2 = 28'h13dcb;//7160
+localparam M3 = 28'h253dcb0;//3437202
 
-localparam M1 = 24'h19f5;//6645
-localparam M2 = 24'h1bf8;//7160
-localparam M3 = 24'h347292;//3437202
 
+localparam M4 = 28'h0;
+localparam M5 = 28'h234f7;//13748
+localparam M6 = 28'h29611a7;//3409705
 
-localparam M4 = 24'h0;
-localparam M5 = 24'h35b4;//13748
-localparam M6 = 24'h340729;//3409705
+localparam M7 = 28'h0;
+localparam M8 = 28'hf9;//22
+localparam M9 = 28'h10000;//4096
 
-localparam M7 = 24'h0;
-localparam M8 = 24'h16;//22
-localparam M9 = 24'h1000;//4096
 
 assign x_coord_temp_check = x_coord_temp;
 assign y_coord_temp_check = y_coord_temp;
 assign x_coord_temp2_check = x_coord_temp2;
 assign y_coord_temp2_check = y_coord_temp2;
 
-reg [47:0] M1_temp;
-reg [47:0] M2_temp;
-reg [47:0] M4_temp;
-reg [47:0] M5_temp;
-reg [47:0] M7_temp;
-reg [47:0] M8_temp;
+reg [55:0] M1_temp;
+reg [55:0] M2_temp;
+reg [55:0] M4_temp;
+reg [55:0] M5_temp;
+reg [55:0] M7_temp;
+reg [55:0] M8_temp;
 assign M1_temp_check = M1_temp;
 assign M2_temp_check = M2_temp;
 assign M4_temp_check = M4_temp;
@@ -53,12 +53,12 @@ assign M8_temp_check = M8_temp;
 always @(posedge clk)
 	begin
 		if (~rst_n) begin
-			M1_temp <= 48'd0;
-			M2_temp <= 48'd0;
-			M4_temp <= 48'd0;
-			M5_temp <= 48'd0;
-			M7_temp <= 48'd0;		
-			M8_temp <= 48'd0;
+			M1_temp <= 55'd0;
+			M2_temp <= 55'd0;
+			M4_temp <= 55'd0;
+			M5_temp <= 55'd0;
+			M7_temp <= 55'd0;		
+			M8_temp <= 55'd0;
 		end
 		else begin
 			M1_temp <= M1 * x_coord;
@@ -72,12 +72,12 @@ always @(posedge clk)
 // Second Cycle
 
 assign w_check = w;
-wire [23:0] x_coord_temp;
-wire [23:0] y_coord_temp;
-wire [23:0] w;
+wire [27:0] x_coord_temp;
+wire [27:0] y_coord_temp;
+wire [27:0] w;
 
-wire [23:0] x_coord_temp2;
-wire [23:0] y_coord_temp2;
+wire [27:0] x_coord_temp2;
+wire [27:0] y_coord_temp2;
 
 assign x_coord_temp = M3 -M1_temp - M2_temp ;
 assign y_coord_temp = M4_temp - M5_temp + M6;
