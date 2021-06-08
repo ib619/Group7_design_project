@@ -231,7 +231,6 @@ void loop() {
 
    //TODO: command reception loop
 
-   /*
    if(Serial.available() > 0)  {
 
       cmd = (Serial.readStringUntil(',')).toInt();
@@ -266,7 +265,6 @@ void loop() {
         }
       }
    }
-   */
 
 //In rests state, if command was running (but not calibration), command complete
   if (loop_trigger == 1){ // FAST LOOP (currently 200HZ)
@@ -324,10 +322,11 @@ void loop() {
   } else if (int_count == 126) {
     digitalWrite(PIN_RLY3,false);
     relay_on = 1;
+
     /*
-    dataString2 = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," + String(current_measure) + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    dataString2 = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3); // + "," + String(current_ref) + "," + String(current_measure) + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
     Serial.println(dataString2);
-    File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
+    File dataFile = SD.open("Diagnose.csv", FILE_WRITE);
     if (dataFile){ 
       dataFile.println(dataString2);
     } else {
@@ -335,6 +334,7 @@ void loop() {
     }
     dataFile.close();
     */
+    
   }
  
   // This still runs every second

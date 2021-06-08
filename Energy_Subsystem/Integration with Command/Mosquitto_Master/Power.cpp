@@ -473,6 +473,7 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
     prev_state = state_num;
 
     // Now Print all values to serial and SD
+
     /*
     dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3);
     // Serial.println(dataString);
