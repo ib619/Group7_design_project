@@ -73,8 +73,8 @@ void SMPS::init() {
     // 3 items in one row: q1_now, q2_now, q3_now. Determins SoC by lookup upon booting up.
     if (SD.exists("Stats.csv")) {
         myFile = SD.open("Stats.csv");  
-        if(myFile) {   
-            Serial.println("Stats file open");    
+        Serial.println("Stats File is open");
+        if(myFile) {    
             for (int i = 0; i < 2; i++) {
                 content = myFile.readStringUntil(',');
                 //Serial.println(content);
@@ -90,7 +90,7 @@ void SMPS::init() {
             q3_now = content.toFloat();
         }
     } else {
-        Serial.println("File not open");
+        Serial.println("Stats File not open");
     }
     myFile.close();
     SoH_1 = q1_now/q1_0*100;
@@ -101,6 +101,7 @@ void SMPS::init() {
     if (SD.exists(discharge_SoC_filename)) {
         myFile = SD.open(discharge_SoC_filename);
         if (myFile) {
+            Serial.println("Discharge file is open");
             for (int i = 0; i < 100; i++) {
                 content = myFile.readStringUntil(',');
                 d_v_1[i] = content.toFloat();
@@ -125,13 +126,14 @@ void SMPS::init() {
             }
         }
     } else {
-        Serial.println("File not open");
+        Serial.println("Discharge File not open");
     }
     myFile.close();
 
     if (SD.exists(charge_SoC_filename)) {
         myFile = SD.open(charge_SoC_filename);
         if (myFile) {
+            Serial.println("charge file is open");
             for (int i = 0; i < 100; i++) {
                 content = myFile.readStringUntil(',');
                 c_v_1[i] = content.toFloat();
@@ -157,13 +159,14 @@ void SMPS::init() {
             }
         }
     } else {
-        Serial.println("File not open");
+        Serial.println("Charge File not open");
     }
     myFile.close();
 
-    if (SD.exists("drive_power.csv")) {
-        myFile = SD.open("drive_power.csv");
+    if (SD.exists("drivepwr.csv")) {
+        myFile = SD.open("drivepwr.csv");
         if (myFile) {
+            Serial.println("drivepwr is open");
             for (int i = 0; i < 18; i++) {
                 content = myFile.readStringUntil(',');
                 drive_speed[i] = content.toFloat();
@@ -182,7 +185,7 @@ void SMPS::init() {
             }
         }
     } else {
-        Serial.println("File not open");
+        Serial.println("Drive Pwr File not open");
     }
     myFile.close();
 }
@@ -470,16 +473,19 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
     prev_state = state_num;
 
     // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3)  + "," + String(q1_now) + "," + String(q2_now)  + "," + String(q3_now);
+
+    /*
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3);
     // Serial.println(dataString);
 
     myFile = SD.open("Diagnose.csv", FILE_WRITE);
     if (myFile){ 
       myFile.println(dataString);
     } else {
-      Serial.println("File not open"); 
+      Serial.println("Diagnosis File not open"); 
     }
     myFile.close();
+    */
 }
 
 float SMPS::get_SOC(int cell_num) {
