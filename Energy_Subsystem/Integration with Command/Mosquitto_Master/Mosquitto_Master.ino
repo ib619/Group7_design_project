@@ -54,9 +54,6 @@ INA219_WE ina219; // this is the instantiation of the library for the current se
 
 SMPS mySMPS;
 
-// Which cell are we using?
-int CELL = 1;
-
 #define PIN_OLCL 2
 #define PIN_PWM 6
 #define PIN_REDLED 7
@@ -64,12 +61,12 @@ int CELL = 1;
 #define PIN_V1 A1
 #define PIN_V2 A2
 #define PIN_V3 A3
-#define PIN_DISC1 5
-#define PIN_DISC2 4
-#define PIN_DISC3 9
-#define PIN_RLY1 10
-#define PIN_RLY2 A7
-#define PIN_RLY3 A6
+#define PIN_DISC1 10
+#define PIN_DISC2 A7
+#define PIN_DISC3 A6
+#define PIN_RLY1 5
+#define PIN_RLY2 4
+#define PIN_RLY3 9
 #define PIN_VA A0
 
 //#define PIN_PV A0  V_PD = analogRead(A1)*4.096/1.03 * 2.699;
@@ -92,6 +89,7 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 String dataString;
+String dataString2, dataString3;
 
 unsigned int rly_timer = 0;
 unsigned int rest_timer;
@@ -156,13 +154,13 @@ float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0; // Use SoC for balancing
 float SoH_1 = 100, SoH_2 = 100, SoH_3 = 100; // SoH
 
 // From command reception
-String data;
-int cmd;
-int speed; //PWM
-int pos_x;
-int pos_y;
-int dist_travelled;
-int drive_status;
+String data = "";
+int cmd = 0;
+int speed = 0; //PWM
+int pos_x = 0;
+int pos_y = 0;
+int dist_travelled = 0;
+int drive_status = 2;
 float remainining_range; // to be sent back to python
 
 void setup() {
@@ -178,6 +176,8 @@ void setup() {
   SoH_1 = mySMPS.get_SOH(1);
   SoH_2 = mySMPS.get_SOH(2);
   SoH_3 = mySMPS.get_SOH(3);
+  dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3);
+  Serial.println(dataString);
 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
@@ -216,6 +216,13 @@ void setup() {
   // TimerB0 initialization for PWM output
   TCB0.CTRLA = TCB_CLKSEL_CLKDIV1_gc | TCB_ENABLE_bm; //62.5kHz
 
+  if (SD.exists("BatCycle.csv")) {
+        SD.remove("BatCycle.csv");
+    }
+    if (SD.exists("Diagnose.csv")) {
+        SD.remove("Diagnose.csv");
+    }
+
   interrupts();  //enable interrupts.
   analogWrite(6, 120); //just a default state to start with
 }
@@ -223,6 +230,8 @@ void setup() {
 void loop() {
 
    //TODO: command reception loop
+
+   /*
    if(Serial.available() > 0)  {
 
       cmd = (Serial.readStringUntil(',')).toInt();
@@ -257,6 +266,7 @@ void loop() {
         }
       }
    }
+   */
 
 //In rests state, if command was running (but not calibration), command complete
   if (loop_trigger == 1){ // FAST LOOP (currently 200HZ)
@@ -288,6 +298,7 @@ void loop() {
       pwm_out = saturation(pwm_out, 0.99, 0.01); //duty_cycle saturation. NOT FIXME: PWM Modulate
       analogWrite(PIN_PWM, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
       int_count++; //count how many interrupts since this was last reset to zero
+      // Serial.println("int count is " + String(int_count));
       rly_timer++;
       loop_trigger = 0; //reset the trigger and move on with life
   }
@@ -313,10 +324,21 @@ void loop() {
   } else if (int_count == 126) {
     digitalWrite(PIN_RLY3,false);
     relay_on = 1;
+    /*
+    dataString2 = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," + String(current_measure) + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    Serial.println(dataString2);
+    File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
+    if (dataFile){ 
+      dataFile.println(dataString2);
+    } else {
+      Serial.println("Batcycle File not open"); 
+    }
+    dataFile.close();
+    */
   }
  
   // This still runs every second
-  if (int_count == 200) { // SLOW LOOP (1Hz)
+  if (int_count % 200 == 0) { // SLOW LOOP (1Hz)
     input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
@@ -549,6 +571,12 @@ void loop() {
           noInterrupts();
           mySMPS.create_SoC_table();
           interrupts();
+          
+          SoH_1 = mySMPS.get_SOH(1);
+          SoH_2 = mySMPS.get_SOH(2);
+          SoH_3 = mySMPS.get_SOH(3);
+          dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3);
+          Serial.println(dataString);
           break;
       }
       case DISCHARGE: { // 8 Normal discharge (-500mA)
@@ -715,27 +743,50 @@ void loop() {
       SoC_1 = mySMPS.get_SOC(1);
       SoC_2 = mySMPS.get_SOC(2);
       SoC_3 = mySMPS.get_SOC(3);
+      // Serial.println ("Got SOC");
     }
-  
-    // Diagnostic CSV
-    dataString = "Diagnostic," + String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
-    Serial.println(dataString);
+
+    //dataString2 = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," + String(current_measure) + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    //Serial.println(dataString2);
+
+    //dataString3 = String(state_num) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    //Serial.println(dataString3);
+    ////////////////// START DIAGNOSIS //////////////////
+    /*
     
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
     if (dataFile){ 
       dataFile.println(dataString);
     } else {
-      Serial.println("File not open"); 
+      Serial.println("Batcycle File not open"); 
     }
     dataFile.close();
 
-    remainining_range = mySMPS.estimate_range(pos_x, pos_y, dist_travelled, drive_status);
-    //NOTE: Printing to serial for MQTT
-    dataString = String(state_num) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3) + "," + String(remainining_range);
+    
+    dataFile = SD.open("Diagnose.csv", FILE_WRITE);
+    if (dataFile){ 
+      dataFile.println(dataString);
+    } else {
+      Serial.println("Diagnose File not open"); 
+    }
+    dataFile.close();
+    */
+    ////////////////// END DIAGNOSIS //////////////////
 
+    ////////////////// START PRINTING TO MQTT //////////////////
+    remainining_range = mySMPS.estimate_range(pos_x, pos_y, dist_travelled, drive_status);
+    
+    //NOTE: Printing to serial for MQTT
+    dataString = String(1) + "," + String(state_num) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(remainining_range);
+    Serial.println(dataString);
+    
     dq1 = 0; dq2 = 0; dq3 = 0;
-    int_count = 0; 
+    ////////////////// END PRINTING TO MQTT //////////////////
     sec_count++;
+  }
+
+  if (int_count == 1000) {
+    int_count = 0;
   }
   
   // Only deal with SOC every 2 minutes

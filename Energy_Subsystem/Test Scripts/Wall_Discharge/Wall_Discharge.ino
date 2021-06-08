@@ -62,9 +62,9 @@ INA219_WE ina219; // this is the instantiation of the library for the current se
 #define PIN_V1 A1
 #define PIN_V2 A2
 #define PIN_V3 A3
-#define PIN_DISC1 A7
-#define PIN_DISC2 A6
-#define PIN_DISC3 A0
+#define PIN_DISC1 10
+#define PIN_DISC2 A7
+#define PIN_DISC3 A6
 #define PIN_RLY1 5
 #define PIN_RLY2 4
 #define PIN_RLY3 9
