@@ -3,8 +3,8 @@
 
 #include "Arduino.h"
 
-#define TX_PIN 27   // A0
-#define RX_PIN 26   // A1
+#define TX_PIN 25   // A0
+#define RX_PIN 33   // A1
 
 #define DATA_PACKET_SIZE 16
 

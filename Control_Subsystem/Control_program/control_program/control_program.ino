@@ -28,8 +28,8 @@ const int mqttPort = MQTT_PORT;
 // some objects and data structures
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
-DriveInterface drive(&Serial);
-EnergyInterface energy(&Serial1);
+DriveInterface drive(&Serial1);
+EnergyInterface energy(&Serial2);
 FPGAInterface fpga(&Wire);
 RoverDataStructure rover;
 RoverDataStructure command_holder;
