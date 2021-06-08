@@ -193,14 +193,8 @@ void loop() {
             rover.drive_mode=1;
             rover.direction=90;
             rover.speed=150;
-            rover.distance=250;
+            rover.distance=500;
             updateFlag=1;
-//            drive.writeDriveMode(rover.drive_mode);
-//            drive.writeDirection(rover.direction);
-//            drive.writeSpeed(rover.speed);
-//            drive.writeDistance(rover.distance);
-//            drive.sendUpdates();
-//            fpga.writeLED(4,1);
             collisionFlag=3;
             break;
            case 3:
@@ -213,7 +207,7 @@ void loop() {
               rover.drive_mode=1;
               rover.direction=-90;
               rover.speed=150;
-              rover.distance=400;
+              rover.distance=700;
               updateFlag=1;
               collisionFlag=5;
             }
