@@ -35,6 +35,7 @@ class MqttServer:
 
         # impt variables
         # self.rover_id = 1 # testing values
+        self.counter = 0
         self.rover_id = create_trip_record(create_connection('db/marsrover.db'))
         self.obstacle_record = {
             "red": deque([]), 
@@ -102,12 +103,17 @@ class MqttServer:
     def on_message_position(self, client, userdata, msg):
         db = create_connection('db/marsrover.db')
         if msg.topic == 'position/update':
-            # new position data from esp 
-            data = str(msg.payload.decode("utf-8", "ignore"))
-            data = json.loads(data) # decode string into json format
-            record = (data["x"], data["y"], data["heading"], self.rover_id)
-            create_position_record(db, record)
+            if self.counter == 10:
+                # only add to db if 10th position update
+                data = str(msg.payload.decode("utf-8", "ignore"))
+                data = json.loads(data) # decode string into json format
+                record = (data["x"], data["y"], data["heading"], self.rover_id)
+                create_position_record(db, record)
 
+                self.counter = 0
+            else:
+                self.counter += 1
+            
             # Publish path on every new position update 
             path = select_all_positions(db, self.rover_id)
             json_path = json.dumps(path)

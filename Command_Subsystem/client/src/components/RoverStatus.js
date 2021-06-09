@@ -5,25 +5,45 @@ import styled from "styled-components";
 
 const RoverStatus = () => {
   const { connectionStatus, client } = useMqttState();
-  const { message } = useSubscription("rover/status");
+  const { message } = useSubscription([
+    "rover/status",
+    "rover/status/range",
+    "position/update",
+  ]);
   const [status, setStatus] = useState({
     drive_status: 2,
-    range: 0,
+    distance_travelled: 0,
     obstacle_detected: 0,
   });
+  const [range, setRange] = useState(500); // in cm
+  const [pos, setPos] = useState({ x: 0, y: 0, heading: 0 });
 
   useEffect(() => {
-    if (message && message.topic === "rover/status") {
+    if (message) {
       let data = JSON.parse(message.message);
-      setStatus(data);
+      if (message.topic === "rover/status") {
+        // on rover status update
+        setStatus(data);
+      } else if (message.topic === "rover/status/range") {
+        // on remaning range update
+        setRange(data);
+      } else if (message.topic === "position/update") {
+        // on position update
+        setPos(data);
+      }
     }
-  }, [message]);
+  }, [message, setStatus, setRange]);
 
   useEffect(() => {
-    if (status["drive_status"] === 2) {
-      localStorage.removeItem("obstacles");
+    // calculate distance, compare with range
+    // publish 0,0 t2c
+    let dist = Math.sqrt(Math.pow(pos.x, 2) + Math.pow(pos.y, 2)); // in mm
+    dist /= 10;
+    if (dist >= range - 50) {
+      let target = { x: 0, y: 0, speed: 150 };
+      client.publish("drive/t2c", JSON.stringify(target));
     }
-  });
+  }, [pos]);
 
   const handleClick = (e) => {
     client.publish("reset", e.target.name);
@@ -42,9 +62,8 @@ const RoverStatus = () => {
   return (
     <Container>
       <p>MQTT: {connectionStatus}</p>
-      {/* <img src={driving} alt="loading..." style={{ height: 50, width: 100 }} /> */}
       <p>{mapStatus()}</p>
-      <p>Remaining Range: {status["range"]} cm</p>
+      <p>Remaining Range: {range} cm</p>
       <Button name={1} variant="outline-light" onClick={handleClick}>
         Reset
       </Button>

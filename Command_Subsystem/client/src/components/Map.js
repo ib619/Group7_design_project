@@ -3,6 +3,7 @@ import { useSubscription } from "mqtt-react-hooks";
 import GridLines from "react-gridlines";
 import { MapInteractionCSS } from "react-map-interaction";
 import BootstrapSwitchButton from "bootstrap-switch-button-react";
+import { ToggleButton } from "react-bootstrap";
 import styled from "styled-components";
 import pointerwhite from "../assets/pointer-white.svg";
 import home from "../assets/home.svg";
@@ -23,27 +24,19 @@ const Map = () => {
   // for the map zooming features
   // const [map, setMap] = useState({ scale: 1, translation: { x: 0, y: 0 } });
 
-  // // on refresh
-  // useEffect(() => {
-  //   const obstacle = JSON.parse(localStorage.getItem("obstacles"));
-  //   if (obstacle !== null) {
-  //     setObstacles(obstacle);
-  //   }
-  // }, [setObstacles]);
-
   // on message update
   useEffect(() => {
     if (message) {
+      let data = JSON.parse(message.message);
       if (message.topic === "obstacle/result") {
         // on obstacle update
-        setObstacles(JSON.parse(message.message));
-        // localStorage.setItem("obstacles", message.message);
+        setObstacles(data);
       } else if (message.topic === "position/update") {
         // on position update
-        setPos(JSON.parse(message.message));
+        setPos(data);
       } else if (message.topic === "path") {
         // on path update
-        setPath(JSON.parse(message.message));
+        setPath(data);
       }
     }
   }, [message, setObstacles, setPos, setPath]);
@@ -51,18 +44,18 @@ const Map = () => {
   return (
     <React.Fragment>
       <Border>
-        <BootstrapSwitchButton
-          checked={false}
-          width={120}
-          onstyle="light"
-          offstyle="dark"
-          onlabel="hide path"
-          offlabel="show path"
+        <ToggleButton
+          checked={show}
+          type="checkbox"
+          variant="secondary"
           className="switch"
-          onChange={(checked) => {
-            setShow(checked);
+          value={1}
+          onChange={(e) => {
+            setShow(e.currentTarget.checked);
           }}
-        />
+        >
+          Show Path
+        </ToggleButton>
         <MapInteractionCSS
           showControls={true}
           minScale={0.5}
@@ -152,8 +145,8 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] * 0.2 + 370,
-    bottom: props.coords[1] * 0.2 - 155,
+    left: props.coords[0] * 0.2 + 2810,
+    bottom: props.coords[1] * 0.2 - 2745,
   },
 }))`
   background: white;
