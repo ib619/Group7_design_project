@@ -29,8 +29,9 @@ const int mqttPort = MQTT_PORT;
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
 HardwareSerial driveSerial(1);
+HardwareSerial energySerial(2);
 DriveInterface drive(&driveSerial);
-EnergyInterface energy(&Serial2);
+EnergyInterface energy(&energySerial);
 FPGAInterface fpga(&Wire);
 RoverDataStructure rover;
 RoverDataStructure command_holder;
@@ -193,7 +194,7 @@ void loop() {
            case 2:              //turn right 90 degrees then move 250mm
             rover.drive_mode=1;
             rover.direction=90;
-            rover.speed=150;
+            rover.speed=250;
             rover.distance=500;
             updateFlag=1;
             collisionFlag=3;
@@ -207,7 +208,7 @@ void loop() {
             if(busyFlag==0) { //turn left 90 degrees then move 400mm
               rover.drive_mode=1;
               rover.direction=-90;
-              rover.speed=150;
+              rover.speed=250;
               rover.distance=700;
               updateFlag=1;
               collisionFlag=5;
