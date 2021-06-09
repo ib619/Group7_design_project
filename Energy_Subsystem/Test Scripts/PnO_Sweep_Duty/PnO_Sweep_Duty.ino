@@ -13,6 +13,8 @@
   // 120R + 75R resistor connected to A
   // Synchronous
 
+// Final test: asynchronous: J1 left, J2 right
+
 // VB halved with a potential divider, so multiply by 2
 // VA is passed through a potential divider, multiply by 5
   
@@ -134,9 +136,9 @@ void loop() {
   // FAST LOOP (1kHZ)
   if (loop_trigger == 1){
       state_num = next_state; //state transition
-      V_B = analogRead(A0)*4.096/1.03*3.648; //manual correction for potential divider
+      V_B = analogRead(A0)*4.096/1.03* 4.1626; //manual correction for potential divider
       V_A = analogRead(A1)*4.096/1.03* 4.1626; //mannual correction for potential divider
-      if (V_B > 10000) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
+      if (V_B > 21000) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
           digitalWrite(7,true); //turn on the red LED

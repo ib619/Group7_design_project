@@ -241,6 +241,7 @@ void loop() {
       speed = (Serial.readStringUntil('\n')).toInt();
 
       mySMPS.decode_command(cmd, speed, pos_x, pos_y, drive_status, V_1, V_2, V_3);
+      Serial.println("Command received");
 
       //TODO: RESET is cmd 2
       //TODO: Can override command at anytime
