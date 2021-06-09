@@ -1,6 +1,6 @@
 clear; close all;
 
-import = readmatrix('BATCYCLE2.CSV');
+import = readmatrix('BATCYCLE1.CSV');
 
 % Arbitrary decisions
     % Charge: Calibrate SoC with voltage lookup at above 3400V;
@@ -106,14 +106,19 @@ end
 %% Plot V vs SoC curves
 
 figure(1);
-plot (charge_SOC*100, charge_table, 'r.'); hold on;
-plot (charge_SOC*100, charge_MA, 'r-'); hold on;
-plot (discharge_SOC*100, discharge_table, 'b.'); hold on;
-plot (discharge_SOC*100, discharge_MA, 'b-'); hold on;
+plot (charge_SOC*100, charge_table, 'r.','Linewidth', 2, 'MarkerSize', 8); hold on;
+plot (charge_SOC*100, charge_MA, 'r-','Linewidth', 2, 'MarkerSize', 8); hold on;
+plot (discharge_SOC*100, discharge_table, 'b.','Linewidth', 2, 'MarkerSize', 8); hold on;
+plot (discharge_SOC*100, discharge_MA, 'b-','Linewidth', 2, 'MarkerSize', 8); hold on;
 xlabel('SOC (%)');
 ylabel('Terminal Voltage (mV)');
 legend('Charge','Discharge');
-title('Charging and Discharging Curves');
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+% title('Charging and Discharging Curves');
+
+set(gca, 'FontName', 'Arial')
+sgtitle('Charging and Discharging Curve','FontName', 'Arial');
 
 %% Iterate through and determine total charge. Apply this to the first iteration as well.
 
@@ -169,28 +174,43 @@ end
 % each time interval is 1s. convenient!
 
 figure(2);
-subplot(4,1,1);
-plot(state);
-xlabel('Time(s)');
-ylabel('State');
-title('Battery Characteristic');
+% subplot(4,1,1);
+% plot(state,'Linewidth', 2, 'MarkerSize', 8);
+% xlabel('Time(s)');
+% ylabel('State');
+% title('Battery Characteristic');
+% set(gca,'LineWidth',2)
+% set(gca,'FontSize',12)
+% set(gca, 'FontName', 'Arial')
 
-subplot(4,1,2);
-plot(voltage);
+subplot(3,1,1);
+plot(voltage,'Linewidth', 2, 'MarkerSize', 8);
 xlabel('Time(s)');
 ylabel('Voltage (mV)');
+set(gca,'LineWidth',2)
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
 
-subplot(4,1,3);
-plot(current_ref, 'r'); hold on;
-plot(current,'b');
+subplot(3,1,2);
+plot(current_ref, 'r','Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(current,'b','Linewidth', 2, 'MarkerSize', 8);
 xlabel('Time(s)');
 ylabel('Current (mA)');
-legend('Reference', 'Actual');
+legend('Reference', 'Actual','Location','best');
+set(gca,'LineWidth',2)
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
 
-subplot(4,1,4);
-plot(SOC*100); hold on;
-plot(SOC_cc*100);
-legend('SOC', 'SOC Coulomb Count');
+subplot(3,1,3);
+plot(SOC*100,'Linewidth', 3, 'MarkerSize', 8); hold on;
+plot(SOC_cc*100,'Linewidth', 2, 'MarkerSize', 8);
+legend('SOC', 'SOC Coulomb Count','Location','best');
 xlabel('Time(s)');
 ylabel('SOC (%)');
 ylim([-20 120]);
+set(gca,'LineWidth',2)
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+
+set(gca, 'FontName', 'Arial')
+sgtitle('Battery Characteristic','FontName', 'Arial');
