@@ -63,7 +63,7 @@ const RoverStatus = () => {
     <Container>
       <p>MQTT: {connectionStatus}</p>
       <p>{mapStatus()}</p>
-      <p>Remaining Range: {range} cm</p>
+      <p>Total distance travelled: {status["distance_travelled"]} mm</p>
       <Button name={1} variant="outline-light" onClick={handleClick}>
         Reset
       </Button>
