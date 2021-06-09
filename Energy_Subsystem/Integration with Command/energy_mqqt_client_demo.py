@@ -25,7 +25,7 @@ class MqttServer:
         self.username = name
         self.password = pw
 
-        self.col_names = ["SOC1","SOC2","SOC3"]
+        self.col_names = ["SOC1","SOC2","SOC3","range"]
 
         self.discharge_df = pd.read_csv("discharge_demo.csv", names=self.col_names)
 
@@ -49,9 +49,10 @@ class MqttServer:
         self.SoC_1 = 0
         self.SoC_2 = 0
         self.SoC_3 = 0
-        self.range = 1000
+        self.range = 200
 
         # Things to send
+        self.prev_cmd = 0
         self.cmd = 0
         self.x,self.y = 0,0
         self.dist_travelled = 0
@@ -125,13 +126,28 @@ class MqttServer:
             # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
             time.sleep(1)
 
+            if self.prev_cmd == 2 or self.prev_cmd == 1:
+                self.cmd = 0
+
             if self.i == 0:
                 #initial value
                 self.SoC_1 = self.discharge_df.at[0,"SOC1"]
                 self.SoC_2 = self.discharge_df.at[0,"SOC2"]
                 self.SoC_3 = self.discharge_df.at[0,"SOC3"]
+                self.range = self.discharge_df.at[self.i,"range"]
                 self.state_num = 0
                 self.i += 1
+            elif self.cmd == 2:
+                # RESET
+                self.state_num = 0
+                self.SoC_1 = self.discharge_df.at[self.i,"SOC1"]
+                self.SoC_2 = self.discharge_df.at[self.i,"SOC2"]
+                self.SoC_3 = self.discharge_df.at[self.i,"SOC3"]
+                self.range = self.discharge_df.at[self.i,"range"]
+                self.i += 1
+                print("Reset only temporarily sets the machine back into idle")
+            elif self.cmd == 1:
+                print("Recalibration not implemented")
             elif self.drive_status == 2:
                 self.state_num = 1
 
@@ -149,6 +165,7 @@ class MqttServer:
                 if self.j3 == 0:
                     self.j3 = abs(self.charge_df['SOC3']-self.SoC_3).idxmin()
                 self.SoC_3 = self.charge_df.at[self.j3,"SOC3"]
+                self.range = self.charge_df.at[self.i,"range"]
                 self.j3 += 1
 
             elif self.drive_status == 1:
@@ -158,6 +175,7 @@ class MqttServer:
                 self.SoC_1 = self.discharge_df.at[self.i,"SOC1"]
                 self.SoC_2 = self.discharge_df.at[self.i,"SOC2"]
                 self.SoC_3 = self.discharge_df.at[self.i,"SOC3"]
+                self.range = self.discharge_df.at[self.i,"range"]
                 self.i += 1
             elif self.drive_status == 0:
                 #IDLE (freeze values)
@@ -195,6 +213,8 @@ class MqttServer:
             }
             json_data = json.dumps(range_res)
             self.energy_client.publish("rover/status/range", json_data, qos=1)
+
+            self.prev_cmd = self.cmd
 
 
             """
