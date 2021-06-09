@@ -28,8 +28,9 @@ const int mqttPort = MQTT_PORT;
 // some objects and data structures
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
-DriveInterface drive(&Serial);
-EnergyInterface energy(&Serial1);
+HardwareSerial driveSerial(1);
+DriveInterface drive(&driveSerial);
+EnergyInterface energy(&Serial2);
 FPGAInterface fpga(&Wire);
 RoverDataStructure rover;
 RoverDataStructure command_holder;
@@ -193,7 +194,7 @@ void loop() {
             rover.drive_mode=1;
             rover.direction=90;
             rover.speed=150;
-            rover.distance=250;
+            rover.distance=500;
             updateFlag=1;
             collisionFlag=3;
             break;
@@ -207,7 +208,7 @@ void loop() {
               rover.drive_mode=1;
               rover.direction=-90;
               rover.speed=150;
-              rover.distance=400;
+              rover.distance=700;
               updateFlag=1;
               collisionFlag=5;
             }

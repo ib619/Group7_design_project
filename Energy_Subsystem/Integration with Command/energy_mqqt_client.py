@@ -22,6 +22,15 @@ class MqttServer:
         self.username = name
         self.password = pw
 
+        # Global variables
+        self.SoH_1 = 100
+        self.SoH_2 = 100
+        self.SoH_3 = 100
+        self.SoC_1 = 0
+        self.SoC_2 = 0
+        self.SoC_3 = 0
+        self.range = 0
+
         # Things to send
         self.cmd = 0
         self.x,self.y = 0,0
@@ -59,7 +68,7 @@ class MqttServer:
             logging.debug("Energy failed to connect")
 
     def on_publish_energy(self, client, userdata, mid):
-        logging.debug("energy data published")
+        pass #logging.debug("energy data published")
 
     # callback for getting a messsage on opstacle topics
     def on_message_energy(self, client, userdata, msg):
@@ -78,7 +87,7 @@ class MqttServer:
             self.speed = data["speed"]
             
         # TODO: write to arduino
-        arduino.write((",".join(self.cmd, self.x, self.y, self.dist_travelled, self.drive_status, self.speed)).encode('utf-8'))
+        arduino.write((",".join([str(self.cmd), str(self.x), str(self.y), str(self.dist_travelled), str(self.drive_status), str(self.speed)]) + "\n").encode('utf-8'))
         
     ### Event Handlers
     def start_server_handler(self):
@@ -88,7 +97,7 @@ class MqttServer:
     def handle_energy(self):
         while True:
             # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
-            time.sleep(1)
+            time.sleep(0.5)
 
             # TODO: write from arduino
             data = arduino.readline()[:-2] #the last bit gets rid of the new-line chars
@@ -96,53 +105,69 @@ class MqttServer:
             if data:
                 data = data.decode('utf-8')
                 print(data) #strip out the new lines for now
-
-                # status, SoC1,2,3, SOH1,2,3, range (cm)
+                
+                # Either
+                    # 1, status, SoC1,2,3, range (cm)
+                # OR
+                    # 2, SOH1,2,3, 
+                # Ignore
+                    # 3,....... (diagnosis)
                 if data[0].isdigit():
-                    current_line = data.split(",")
-                    state_num = int(current_line[0])
-                    SoC_1 = int(current_line[1])
-                    SoC_2 = int(current_line[2])
-                    SoC_3 = int(current_line[3])
-                    SoH_1 = int(current_line[4])
-                    SoH_2 = int(current_line[5])
-                    SoH_3 = int(current_line[6])
-                    range = int(current_line[7])
 
-                    
-                    cell1_res = {
-                        "cell":0, 
-                        "battery_level":SoC_1, 
-                        "battery_soh":SoH_1, 
-                        "battery_state":state_num
-                    }
-                    json_data = json.dumps(cell1_res)
-                    self.energy_client.publish("battery/status", json_data, qos=1)
+                    header = int(data[0])
+                    # print(header)
 
-                    cell2_res = {
-                        "cell":1, 
-                        "battery_level":SoC_2, 
-                        "battery_soh":SoH_2, 
-                        "battery_state":state_num
-                    }
-                    json_data = json.dumps(cell2_res)
-                    self.energy_client.publish("battery/status", json_data, qos=1)
+                    if header == 1 and (self.SoH_1 != 0 and self.SoH_2 != 0 and self.SoH_3 != 0):
+                        current_line = data.split(",")
+                        state_num = int(current_line[1])
+                        self.SoC_1 = int(float(current_line[2]))
+                        self.SoC_2 = int(float(current_line[3]))
+                        self.SoC_3 = int(float(current_line[4]))
+                        self.range = int(float(current_line[5]))
+          
+                        cell1_res = {
+                            "cell":0, 
+                            "battery_level":self.SoC_1, 
+                            "battery_soh":self.SoH_1, 
+                            "battery_state":state_num
+                        }
+                        json_data = json.dumps(cell1_res)
+                        self.energy_client.publish("battery/status", json_data, qos=1)
 
-                    cell3_res = {
-                        "cell":2, 
-                        "battery_level":SoC_3, 
-                        "battery_soh":SoH_3, 
-                        "battery_state":state_num
-                    }
-                    json_data = json.dumps(cell3_res)
-                    self.energy_client.publish("battery/status", json_data, qos=1)
+                        cell2_res = {
+                            "cell":1, 
+                            "battery_level":self.SoC_2, 
+                            "battery_soh":self.SoH_2, 
+                            "battery_state":state_num
+                        }
+                        json_data = json.dumps(cell2_res)
+                        self.energy_client.publish("battery/status", json_data, qos=1)
 
-                    # range can just be a number, not a json
-                    self.energy_client.publish("rover/status/range", range, qos=1)
+                        cell3_res = {
+                            "cell":2, 
+                            "battery_level":self.SoC_3, 
+                            "battery_soh":self.SoH_3, 
+                            "battery_state":state_num
+                        }
+                        json_data = json.dumps(cell3_res)
+                        self.energy_client.publish("battery/status", json_data, qos=1)
+
+                        range_res = {
+                            "range":self.range
+                        }
+                        json_data = json.dumps(range_res)
+                        self.energy_client.publish("rover/status/range", json_data, qos=1)
+
+                    if header == 2:
+                        current_line = data.split(",")
+                        self.SoH_1 = int(float(current_line[1]))
+                        self.SoH_2 = int(float(current_line[2]))
+                        self.SoH_3 = int(float(current_line[3]))
                     
 
 def main():
-    ip  = "localhost"
+    ip  = "35.177.181.61"
+    # ip = "localhost"
     port = 1883
     name = "admin"
     password = "marsrover"

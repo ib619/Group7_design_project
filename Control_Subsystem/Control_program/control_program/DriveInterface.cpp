@@ -4,11 +4,17 @@ DriveInterface::DriveInterface(HardwareSerial *ser)  {
     serial=ser;
 }
 
-int DriveInterface::begin() {
-    serial->begin(baudrate);
+int DriveInterface::begin()    {
+    serial->begin(baudrate, SERIAL_8N1, RX_PIN, TX_PIN);
     serial->setTimeout(timeout);
     return 1;
 }
+
+// int DriveInterface::begin() {
+//     serial->begin(baudrate);
+//     serial->setTimeout(timeout);
+//     return 1;
+// }
 
 void DriveInterface::setBaudrate(long brate)    {
     baudrate=brate;
