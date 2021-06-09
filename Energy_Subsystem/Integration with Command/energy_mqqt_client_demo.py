@@ -27,11 +27,11 @@ class MqttServer:
 
         self.col_names = ["SOC1","SOC2","SOC3","range"]
 
-        self.discharge_df = pd.read_csv("discharge_demo.csv", names=self.col_names)
+        self.discharge_df = pd.read_csv("discharge_demo2.csv", names=self.col_names)
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.discharge_df)
-        self.charge_df = pd.read_csv("charge_demo.csv", names=self.col_names)
+        self.charge_df = pd.read_csv("charge_demo2.csv", names=self.col_names)
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.charge_df)
@@ -252,8 +252,8 @@ class MqttServer:
         """            
 
 def main():
-    # ip  = "35.177.181.61"
-    ip = "localhost"
+    ip  = "35.177.181.61"
+    # ip = "localhost"
     port = 1883
     name = "admin"
     password = "marsrover"
