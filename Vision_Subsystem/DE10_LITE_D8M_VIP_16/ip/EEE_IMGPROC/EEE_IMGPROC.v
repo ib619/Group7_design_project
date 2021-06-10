@@ -27,11 +27,11 @@ module EEE_IMGPROC(
 
     // conduit
     mode,
-	 erosion_mode,
-	 dilation_mode,
-	 gaussian_mode,
-	 edge_detection_mode,
-	 median_mode
+    erosion_mode,
+    dilation_mode,
+    gaussian_mode,
+    edge_detection_mode,
+    median_mode
 );
 
 // global clock & reset
@@ -92,8 +92,6 @@ wire         red_edge_detect, blue_edge_detect, green_edge_detect, grey_edge_det
 wire         in_valid, out_ready, sop_in, eop_in, valid_rgbhsv;
 wire [8:0]   hue;
 wire [7:0]   saturation, value_b;
-wire [21:0]  pixel_addr, pixel_addr_interm, pixel_addr_obstacle;
-wire [10:0]  prev_x, prev_y;
 reg  [19:0]  bright_pix_count;
 
 ////////////////////////////////////////////////////////////////////////
@@ -127,15 +125,15 @@ STREAM_REG #(.DATA_WIDTH(26)) in_reg1 (
 //);
 
 gaussian_filter5x5 gaussianfilter(
-	.clk(clk),
-	.rst_n(reset_n),
-	.i_pixel_red(red_out1),
-   .i_pixel_blue(blue_out1),
-   .i_pixel_green(green_out1),
-	.i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
-	.o_convolved_data_red(red_gaussian),
-	.o_convolved_data_blue(blue_gaussian),
-	.o_convolved_data_green(green_gaussian)
+    .clk(clk),
+    .rst_n(reset_n),
+    .i_pixel_red(red_out1),
+    .i_pixel_blue(blue_out1),
+    .i_pixel_green(green_out1),
+    .i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
+    .o_convolved_data_red(red_gaussian),
+    .o_convolved_data_blue(blue_gaussian),
+    .o_convolved_data_green(green_gaussian)
 );
 
 always@(posedge clk) begin
@@ -186,7 +184,6 @@ end
 rgb_to_hsv rgb_hsv(
     .clk(clk),
     .rst_n(reset_n),
-    .pixel_addr(pixel_addr),
     .rgb_r(red_out),
     .rgb_g(green_out),
     .rgb_b(blue_out),	
@@ -194,14 +191,8 @@ rgb_to_hsv rgb_hsv(
     .hsv_s(saturation),
     .hsv_v(value_b),
     .valid_in(in_valid & ~sop_in & packet_video),
-    .valid_out(valid_rgbhsv),
-    .pixel_addr_out(pixel_addr_interm)
+    .valid_out(valid_rgbhsv)
 );
-
-assign pixel_addr = {x ,y};
-assign prev_x = pixel_addr_interm[21:11];
-assign prev_y = pixel_addr_interm[10:0];
-
 ///////////////////////////////////////////////////////////////////////
 // Color Threshold
 
@@ -359,7 +350,7 @@ always @(posedge clk) begin
 				if (y < gr_y_min) gr_y_min <= y;
 				gr_y_max <= y;
 			end
-			if ((y > 11'd100) & (gr_y_min != IMAGE_H-11'h1) & (gr_y_diff > 11'd60) & (gr_y_diff2 > 11'd60)) begin
+			if ((y > 11'd60) & (gr_y_min != IMAGE_H-11'h1) & (gr_y_diff > 11'd60) & (gr_y_diff2 > 11'd60)) begin
 				gr_bb_state <= 3'd1;
 			end
 		end
@@ -393,7 +384,7 @@ always @(posedge clk) begin
 				if (y < r_y_min) r_y_min <= y;
 				r_y_max <= y;
 			end
-			if ((y > 11'd100) & (r_y_min != IMAGE_H-11'h1) & (r_y_diff > 11'd60)) begin
+			if ((y > 11'd60) & (r_y_min != IMAGE_H-11'h1) & (r_y_diff > 11'd60)) begin
 				r_bb_state <= 3'd1;
 			end
 		end
@@ -427,7 +418,7 @@ always @(posedge clk) begin
 				if (y < g_y_min) g_y_min <= y;
 				g_y_max <= y;
 			end
-			if ((y > 11'd100) & (g_y_min != IMAGE_H-11'h1) & (g_y_diff > 11'd60)) begin
+			if ((y > 11'd60) & (g_y_min != IMAGE_H-11'h1) & (g_y_diff > 11'd60)) begin
 				g_bb_state <= 3'd1;
 			end
 		end
@@ -461,7 +452,7 @@ always @(posedge clk) begin
 				if (y < b_y_min) b_y_min <= y;
 				b_y_max <= y;
 			end
-			if ((y > 11'd100) & (b_y_min != IMAGE_H-11'h1) & (b_y_diff > 11'd60)) begin
+			if ((y > 11'd60) & (b_y_min != IMAGE_H-11'h1) & (b_y_diff > 11'd60)) begin
 				b_bb_state <= 3'd1;
 			end
 		end
@@ -495,7 +486,7 @@ always @(posedge clk) begin
 				if (y < y_y_min) y_y_min <= y;
 				y_y_max <= y;
 			end
-			if ((y > 11'd100) & (y_y_min != IMAGE_H-11'h1) & (y_y_diff > 11'd60)) begin
+			if ((y > 11'd60) & (y_y_min != IMAGE_H-11'h1) & (y_y_diff > 11'd60)) begin
 				y_bb_state <= 3'd1;
 			end
 		end

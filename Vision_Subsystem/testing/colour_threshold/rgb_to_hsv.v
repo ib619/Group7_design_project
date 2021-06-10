@@ -1,3 +1,5 @@
+`timescale 1 ns/10 ps  // time-unit = 1 ns, precision = 10 ps
+
 module  rgb_to_hsv(
     input                       clk,
     input                       rst_n,
@@ -9,10 +11,11 @@ module  rgb_to_hsv(
     output reg   [7:0]            hsv_v, // 0- 255
     output reg                    valid_out,
     input                         valid_in,
-    //Testing
+
     output [13:0]  top60_check,
     output [13:0]  quotient_check,
-    output [7:0]   cdiff_reg_check
+    output [7:0]   cdiff_reg_check,
+    output [13:0]  quotient_before
 );
 
 
@@ -30,8 +33,8 @@ wire b_more_g;
 reg [7:0] division;//division
 reg [8:0] hsv_h_interm;
 wire [7:0] hsv_s_interm;
-wire [15:0] quotient_s;
-wire [13:0] quotient_h;
+reg [15:0] quotient_s;
+reg [13:0] quotient_h;
 
 // Pipeline Registers
 reg [7:0] cmax_reg; 
@@ -58,11 +61,6 @@ reg [8:0] hsv_v_interm;
 reg valid1;
 reg valid2;
 
-//Testing
-assign top60_check = top_60;
-assign cdiff_reg_check = cdiff_reg;
-assign quotient_check = quotient_s;
-
 
 assign r_more_g = (rgb_r > rgb_g)? 1'b1:1'b0; 
 assign r_more_b = (rgb_r > rgb_b)? 1'b1:1'b0; 
@@ -72,6 +70,10 @@ assign b_more_g = (rgb_b > rgb_g)? 1'b1:1'b0;
 assign cmax = (r_more_g & r_more_b) ? rgb_r : (g_more_b & ~r_more_g) ? rgb_g : rgb_b; 
 assign cmin = (~r_more_g & ~r_more_b) ? rgb_r : (g_more_b & r_more_b) ? rgb_b : rgb_g;
 assign cdiff = cmax - cmin;
+
+assign top60_check = top_60;
+assign cdiff_reg_check = cdiff_reg;
+assign quotient_check = quotient_s;
 
 always @(*)
     begin
@@ -97,9 +99,9 @@ always@(posedge clk)
     begin
         if (~rst_n) begin
             cmax_reg <= 8'd0;
-            cmax_reg1 <= 8'd0;
+				cmax_reg1 <= 8'd0;
             cdiff_reg <= 8'd0;
-            cdiff_reg1 <= 8'd0;
+				cdiff_reg1 <= 8'd0;
             r_more_g_reg1 <= 1'b0;
             r_more_b_reg1 <= 1'b0;
             g_more_b_reg1 <= 1'b0;
@@ -115,9 +117,9 @@ always@(posedge clk)
             end
         else begin
             cmax_reg <= cmax;
-            cmax_reg1 <= cmax_reg;
+				cmax_reg1 <= cmax_reg;
             cdiff_reg <= cdiff;
-            cdiff_reg1 <= cdiff_reg;
+				cdiff_reg1 <= cdiff_reg;
             r_more_g_reg1 <= r_more_g;
             r_more_b_reg1 <= r_more_b;
             g_more_b_reg1 <= g_more_b;
@@ -131,20 +133,20 @@ always@(posedge clk)
             top_60 <= {top,6'b000000} - {top,2'b00};
                 
             valid1 <= valid_in;
-                
-        end
+            end
     end
 
 
-divider1	divide_h (
-	.aclr ( ~rst_n ),
-	.clken ( valid1 ),
-	.clock ( clk ),
-	.denom ( cdiff_reg ),
-	.numer ( top_60 ),
-	.quotient ( quotient_h )
-	);
-
+assign quotient_before = $signed(top_60)/cdiff_reg;
+always @(posedge clk)
+    begin
+        if (~rst_n) begin
+            quotient_h <= 16'd0;
+        end
+        else begin
+            quotient_h <= $signed(top_60)/ cdiff_reg;
+        end
+    end 
 	
 always @(*)
     begin
@@ -166,24 +168,29 @@ always @(*)
         else division = 8'b0;
     end
 
-divider2	divide_s (
-	.aclr ( ~rst_n ),
-	.clken ( valid1 ),
-	.clock ( clk ),
-	.denom ( cmax_reg ),
-	.numer ( {cdiff_reg[7:0],8'b00000000} ),
-	.quotient ( quotient_s )
-);
+always @(posedge clk)
+    begin
+        if (~rst_n) begin
+            quotient_s <= 16'd0;
+        end
+        else begin
+            quotient_s <= {cdiff_reg[7:0],8'b00000000} / cmax_reg;
+        end
+    end 
 
 assign hsv_s_interm =  (cmax_reg1 == 8'd0)? 8'd0: quotient_s ;
 
 always@(posedge clk) 
     begin
         if (~rst_n) begin
+//            division_reg <= 8'd0;
+//            hsv_s_interm2 <= 8'd0;
             hsv_v_interm <= 8'd0;
             valid2 <= 1'b0;
             end
         else begin
+//            division_reg <= division;	
+//            hsv_s_interm2 <= hsv_s_interm;
             hsv_v_interm <= cmax_reg;	
             valid2 <= valid1;
         end
