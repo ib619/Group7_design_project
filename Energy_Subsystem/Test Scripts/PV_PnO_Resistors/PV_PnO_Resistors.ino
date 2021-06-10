@@ -51,13 +51,6 @@ float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
 
-// PnO Algorithm (only updates in slow loop)
-float vref = 2500;
-float v0, v1; // current and previous voltage values
-float p0, p1; // current and previous power values
-float i0, i1; // current and previous current values
-float p_diff, v_diff;
-
 // Current PID Controller Stuff
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
 float ui_max = 1, ui_min = 0; //anti-windup limitation
@@ -75,8 +68,14 @@ boolean input_switch; // OLCL switch. 0 means back to IDLE
 bool move_on = 0;
 
 // Panel Limits
-float current_limit = +230;
-float V_limit = 4700;
+float vref = 2500;
+float I_in;
+float current_limit = 230;
+float V_limit = 5000;
+float v0, v1; // current and previous voltage values
+float p0, p1; // current and previous power values
+float i0, i1; // current and previous current values
+float p_diff, v_diff, i_diff;
 
 // State Machine
 int state_num=0,next_state;
@@ -90,7 +89,7 @@ void setup() {
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
 
-  //Check for the SD Card - Initiate a "PVPWMSwe.csv" upon reset
+  //Check for the SD Card - Initiate a "MPPTPVC2.csv" upon reset
   Serial.println("\nInitializing SD card...");
   if (!SD.begin(chipSelect)) {
     Serial.println("* is a card inserted?");
@@ -98,8 +97,8 @@ void setup() {
   } else {
     Serial.println("Wiring is correct and a card is present.");
   }
-  if (SD.exists("PVPWMSwe.csv")) { // Wipe the datalog when starting
-    SD.remove("PVPWMSwe.csv");
+  if (SD.exists("MPPTPVC2.csv")) { // Wipe the datalog when starting
+    SD.remove("MPPTPVC2.csv");
   }
   
   noInterrupts(); //disable all interrupts
@@ -169,6 +168,11 @@ void loop() {
         vref = 2500;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
+          closed_pwm = 0.5;
+          v1 = V_B;
+          i1 = current_measure;
+          p1 = v1*i1;
+          pwm_out = pwm_out + 0.03;
           next_state = 1;
           digitalWrite(8,true);
         } else { // otherwise stay put
@@ -179,14 +183,30 @@ void loop() {
         break;
       }
       case 1:{ // Running state (a green LED)
-        if (move_on == 0) {
-          move_on = 1;
-        } else {
-          move_on = 0;
-        }
+        // Assign values
+        v0 = V_B;
+        i0 = current_measure;
+        
+        p0 = v0 * i0; // directly use I_out as a proxy indicator for I_in
+        p_diff = p0-p1;
+        
+        v_diff = v0-v1;
+        i_diff = i0-i1;
 
-        if(move_on == 1) {
-          closed_pwm = closed_pwm + 0.01;
+        p1 = p0;
+        v1 = v0;
+
+        // in general increasing PWM means decreasing PV voltage
+
+        // PnO algorithm
+        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1))) {
+          // vref = vref + 100;
+          pwm_out = pwm_out - 0.03;
+        } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
+          // vref = vref - 100;
+          pwm_out = pwm_out + 0.03;
+        } else {
+          Serial.println("No increment");
         }
         
         // Reset Flags for next iteration
@@ -196,12 +216,6 @@ void loop() {
         if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
           next_state = 0;
           digitalWrite(8,false);
-        }
-
-        if(closed_pwm >= 0.99){ // Sweeping complete
-          next_state = 2;
-          digitalWrite(8,true);
-          digitalWrite(7,true);
         }
 
         break;
@@ -240,7 +254,7 @@ void loop() {
     dataString = String(state_num) + "," + String(closed_pwm) + "," + String(V_B) + ","+ String(current_measure) + "," + String(V_A) + "," + String(V_B*current_measure/1000000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
-    File dataFile = SD.open("PVPWMSwe.csv", FILE_WRITE); // open our CSV file
+    File dataFile = SD.open("MPPTPVC2.csv", FILE_WRITE); // open our CSV file
     if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
       dataFile.println(dataString); // print the data
     } else {

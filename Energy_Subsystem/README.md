@@ -110,13 +110,18 @@ At this point, the SoC estimation is on the Arduino.
 
 The main aim of this test is to test cel balancing during discharging. This test involves discharging the cells at a constant 250mA current. An ideal SoC curve should appear something like this:
 
-![Multicell Wall Discharging Ideal](Images/wall_discharge_SoC_ideal.jpg)
+<p>
+  <center>
+    <img src="Images/wall_discharge_SoC_ideal.jpg" width="50%" />
+  </center>
+</p>
+
 
 In practice however, the curve looks like this:
 
 This means that the SoC estimation is not very accurate, which spoils the cell balancing algorithm. Regardless of the relatively inaccurate SoC estimation, the cell balancing was rarely adopted during discharging. This suggests that a more aggressive cell balancing algorithm (say balancing when the SoC difference is merely 1%) would do little benefit to the state of health of the battery pack.
 
-<p float="left">
+<p float="aligncenter">
   <img src="Images/wall_discharge_SoC_actual.jpg" width="50%" /><img src="Images/wall_discharge_characteristic.jpg" width="50%" /> 
 </p>
 

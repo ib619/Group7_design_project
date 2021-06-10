@@ -14,7 +14,6 @@ Evaluates the SoC using the SoC voltage lookup table
 3 CELLS IN SERIES!!!!
 
 Flow chart
-typical: 0 > 1 > 2 > 3 > 4 > 1 > 2 > 3 > 4 > ......
 recalibrate: 0 > 1 > 6 > 2 > 3 > 4 > 1 > 6 > 2 > 7 > 0
 discharge: 0 > 8 > 4 > 0
 rapid_discharge: 0 > 9 > 8 > 4 > 0
@@ -61,9 +60,6 @@ SMPS mySMPS;
 #define PIN_V1 A1
 #define PIN_V2 A2
 #define PIN_V3 A3
-#define PIN_DISC1 10
-#define PIN_DISC2 A7
-#define PIN_DISC3 A6
 #define PIN_RLY1 5
 #define PIN_RLY2 4
 #define PIN_RLY3 9
@@ -129,13 +125,14 @@ float V_PD = 0;
 // Series Batteries Variables
 float V_1 = 0, V_2 = 0, V_3 =0;
 float V_UPLIM = 3590;
-float V_LOWLIM = 2500;
+float V_LOWLIM = 2510;
 
 // State Machine Stuff
 boolean input_switch;
 int state_num = 0,next_state;
 bool recalibrating = 0; bool started_discharge = 0;
 bool stop = 0;
+int error1 = 0, error2 = 0, error3 = 0; // 0 for no error, 1 for overcharge, 2 for undercharge, 3 for overheating
 
 // Blinking LED for state 6
 boolean blink = 0;
@@ -143,11 +140,6 @@ boolean blink = 0;
 // Current Capacity: Only calculated during discharge process
 float q1 = 0, q2 = 0, q3 = 0;
 
-// Stores the amount of charge added/removed within the past 2 minutes. Reset after.
-float dq1 = 0, dq2 = 0, dq3 = 0; 
-
-// Account for difference in current when relay is on;
-bool disc1 = 0, disc2 = 0, disc3 = 0;
 bool relay_on = 0;
 
 float SoC_1 = 0, SoC_2 = 0, SoC_3 = 0; // Use SoC for balancing
@@ -161,7 +153,9 @@ int pos_x = 0;
 int pos_y = 0;
 int dist_travelled = 0;
 int drive_status = 2;
-float remainining_range; // to be sent back to python
+float range; // to be sent back to python
+float remain_time; // in seconds
+int cycle1, cycle2, cycle3;
 
 void setup() {
 
@@ -176,12 +170,19 @@ void setup() {
   SoH_1 = mySMPS.get_SOH(1);
   SoH_2 = mySMPS.get_SOH(2);
   SoH_3 = mySMPS.get_SOH(3);
-  dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3);
-  Serial.println(dataString);
+  cycle1 = mySMPS.get_cycle(1);
+  cycle2 = mySMPS.get_cycle(2);
+  cycle3 = mySMPS.get_cycle(3);
 
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
 
+  dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3);
+  Serial.println(dataString);
+
+  //dataString = String(3) + "," + String(cycle1) + "," + String(cycle2)  + "," + String(cycle3);
+  //Serial.println(dataString);
+  
   //SMPS Pins
   pinMode(13, OUTPUT); // Using the LED on Pin D13 to indicate status
   pinMode(PIN_OLCL, INPUT_PULLUP); // Pin 2 is the input from the CL/OL switch
@@ -277,10 +278,39 @@ void loop() {
           next_state = ERROR; // stay in jail
           digitalWrite(PIN_REDLED,true); //turn on the red LED
           current_ref = 0; // no current
+
+          // Error status
+          if (V_1 > 3700) {
+            error1 = 1;
+          } else if (V_1 < 2400) {
+            error1 = 2;
+          } else {
+            error1 = 0;
+          }
+
+          if (V_2> 3700) {
+            error2 = 1;
+          } else if (V_2 < 2400) {
+            error2 = 2;
+          } else {
+            error2 = 0;
+          }
+
+          if (V_3> 3700) {
+            error3 = 1;
+          } else if (V_3 < 2400) {
+            error3 = 2;
+          } else {
+            error3 = 0;
+          }
+      } else {
+        error1 = 0;
+        error2 = 0;
+        error3 = 0;
       }
 
       V_PD = analogRead(PIN_VA)*4.096/1.03* 4.1626; //mannual correction for potential divider
-      current_measure = (ina219.getCurrent_mA()); // sample the inductor current (via the sensor chip)
+      current_measure = ina219.getCurrent_mA(); // sample the inductor current (via the sensor chip)
      
       // Use constant voltage with respect to battery 1
       // Use voltage then current PID controller for constant voltage (only in state 6)
@@ -331,10 +361,11 @@ void loop() {
     if (dataFile){ 
       dataFile.println(dataString2);
     } else {
-      Serial.println("Batcycle File not open"); 
+      Serial.println("Batcycle not open"); 
     }
     dataFile.close();
     */
+    
     
   }
  
@@ -344,8 +375,6 @@ void loop() {
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
         current_ref = mySMPS.get_discharge_current();
-        q1 = 0; q2 = 0; q3 = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
         if (input_switch == 1) { // if switch, move to charge
           next_state = CHARGE;
           digitalWrite(PIN_YELLED,true);
@@ -382,32 +411,7 @@ void loop() {
         if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED,true);
-            // Rationale: Discharge current in the more higher charged cells
-            //Connect to discharging relay if a battery is significantly lower  
-            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-                disc1 = 0, disc2 = 1, disc3 = 1;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-                disc1 = 1, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
-                disc1 = 1, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            } else {
-              disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            }
-            digitalWrite(PIN_DISC1, disc1);
-            digitalWrite(PIN_DISC2, disc2);
-            digitalWrite(PIN_DISC3, disc3);
+            mySMPS.charge_balance(V_1, V_2,V_3, current_measure);            
         } else { // otherwise go to constant voltage charge
           next_state = CV_CHARGE;
           digitalWrite(PIN_YELLED,false);
@@ -420,7 +424,6 @@ void loop() {
       }
       case CHARGE_REST:{ // 2 Charge Rest, green LED is off and no current
         current_ref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
         if(mySMPS.command_running == 1 && recalibrating == 0){
           next_state = IDLE;
           rest_timer = 0;
@@ -453,48 +456,7 @@ void loop() {
          if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
             next_state = SLOW_DISCHARGE;
             digitalWrite(PIN_YELLED,false);
-            
-            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-                Serial.println("Cell 1 lowest");
-                disc1 = 1, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-                q1 = q1 + (current_measure - V_1/150.0)/1000.0;
-                q2 = q2 + current_measure/1000.0;
-                q3 = q3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-                Serial.println("Cell 2 lowest");
-                disc1 = 0, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-                q1 = q1 + current_measure/1000.0;
-                q2 = q2 + (current_measure - V_2/150.0)/1000.0;
-                q3 = q3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
-                Serial.println("Cell 3 lowest");
-                disc1 = 0, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-                q1 = q1 + current_measure/1000.0;
-                q2 = q2 + current_measure/1000.0;
-                q3 = q3 + (current_measure - V_3/150.0)/1000.0;
-            } else {
-              Serial.println("No balancing");
-                disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-                q1 = q1 + current_measure/1000.0;
-                q2 = q2 + current_measure/1000.0;
-                q3 = q3 + current_measure/1000.0;
-            }
-            digitalWrite(PIN_DISC1, disc1);
-            digitalWrite(PIN_DISC2, disc2);
-            digitalWrite(PIN_DISC3, disc3);
-                     
+            mySMPS.discharge_balance(V_1, V_2, V_3, current_measure);                  
          } else { // If we reach full discharged, move to rest
            next_state = DISCHARGE_REST;
            digitalWrite(PIN_YELLED,false);
@@ -507,7 +469,6 @@ void loop() {
       }
       case DISCHARGE_REST:{ // 4 Discharge rest, no LEDs no current
         current_ref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen
         if(mySMPS.command_running == 1 && recalibrating == 0){
           next_state = IDLE;
           rest_timer = 0;
@@ -532,7 +493,6 @@ void loop() {
       }
       case ERROR: { // 5 ERROR state RED led and no current
         current_ref = 0;
-        // dq1 = dq1; dq2 = dq2; dq3 = dq3; // dq value is frozen   
         if(mySMPS.command_running == 1){
             mySMPS.triggerError();
             next_state = ERROR; // Always stay here
@@ -544,9 +504,7 @@ void loop() {
       case CV_CHARGE: { // 6 Charging with constant voltage (after state 1, before 2)
         vref = 3600;
         current_ref = 0;
-        q1 = q1 + current_measure/1000.0;
-        q2 = q2 + current_measure/1000.0;
-        q3 = q3 + current_measure/1000.0;
+        mySMPS.charge_discharge(current_measure);
         if (current_measure < 0) {
             next_state = CHARGE_REST;
             vref=0;
@@ -585,36 +543,7 @@ void loop() {
          if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
             next_state = DISCHARGE;
             digitalWrite(PIN_YELLED,false);
-            
-            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-                Serial.println("Cell 1 lowest");
-                disc1 = 1, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-                Serial.println("Cell 2 lowest");
-                disc1 = 0, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
-                Serial.println("Cell 3 lowest");
-                disc1 = 0, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-            } else {
-              Serial.println("No balancing");
-                disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            }
-            digitalWrite(PIN_DISC1, disc1);
-            digitalWrite(PIN_DISC2, disc2);
-            digitalWrite(PIN_DISC3, disc3);
-
+            mySMPS.discharge_balance(V_1, V_2, V_3, current_measure);
          } else { // If we reach full discharged, move to rest
            next_state = DISCHARGE_REST;
            digitalWrite(PIN_YELLED,false);
@@ -630,36 +559,7 @@ void loop() {
          if ((V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) && rapid_timer < 10) { // while timer is less than 10 seconds
             next_state = RAPID_DISCHARGE;
             digitalWrite(PIN_YELLED,false);
-
-            if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-                Serial.println("Cell 1 lowest");
-                disc1 = 1, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-                Serial.println("Cell 2 lowest");
-                disc1 = 0, disc2 = 1, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
-                Serial.println("Cell 3 lowest");
-                disc1 = 0, disc2 = 0, disc3 = 1;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-            } else {
-              Serial.println("No balancing");
-                disc1 = 0, disc2 = 0, disc3 = 0;
-                dq1 = dq1 + current_measure/1000.0;
-                dq2 = dq2 + current_measure/1000.0;
-                dq3 = dq3 + current_measure/1000.0;
-            }
-            digitalWrite(PIN_DISC1, disc1);
-            digitalWrite(PIN_DISC2, disc2);
-            digitalWrite(PIN_DISC3, disc3);
-
+            mySMPS.discharge_balance(V_1, V_2, V_3, current_measure);
             rapid_timer++;
          } else { // If we reach full discharged, move to rest
            rapid_timer = 0;
@@ -679,30 +579,7 @@ void loop() {
             if (V_1 < V_UPLIM && V_2 < V_UPLIM && V_3 < V_UPLIM) {
                 next_state = RAPID_CHARGE;
                 digitalWrite(PIN_YELLED,true);                              
-                if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-                    disc1 = 0, disc2 = 1, disc3 = 1;
-                    dq1 = dq1 + current_measure/1000.0;
-                    dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                    dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-                } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-                    disc1 = 1, disc2 = 0, disc3 = 1;
-                    dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                    dq2 = dq2 + current_measure/1000.0;
-                    dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-                } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
-                    disc1 = 1, disc2 = 1, disc3 = 0;
-                    dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
-                    dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-                    dq3 = dq3 + current_measure/1000.0;
-                } else {
-                  disc1 = 0, disc2 = 0, disc3 = 0;
-                    dq1 = dq1 + current_measure/1000.0;
-                    dq2 = dq2 + current_measure/1000.0;
-                    dq3 = dq3 + current_measure/1000.0;
-                }
-                digitalWrite(PIN_DISC1, disc1);
-                digitalWrite(PIN_DISC2, disc2);
-                digitalWrite(PIN_DISC3, disc3);
+                mySMPS.charge_balance(V_1, V_2, V_3, current_measure);
             } else { // otherwise go to constant voltage charge
                 next_state = CV_CHARGE;
                 digitalWrite(PIN_YELLED, false);
@@ -710,8 +587,7 @@ void loop() {
         } else {
             next_state = CHARGE;
             digitalWrite(PIN_YELLED, true);
-        }
-        
+        }      
         if(mySMPS.command_running == 0){
           next_state = 0;
           digitalWrite(PIN_YELLED,false);
@@ -721,26 +597,17 @@ void loop() {
       default :{ // Should not end up here ....
         Serial.println("Boop");
         current_ref = 0;
-        dq1 = 0; dq2 = 0; dq3 = 0;
         next_state = ERROR; // So if we are here, we go to error
         digitalWrite(PIN_REDLED,true);
         break;
       }    
-    }
-
-    // The current is halted for a while when the relay is on.
-    if (relay_on == 1) {
-      dq1 = dq1*0.87;
-      dq2 = dq2*0.87;
-      dq3 = dq3*0.87;
-      relay_on = 0;
     }
     
     //NOTE: Evaluate SOC every second, send to control every second
     // SoC Measurement
 
     if (recalibrating == 0) {
-      mySMPS.compute_SOC(state_num, V_1, V_2, V_3, dq1, dq2, dq3);
+      mySMPS.compute_SOC(state_num, V_1, V_2, V_3);
       SoC_1 = mySMPS.get_SOC(1);
       SoC_2 = mySMPS.get_SOC(2);
       SoC_3 = mySMPS.get_SOC(3);
@@ -775,13 +642,27 @@ void loop() {
     ////////////////// END DIAGNOSIS //////////////////
 
     ////////////////// START PRINTING TO MQTT //////////////////
-    remainining_range = mySMPS.estimate_range(pos_x, pos_y, dist_travelled, drive_status);
+    range = mySMPS.estimate_range(pos_x, pos_y, dist_travelled, drive_status);
+    remain_time = mySMPS.estimate_time();
+
+    if (mySMPS.cycle_changed == 1) {
+      cycle1 = mySMPS.get_cycle(1);
+      cycle2 = mySMPS.get_cycle(2);
+      cycle3 = mySMPS.get_cycle(3);
+
+      // Print with SoH
+      dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3) + "," 
+            + String(cycle1) + "," + String(cycle2)  + "," + String(cycle3);
+      Serial.println(dataString);
+    }
     
     //NOTE: Printing to serial for MQTT
-    dataString = String(1) + "," + String(state_num) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(remainining_range);
+    dataString = String(1) + "," + String(state_num) + "," 
+              + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," 
+              + String(range); // +  "," + String(remain_time); // + "," 
+              //+ String(error1) +  "," + String(error2) +  "," + String(error3);
     Serial.println(dataString);
     
-    dq1 = 0; dq2 = 0; dq3 = 0;
     ////////////////// END PRINTING TO MQTT //////////////////
     sec_count++;
   }
@@ -790,7 +671,6 @@ void loop() {
     int_count = 0;
   }
   
-  // Only deal with SOC every 2 minutes
   //NOTE - Record curve every 3 minutes, revaluate SoH at the end, build SOC table, and record new charge capacity
   if (sec_count == 180) {
       // OCV: Assume that voltage hasn't drastically changed within past 2 minutes
