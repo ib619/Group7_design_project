@@ -10,7 +10,7 @@
 #define BASE_ADDRESS 0x40000
 #define FPGA_I2C_ADDRESS 0x55
 
-#define COLLISION_THRESHOLD 70  // currently in cm cos object distance comes in cm
+#define COLLISION_THRESHOLD 50  // currently in cm cos object distance comes in cm
 
 #define RSSI_UPDATE_INTERVAL 100
 #define VISION_UPDATE_INTERVAL 500
