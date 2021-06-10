@@ -13,13 +13,9 @@ const Map = () => {
   // for the map stuff
   const [pos, setPos] = useState({ x: 0, y: 0, heading: 0 });
   const [obstacles, setObstacles] = useState({});
-  const [show, setShow] = useState(false);
-  const [path, setPath] = useState({});
-  const { message } = useSubscription([
-    "obstacle/result",
-    "position/update",
-    "path",
-  ]);
+  // const [show, setShow] = useState(false);
+  // const [path, setPath] = useState({});
+  const { message } = useSubscription(["obstacle/result", "position/update"]);
 
   // for the map zooming features
   // const [map, setMap] = useState({ scale: 1, translation: { x: 0, y: 0 } });
@@ -34,17 +30,18 @@ const Map = () => {
       } else if (message.topic === "position/update") {
         // on position update
         setPos(data);
-      } else if (message.topic === "path") {
-        // on path update
-        setPath(data);
       }
+      // else if (message.topic === "path") {
+      //   // on path update
+      //   setPath(data);
+      // }
     }
-  }, [message, setObstacles, setPos, setPath]);
+  }, [message, setObstacles, setPos]);
 
   return (
     <React.Fragment>
       <Border>
-        <ToggleButton
+        {/* <ToggleButton
           checked={show}
           type="checkbox"
           variant="secondary"
@@ -55,12 +52,12 @@ const Map = () => {
           }}
         >
           Show Path
-        </ToggleButton>
+        </ToggleButton> */}
         <MapInteractionCSS
           showControls={true}
-          minScale={0.5}
+          // minScale={0.5}
           maxScale={2}
-          translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
+          // translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
           // value={map}
           // onChange={(val) => {
           //   setMap(val);
@@ -73,10 +70,10 @@ const Map = () => {
               Array.from(obstacles).map((data, i) => (
                 <Obstacle key={i} coords={data} />
               ))}
-            {show &&
+            {/* {show &&
               Array.from(path).map((data, i) => (
                 <Point key={i} coords={data} />
-              ))}
+              ))} */}
           </GridLines>
         </MapInteractionCSS>
       </Border>
@@ -106,7 +103,6 @@ const Border = styled.div`
   }
 
   .body {
-    display: flex;
     height: 5000px;
     width: 5000px;
     position: relative;
@@ -128,42 +124,43 @@ const Center = styled.img`
 
 const Obstacle = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[1] * 0.2 + 2810,
-    bottom: props.coords[2] * 0.2 - 2740,
+    position: "absolute",
+    left: props.coords[1] * 0.2 + 2900,
+    bottom: props.coords[2] * 0.2 + 2243,
     opacity: 1 / props.coords[3],
     background: props.coords[0] === "blue" ? "turquoise" : props.coords[0],
   },
 }))`
+  position: absolute;
   width: 15px;
   height: 15px;
-  position: relative;
   transition: all 1s ease-out;
 `;
 
-// left: 390
-// bottom: -155
+// left: 2810
+// bottom: -2740
 
-const Point = styled.div.attrs((props) => ({
-  style: {
-    left: props.coords[0] * 0.2 + 2810,
-    bottom: props.coords[1] * 0.2 - 2745,
-  },
-}))`
-  background: white;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  position: relative;
-  transition: all 1s ease-out;
-`;
+// const Point = styled.div.attrs((props) => ({
+//   style: {
+//     left: props.coords[0] * 0.2 + 2810,
+//     bottom: props.coords[1] * 0.2 - 2745,
+//   },
+// }))`
+//   background: white;
+//   width: 10px;
+//   height: 10px;
+//   border-radius: 50%;
+//   position: relative;
+//   transition: all 1s ease-out;
+// `;
 
 const Person = styled.img.attrs((props) => ({
   style: {
-    left: props.pos.x * 0.2 + 2840, // hardcoded offset values :(
-    bottom: props.pos.y * 0.2 - 2730,
+    left: props.pos.x * 0.2 + 2878, // hardcoded offset values :(
+    bottom: props.pos.y * 0.2 + 2220,
   },
 }))`
-  position: relative;
+  position: absolute;
   height: 50px;
   width: 40px;
   z-index: 1;
