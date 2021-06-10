@@ -34,20 +34,20 @@ const BatteryPopup = (props) => {
         <Content>
           <div className="cell">
             <h3>Cell 0</h3>
-            <p>Battery level: {props.cell0["battery_level"]}%</p>
-            <p>Battery soh: {props.cell0["battery_soh"]}%</p>
+            <p>Battery level: {props.cell0["battery_level"].toFixed(2)}%</p>
+            <p>Battery soh: {props.cell0["battery_soh"].toFixed(2)}%</p>
             <p>Battery state: {mapstates(props.cell0["battery_state"])}</p>
           </div>
           <div className="cell">
             <h3>Cell 1</h3>
-            <p>Battery level: {props.cell1["battery_level"]}%</p>
-            <p>Battery soh: {props.cell1["battery_soh"]}%</p>
+            <p>Battery level: {props.cell1["battery_level"].toFixed(2)}%</p>
+            <p>Battery soh: {props.cell1["battery_soh"].toFixed(2)}%</p>
             <p>Battery state: {mapstates(props.cell1["battery_state"])}</p>
           </div>
           <div className="cell">
             <h3>Cell 2</h3>
-            <p>Battery level: {props.cell2["battery_level"]}%</p>
-            <p>Battery soh: {props.cell2["battery_soh"]}%</p>
+            <p>Battery level: {props.cell2["battery_level"].toFixed(2)}%</p>
+            <p>Battery soh: {props.cell2["battery_soh"].toFixed(2)}%</p>
             <p>Battery state: {mapstates(props.cell2["battery_state"])}</p>
           </div>
         </Content>
