@@ -51,7 +51,7 @@ void SMPS::init() {
     /* Need to Initialise
         Current statistics: current maximal charge, determined from last calibration
         Charge discharge curves, from SD
-        Threshold voltages
+        Cycles
     */
 
    SoC_1_arr.fill(0);

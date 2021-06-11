@@ -7,7 +7,7 @@ from collections import deque
 import serial
 import pandas as pd
 
-# arduino = serial.Serial('/dev/cu.usbmodem1461301', 9600, timeout=.1)
+arduino = serial.Serial('/dev/cu.usbmodem14301', 9600, timeout=.1)
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -32,32 +32,35 @@ class MqttServer:
             print(self.discharge_df)
         self.charge_df = pd.read_csv("charge_demo2.csv", names=self.col_names)
 
+        '''
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.charge_df)
+        '''
 
         self.i = 0 # iterator for discharge_df
         self.j1 = 0 # iterator for charge_df
         self.j2 = 0
         self.j3 = 0
+        self.arduino_done = 0 # received from arduino?
 
-        # Global variables
+        ########## Things to send to MQTT ##########
         self.state_num = 0
-        self.SoH_1 = 90 # state of health
-        self.SoH_2 = 87
-        self.SoH_3 = 92
+        self.SoH_1 = 100 # state of health
+        self.SoH_2 = 100
+        self.SoH_3 = 100
         self.SoC_1 = 0 # state of charge
         self.SoC_2 = 0
         self.SoC_3 = 0
-        self.range = 200 # range in cm
+        self.range = 0 # range in cm
         self.runtime = 0 #remaining time in seconds
         self.error1 = 0 # type of error: (0 no error) (1 overvoltage) (2 undervoltage) (3 )
         self.error2 = 0
         self.error3 = 0
-        self.cycle1 = 15
-        self.cycle2 = 14
-        self.cycle3 = 9
+        self.cycle1 = 0
+        self.cycle2 = 0
+        self.cycle3 = 0
 
-        # Things to send
+        # Things to receive from MQTT and send to arduino
         self.prev_cmd = 0
         self.cmd = 0
         self.x,self.y = 0,0
@@ -111,18 +114,18 @@ class MqttServer:
         if msg.topic == 'rover/status':
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data)
-            print(data)
+            print("rover status received" + str(data))
             self.drive_status = int(data["drive_status"])
         if msg.topic == "drive/discrete" or msg.topic == "drive/t2c":
             data = str(msg.payload.decode("utf-8", "ignore"))
             data = json.loads(data)
             self.speed = int(data["speed"])
-
+        
         """ 
         # TODO: write to arduino
         arduino.write((",".join([str(self.cmd), str(self.x), str(self.y), str(self.dist_travelled), str(self.drive_status), str(self.speed)]) + "\n").encode('utf-8'))
         """
-
+            
     ### Event Handlers
     def start_server_handler(self):
         logging.debug("Started backend server")
@@ -157,13 +160,16 @@ class MqttServer:
                 self.range = self.discharge_df.at[self.i,"range"]
                 self.runtime = self.discharge_df.at[self.i,"runtime"]
                 self.i += 1
-                print("Reset only temporarily sets the machine back into idle")
+                print("Energy SMPS Reset!")
             elif self.cmd == 1:
-                print("Recalibration not implemented")
+                print("Recalibration not implemented on demo!")
             elif self.drive_status == 2:
                 self.state_num = 1
 
                 #CHARGE
+                self.handle_arduino_input()
+
+                '''
                 if self.j1 == 0:
                     self.j1 = abs(self.charge_df['SOC1']-self.SoC_1).idxmin()
                 self.SoC_1 = self.charge_df.at[self.j1,"SOC1"]
@@ -179,6 +185,7 @@ class MqttServer:
                 self.SoC_3 = self.charge_df.at[self.j3,"SOC3"]
                 self.range = self.charge_df.at[self.i,"range"]
                 self.j3 += 1
+                '''
 
             elif self.drive_status == 1:
                 self.state_num = 8
@@ -234,10 +241,32 @@ class MqttServer:
             self.prev_cmd = self.cmd
             self.seconds += 1
 
+    def handle_arduino_input(self):
+        #NOTE: write from arduino
+        data = arduino.readline()[:-2] #the last bit gets rid of the new-line chars
+        if data:
+            data = data.decode('utf-8')
+            print(data) #strip out the new lines for now
+            
+            # Only accept when starts with 1
+            # 1 (state_num), pwm_out (0 to 1), V_B(mV), current_measure (mA), V_A (mV), power (W)
+            #TODO: reverse polarity of current measure
+            if data[0].isdigit():
+                header = int(data[0])
+                if header == 1:
+                    current_line = data.split(",")
+                    V_B = int(float(current_line[2]))
+                    current_measure = int(float(current_line[3]))
+                    V_A = int(float(current_line[4]))
+                    pwr = int(float(current_line[5]))
 
-            """
-            # TODO: write from arduino - not implemented for demo file
-            """            
+                    # 3 hypotheical batteries with 1800 coulombs (500mAhr)
+                    self.SoC_1 -= current_measure/1000/1800*100
+                    self.SoC_2 -= current_measure/1000/1800*100
+                    self.SoC_3 -= current_measure/1000/1800*100
+        
+                    
+                    
 
 def main():
     # ip  = "35.177.181.61"
