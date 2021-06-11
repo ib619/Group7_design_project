@@ -301,7 +301,9 @@ void loop() {
      
       // Use constant voltage with respect to battery 1
       // Use voltage then current PID controller for constant voltage (only in state 6)
-      if (vref == 3600) { 
+      if (current_ref === 2000) {
+        // do not use PID voltage or current controllers.
+      } else if (vref == 3600) { 
         ev = (vref - V_1)/1000.0;  //voltage error at this time
         cv = pidv(ev);  //voltage pid
         cv = saturation(cv, 0.25, 0); //current demand saturation
@@ -364,7 +366,7 @@ void loop() {
         break;
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        // current_ref = 250;
+        current_ref = 2000;
 
         //NOTE: Instead of using wall charging, use PV charging
         // Assign values
@@ -594,7 +596,7 @@ void loop() {
     int_count = 0;
   }
 
-  if (sec_count == 5) {
+  if (sec_count % 5 == 0) {
     rly_timer = 0;
   }
   

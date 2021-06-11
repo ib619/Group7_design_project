@@ -139,8 +139,7 @@ void loop() {
         pwm_out = 0;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
-          pwm_out = 0.5; // initial pwm value
-          
+          pwm_out = 0.5; // initial pwm value   
           v1 = V_PD;
           i1 = current_measure;
           p1 = v1*i1;

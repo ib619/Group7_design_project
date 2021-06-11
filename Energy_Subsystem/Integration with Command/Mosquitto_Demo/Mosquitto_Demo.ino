@@ -8,8 +8,8 @@ Switch on Lamp!!!
 
 Sweep IV curve: From 0 to -230mA. Stay at each current for 3 seconds
 0: IDLE
-1: SWEEP
-2: SWEEP COMPLETE
+1: Charge with PNO
+2: Charge Complete (never)
 
 How bout we try to control the current on the output side?
   Panel connected to V_B
@@ -51,13 +51,6 @@ float kpv=0.05024,kiv=15.78,kdv=0; // voltage pid.
 float u0v,u1v,delta_uv,e0v,e1v,e2v; // u->output; e->error; 0->this time; 1->last time; 2->last last time
 float uv_max=4, uv_min=0; //anti-windup limitation
 
-// PnO Algorithm (only updates in slow loop)
-float vref = 2500;
-float v0, v1; // current and previous voltage values
-float p0, p1; // current and previous power values
-float i0, i1; // current and previous current values
-float p_diff, v_diff;
-
 // Current PID Controller Stuff
 float u0i, u1i, delta_ui, e0i, e1i, e2i; // Internal values for the current controller
 float ui_max = 1, ui_min = 0; //anti-windup limitation
@@ -67,16 +60,19 @@ float Ts = 0.001; //1 kHz control frequency.
 float current_measure; // obtained from ina219 (inductor current)
 float current_ref = 0, error_amps; // Current Control
 float pwm_out;
-float closed_pwm;
 double V_B; // voltage at terminal VB
 double V_A; // voltage at terminal VA
 boolean input_switch; // OLCL switch. 0 means back to IDLE
 
 bool move_on = 0;
 
-// Panel Limits
+// PV Panels PnO Algorithm
 float current_limit = +230;
 float V_limit = 4700;
+float v0, v1; // current and previous voltage values
+float p0, p1; // current and previous power values
+float i0, i1; // current and previous current values
+float p_diff, v_diff;
 
 // State Machine
 int state_num=0,next_state;
@@ -96,7 +92,8 @@ void setup() {
     Serial.println("* is a card inserted?");
     while (true) {} //It will stick here FOREVER if no SD is in on boot
   } else {
-    Serial.println("Wiring is correct and a card is present.");
+    Serial.println("Here comes the sun and I say it's all right!");
+    Serial.println("Printing state_num, V_panels, current_measure, V_resistors, P_panels");
   }
   if (SD.exists("PVPWMSwe.csv")) { // Wipe the datalog when starting
     SD.remove("PVPWMSwe.csv");
@@ -140,9 +137,7 @@ void loop() {
   // FAST LOOP (1kHZ)
   if (loop_trigger == 1){
       state_num = next_state; //state transition
-      //V_B = analogRead(A0)*4.096/1.03* 4.1626* 0.39; //manual correction for potential divider
       V_B = analogRead(A0)*4.096/1.03* 1.481816;
-      //V_A = analogRead(A1)*4.096/1.03* 4.1626* 0.39; //mannual correction for potential divider
       V_A = analogRead(A1)*4.096/1.03* 4.142073;
       if (V_B > 21000) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
@@ -150,11 +145,8 @@ void loop() {
           digitalWrite(7,true); //turn on the red LED
       }
       current_measure = (ina219.getCurrent_mA()); // sample the inductor current (via the sensor chip)
-
-      //ei = (current_ref - current_measure)/1000; //current error
-      //closed_pwm = pidi(ei);  //current pid
-      //closed_pwm = saturation(closed_pwm, 0.99, 0.01);  //duty_cycle saturation
-      analogWrite(6, (int)(255 - closed_pwm * 255)); // write it out (inverting for the Buck here) //Not TODO: PWM Modulate Function
+      pwm_out = saturation(pwm_out, 0.99, 0.01);  //duty_cycle saturation
+      analogWrite(6, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here) //Not TODO: PWM Modulate Function
 
       // Update Flags
       int_count++; //count how many interrupts since this was last reset to zero
@@ -166,9 +158,14 @@ void loop() {
     input_switch = digitalRead(2); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case 0:{ // Start state (no current, no LEDs)
-        vref = 2500;
-        if (input_switch == 1) { // if switch, move to charge
+        if (input_switch == 1) {
           // First time, so reset voltage panel values
+          pwm_out = 0.5; // initial pwm value   
+          v1 = V_B;
+          i1 = current_measure;
+          p1 = v1*i1;
+          pwm_out = pwm_out + 0.03;
+
           next_state = 1;
           digitalWrite(8,true);
         } else { // otherwise stay put
@@ -179,31 +176,32 @@ void loop() {
         break;
       }
       case 1:{ // Running state (a green LED)
-        if (move_on == 0) {
-          move_on = 1;
+        // Assign values
+        v0 = V_B;
+        i0 = current_measure;
+        
+        p0 = v0 * i0; // directly use I_out as a proxy indicator for I_in
+        p_diff = p0-p1;       
+        v_diff = v0-v1;
+
+        // in general increasing PWM means decreasing PV voltage
+        // PnO algorithm
+        if (((p0>p1) && (v0>v1) || (p0<p1) && (v0<v1))) {
+          pwm_out = pwm_out - 0.03;
+        } else if ((p0<p1) && (v0>v1) || (p0>p1) && (v0<v1)) {
+          pwm_out = pwm_out + 0.03;
         } else {
-          move_on = 0;
+          Serial.println("No increment");
         }
 
-        if(move_on == 1) {
-          closed_pwm = closed_pwm + 0.01;
-        }
-        
-        // Reset Flags for next iteration
-        next_state = 1;
-        digitalWrite(8,true); 
+        // Reset values for next round
+        p1 = p0;
+        v1 = v0;
 
         if(input_switch == 0){ // UNLESS the switch = 0, then go back to start
           next_state = 0;
           digitalWrite(8,false);
         }
-
-        if(closed_pwm >= 0.99){ // Sweeping complete
-          next_state = 2;
-          digitalWrite(8,true);
-          digitalWrite(7,true);
-        }
-
         break;
       }
       case 2: {
@@ -237,17 +235,17 @@ void loop() {
     
     // Print values to serial monitor and csv
     // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(closed_pwm) + "," + String(V_B) + ","+ String(current_measure) + "," + String(V_A) + "," + String(V_B*current_measure/1000000); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(pwm_out) + "," + String(V_B) + ","+ String(current_measure) + "," + String(V_A) + "," + String(V_B*current_measure/1000000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
-    File dataFile = SD.open("PVPWMSwe.csv", FILE_WRITE); // open our CSV file
-    if (dataFile){ //If we succeeded (usually this fails if the SD card is out)
-      dataFile.println(dataString); // print the data
+    File dataFile = SD.open("PVPWMSwe.csv", FILE_WRITE);
+    if (dataFile){
+      dataFile.println(dataString);
     } else {
-      Serial.println("File not open"); //otherwise print an error
+      Serial.println("File not open"); 
     }
-    dataFile.close(); // close the file
-    int_count = 0; // reset the interrupt count so we dont come back here for 1000ms
+    dataFile.close();
+    int_count = 0; 
   }
 }
 
@@ -262,54 +260,4 @@ float saturation( float sat_input, float uplim, float lowlim) { // Saturation fu
   else if (sat_input < lowlim ) sat_input = lowlim;
   else;
   return sat_input;
-}
-
-// Current PID Controller - Not Needed for PnO
-float pidi(float pid_input) { // discrete PID function
-  float e_integration;
-  e0i = pid_input;
-  e_integration = e0i;
-
-  //anti-windup
-  if (u1i >= ui_max) {
-    e_integration = 0;
-  } else if (u1i <= ui_min) {
-    e_integration = 0;
-  }
-
-  delta_ui = kpi * (e0i - e1i) + kii * Ts * e_integration + kdi / Ts * (e0i - 2 * e1i + e2i); //incremental PID programming avoids integrations.
-  u0i = u1i + delta_ui;  //this time's control output
-
-  //output limitation
-  saturation(u0i, ui_max, ui_min);
-
-  u1i = u0i; //update last time's control output
-  e2i = e1i; //update last last time's error
-  e1i = e0i; // update last time's error
-  return u0i;
-}
-
-// Voltage PID Controller
-float pidv( float pid_input){
-  float e_integration;
-  e0v = pid_input;
-  e_integration = e0v;
- 
-  //anti-windup, if last-time pid output reaches the limitation, this time there won't be any intergrations.
-  if(u1v >= uv_max) {
-    e_integration = 0;
-  } else if (u1v <= uv_min) {
-    e_integration = 0;
-  }
-
-  delta_uv = kpv*(e0v-e1v) + kiv*Ts*e_integration + kdv/Ts*(e0v-2*e1v+e2v); //incremental PID programming avoids integrations.there is another PID program called positional PID.
-  u0v = u1v + delta_uv;  //this time's control output
-
-  //output limitation
-  saturation(u0v,uv_max,uv_min);
-  
-  u1v = u0v; //update last time's control output
-  e2v = e1v; //update last last time's error
-  e1v = e0v; // update last time's error
-  return u0v;
 }
