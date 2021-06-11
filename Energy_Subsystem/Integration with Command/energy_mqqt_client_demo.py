@@ -25,13 +25,13 @@ class MqttServer:
         self.username = name
         self.password = pw
 
-        self.col_names = ["SOC1","SOC2","SOC3","range"]
+        self.col_names = ["SOC1","SOC2","SOC3","range","runtime"]
 
-        self.discharge_df = pd.read_csv("discharge_demo.csv", names=self.col_names)
+        self.discharge_df = pd.read_csv("discharge_demo2.csv", names=self.col_names)
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.discharge_df)
-        self.charge_df = pd.read_csv("charge_demo.csv", names=self.col_names)
+        self.charge_df = pd.read_csv("charge_demo2.csv", names=self.col_names)
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.charge_df)
@@ -43,13 +43,20 @@ class MqttServer:
 
         # Global variables
         self.state_num = 0
-        self.SoH_1 = 94
-        self.SoH_2 = 96
-        self.SoH_3 = 89
-        self.SoC_1 = 0
+        self.SoH_1 = 90 # state of health
+        self.SoH_2 = 87
+        self.SoH_3 = 92
+        self.SoC_1 = 0 # state of charge
         self.SoC_2 = 0
         self.SoC_3 = 0
-        self.range = 200
+        self.range = 200 # range in cm
+        self.runtime = 0 #remaining time in seconds
+        self.error1 = 0 # type of error: (0 no error) (1 overvoltage) (2 undervoltage) (3 )
+        self.error2 = 0
+        self.error3 = 0
+        self.cycle1 = 15
+        self.cycle2 = 14
+        self.cycle3 = 9
 
         # Things to send
         self.prev_cmd = 0
@@ -135,6 +142,7 @@ class MqttServer:
                 self.SoC_2 = self.discharge_df.at[0,"SOC2"]
                 self.SoC_3 = self.discharge_df.at[0,"SOC3"]
                 self.range = self.discharge_df.at[self.i,"range"]
+                self.runtime = self.discharge_df.at[self.i,"runtime"]
                 self.state_num = 0
                 self.i += 1
             elif self.cmd == 2:
@@ -144,6 +152,7 @@ class MqttServer:
                 self.SoC_2 = self.discharge_df.at[self.i,"SOC2"]
                 self.SoC_3 = self.discharge_df.at[self.i,"SOC3"]
                 self.range = self.discharge_df.at[self.i,"range"]
+                self.runtime = self.discharge_df.at[self.i,"runtime"]
                 self.i += 1
                 print("Reset only temporarily sets the machine back into idle")
             elif self.cmd == 1:
@@ -182,74 +191,48 @@ class MqttServer:
                 self.state_num = 0
 
             cell1_res = {
-                "cell":0, 
                 "battery_level":self.SoC_1, 
                 "battery_soh":self.SoH_1, 
-                "battery_state":self.state_num
+                "cycles":self.cycle1,
+                "error":self.error1
             }
             json_data = json.dumps(cell1_res)
-            self.energy_client.publish("battery/status", json_data, qos=1)
+            self.energy_client.publish("battery/status/cell0", json_data, qos=1)
 
             cell2_res = {
-                "cell":1, 
                 "battery_level":self.SoC_2, 
                 "battery_soh":self.SoH_2, 
-                "battery_state":self.state_num
+                "cycles":self.cycle2,
+                "error":self.error2
             }
             json_data = json.dumps(cell2_res)
-            self.energy_client.publish("battery/status", json_data, qos=1)
+            self.energy_client.publish("battery/status/cell1", json_data, qos=1)
 
             cell3_res = {
-                "cell":2, 
                 "battery_level":self.SoC_3, 
                 "battery_soh":self.SoH_3, 
-                "battery_state":self.state_num
+                "cycles":self.cycle3,
+                "error":self.error3
             }
             json_data = json.dumps(cell3_res)
-            self.energy_client.publish("battery/status", json_data, qos=1)
+            self.energy_client.publish("battery/status/cell2", json_data, qos=1)
 
             range_res = {
-                "range":self.range
+                "range":self.range/100,
+                "time":self.runtime
             }
             json_data = json.dumps(range_res)
-            self.energy_client.publish("rover/status/range", json_data, qos=1)
+            self.energy_client.publish("rover/status/energy", json_data, qos=1)
+
+            status_res = self.state_num
+            self.energy_client.publish("battery/status", status_res, qos=1)
 
             self.prev_cmd = self.cmd
 
 
             """
-            # TODO: write from arduino
-            data = arduino.readline()[:-2] #the last bit gets rid of the new-line chars
-
-            if data:
-                data = data.decode('utf-8')
-                print(data) #strip out the new lines for now
-                
-                # Either
-                    # 1, status, SoC1,2,3, range (cm)
-                # OR
-                    # 2, SOH1,2,3, 
-                # Ignore
-                    # 3,....... (diagnosis)
-                if data[0].isdigit():
-
-                    header = int(data[0])
-                    # print(header)
-
-                    if header == 1 and (self.SoH_1 != 0 and self.SoH_2 != 0 and self.SoH_3 != 0):
-                        current_line = data.split(",")
-                        state_num = int(current_line[1])
-                        self.SoC_1 = int(float(current_line[2]))
-                        self.SoC_2 = int(float(current_line[3]))
-                        self.SoC_3 = int(float(current_line[4]))
-                        self.range = int(float(current_line[5]))
-          
-                    if header == 2:
-                        current_line = data.split(",")
-                        self.SoH_1 = int(float(current_line[1]))
-                        self.SoH_2 = int(float(current_line[2]))
-                        self.SoH_3 = int(float(current_line[3]))
-        """            
+            # TODO: write from arduino - not implemented for demo file
+            """            
 
 def main():
     # ip  = "35.177.181.61"

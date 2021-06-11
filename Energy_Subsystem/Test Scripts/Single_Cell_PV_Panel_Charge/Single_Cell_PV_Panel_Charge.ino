@@ -187,7 +187,7 @@ void loop() {
           pwm_out = pwm_out - 0.05;
         } else if ((abs(v_diff) >= 10) && (i_diff/v_diff <= -i0/v0) || (abs(v_diff) < 10) && (i_diff <= 0)) {
           // vref = vref - 100;
-          pwm_out = pwm_out + 0.05;
+          pwm_out = pwm_out + 0.05;   
         } else {
           Serial.println("Not incrementing or decrementing");
         }

@@ -1,6 +1,6 @@
 clear; close all;
 
-import = readmatrix('PVPWMSWE.CSV');
+import = readmatrix('4parallelcells_test4_home.CSV');
 
 % Test 1: 120R resistor on port A, asynchronous
 % Newest Test: 120+75R resistor on port A, synchronous
