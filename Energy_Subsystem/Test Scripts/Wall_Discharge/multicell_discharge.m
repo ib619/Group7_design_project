@@ -24,76 +24,85 @@ disc1 = import1(:,7);
 disc2 = import1(:,8);
 disc3 = import1(:,9);
 
-SOC1 = import2(:,5);
-SOC2 = import2(:,6);
-SOC3 = import2(:,7);
-% 
-% dv1 = dvimport(:,1);
-% dv2 = dvimport(:,2);
-% dv3 = dvimport(:,3);
-% dSoC = dvimport(:,4);
-% 
-% SOC1 = zeros(length, 1);
-% SOC2 = zeros(length, 1);
-% SOC3 = zeros(length, 1);
-% 
-% d_ocv_l = 3150;
-% d_ocv_u = 3300;
-% 
-% %% 
-% 
-% correction = 2;
-% 
-% for i = 1:length
-%     if (i==1 || state(i,1) == 0) % calibrate initial SoC with voltage lookup
-%         [c1, index1] = min(abs(dv1-V_1(i,1)));
-%         SOC1(i,1) = dSoC(index1);
-%         
-%         [c2, index2] = min(abs(dv2-V_2(i,1)));
-%         SOC2(i,1) = dSoC(index2);
-%         
-%         [c3, index3] = min(abs(dv3-V_3(i,1)));
-%         SOC3(i,1) = dSoC(index3);
-%     elseif (state(i,1) == 3 && state(i-1,1) == 0) % First valid term
-%         [c1, index1] = min(abs(dv1-V_1(i,1)));
-%         SOC1(i,1) = dSoC(index1);
-%         
-%         [c2, index2] = min(abs(dv2-V_2(i,1)));
-%         SOC2(i,1) = dSoC(index2);
-%         
-%         [c3, index3] = min(abs(dv3-V_3(i,1)));
-%         SOC3(i,1) = dSoC(index3);
-%     elseif (state(i,1) == 5 || state(i,1) == 0) % freeze SOC
-%         SOC1(i,1) = SOC1(i-1,1); 
-%         SOC2(i,1) = SOC2(i-1,1); 
-%         SOC3(i,1) = SOC3(i-1,1); 
-%     elseif (state(i,1) == 3) % discharge
-%         if (V_1(i,1) < d_ocv_l || V_1(i,1) > d_ocv_u) % outside threshold for CC?
-%             [c1, index1] = min(abs(dv1-V_1(i,1)));
-%             movavg = (movmean([SOC1(1:i-1); dSoC(index1)], [10 0])); % moving avg
-%             SOC1(i,1) = movavg(end);
-%         else
-%             SOC1(i,1) = SOC1(i-1,1)- 0.25/1800 * 100*correction;
-%             % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
-%         end
-%         if (V_2(i,1) < d_ocv_l || V_2(i,1) > d_ocv_u) % outside threshold for CC?
-%             [c2, index2] = min(abs(dv2-V_2(i,1)));
-%             movavg = (movmean([SOC2(1:i-1); dSoC(index2)], [10 0])); % moving avg
-%             SOC2(i,1) = movavg(end);
-%         else
-%             SOC2(i,1) = SOC2(i-1,1)- 0.25/1800 * 100*correction;
-%             % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
-%         end
-%         if (V_3(i,1) < d_ocv_l || V_3(i,1) > d_ocv_u) % outside threshold for CC?
-%             [c3, index3] = min(abs(dv3-V_3(i,1)));
-%             movavg = (movmean([SOC3(1:i-1); dSoC(index3)], [10 0])); % moving avg
-%             SOC3(i,1) = movavg(end);
-%         else
-%             SOC3(i,1) = SOC3(i-1,1)- 0.25/1800 * 100*correction;
-%             % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
-%         end
-%     end
-% end
+% SOC1 = import2(:,5);
+% SOC2 = import2(:,6);
+% SOC3 = import2(:,7);
+
+dv1 = dvimport(:,1);
+dv2 = dvimport(:,2);
+dv3 = dvimport(:,3);
+dSoC = dvimport(:,4);
+
+SOC1 = zeros(length, 1);
+SOC2 = zeros(length, 1);
+SOC3 = zeros(length, 1);
+
+d_ocv_l = 3150;
+d_ocv_u = 3300;
+
+%% 
+
+correction = 2;
+
+for i = 1:length
+    if (i==1 || state(i,1) == 0) % calibrate initial SoC with voltage lookup
+        [c1, index1] = min(abs(dv1-V_1(i,1)));
+        SOC1(i,1) = dSoC(index1);
+        
+        [c2, index2] = min(abs(dv2-V_2(i,1)));
+        SOC2(i,1) = dSoC(index2);
+        
+        [c3, index3] = min(abs(dv3-V_3(i,1)));
+        SOC3(i,1) = dSoC(index3);
+    elseif (state(i,1) == 3 && state(i-1,1) == 0) % First valid term
+        [c1, index1] = min(abs(dv1-V_1(i,1)));
+        SOC1(i,1) = dSoC(index1);
+        
+        [c2, index2] = min(abs(dv2-V_2(i,1)));
+        SOC2(i,1) = dSoC(index2);
+        
+        [c3, index3] = min(abs(dv3-V_3(i,1)));
+        SOC3(i,1) = dSoC(index3);
+    elseif (state(i,1) == 5 || state(i,1) == 0) % freeze SOC
+        SOC1(i,1) = SOC1(i-1,1); 
+        SOC2(i,1) = SOC2(i-1,1); 
+        SOC3(i,1) = SOC3(i-1,1); 
+    elseif (state(i,1) == 3) % discharge
+        if (V_1(i,1) < d_ocv_l || V_1(i,1) > d_ocv_u) % outside threshold for CC?
+            [c1, index1] = min(abs(dv1-V_1(i,1)));
+            movavg = (movmean([SOC1(1:i-1); dSoC(index1)], [10 0])); % moving avg
+            SOC1(i,1) = movavg(end);
+        else
+            SOC1(i,1) = SOC1(i-1,1)- 0.25/1800 * 100*correction;
+            % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
+        end
+        if (V_2(i,1) < d_ocv_l || V_2(i,1) > d_ocv_u) % outside threshold for CC?
+            [c2, index2] = min(abs(dv2-V_2(i,1)));
+            movavg = (movmean([SOC2(1:i-1); dSoC(index2)], [10 0])); % moving avg
+            SOC2(i,1) = movavg(end);
+        else
+            SOC2(i,1) = SOC2(i-1,1)- 0.25/1800 * 100*correction;
+            % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
+        end
+        if (V_3(i,1) < d_ocv_l || V_3(i,1) > d_ocv_u) % outside threshold for CC?
+            [c3, index3] = min(abs(dv3-V_3(i,1)));
+            movavg = (movmean([SOC3(1:i-1); dSoC(index3)], [10 0])); % moving avg
+            SOC3(i,1) = movavg(end);
+        else
+            SOC3(i,1) = SOC3(i-1,1)- 0.25/1800 * 100*correction;
+            % SOC_cc(i,1) = SOC(i,1); % track the coulomb counting values
+        end
+    end
+end
+
+remaining_time = zeros(length,1);
+for i = 1:length
+    % gross_Charge = (SOC1(i,1)+SOC2(i,1)+SOC3(i,1))*1800/100;
+    amphr_cap = (min([SOC1(i,1) SOC2(i,1) SOC3(i,1)]))*1800/100;
+    % remaining_Ws = (V_1(i,1)+V_2(i,1)+V_3(i,1)-3*2500)/1000*amphr_cap;
+    remaining_Ws = (3*(min([V_1(i,1) V_2(i,1) V_3(i,1)])-2400))/1000*amphr_cap;
+    remaining_time(i,1) = remaining_Ws/2 * 1.5;
+end
 
 %% 
 
@@ -148,3 +157,8 @@ set(gca,'LineWidth',2);
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
 sgtitle('Series Cells Discharging SoC','FontName', 'Arial');
+
+figure(3);
+plot(remaining_time);
+xlabel('Time(s)');
+ylabel('Remaining Time (s)');

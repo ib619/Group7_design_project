@@ -12,16 +12,6 @@
 #define PIN_DISC2 A7
 #define PIN_DISC3 A6
 
-struct Stats {
-    float q1_now;
-    float q2_now;
-    float q3_now;
-
-    float SoC_1;
-    float SoC_2;
-    float SoC_3;
-};
-
 class SMPS {
     public:
         SMPS();
@@ -35,8 +25,11 @@ class SMPS {
         void reset();
         
         void decode_command(int cmd, int speed, int pos_x, int pos_y, int drive_status, float V_1, float V_2, float V_3);
-        float estimate_range(int x0, int y0, int distance, int drive_status) ;
-        float estimate_time();
+        int estimate_range(int x0, int y0, float distance, int drive_status) ;
+        int estimate_time(float V_1, float V_2, float V_3);
+
+        // helper function for finding minimum
+        float minimum(float item_1, float item_2, float item_3);
 
         //TODO: Need to consider balancing for charging as well. Handle in main Arduino file
         void charge(); // 250mA
@@ -49,9 +42,10 @@ class SMPS {
         float get_discharge_current();
         
         // Recalibrate SOH
-        void recalibrate_SOH(); //called by control     
-        bool get_recalibrate(); // instruct Arduino to recalibrate.
-        void send_current_cap(float q1, float q2, float q3); 
+        void recalibrate_SOH(); //called by control
+        bool recalibrating = 0;
+             
+        void send_current_cap(); 
         int get_SOH(int cell_num);
         void clear_lookup();
         void record_curve(int state_num, float V_1, float V_2, float V_3);
@@ -71,7 +65,7 @@ class SMPS {
 
         //Compute SoC
         void compute_SOC(int state_num, float V_1, float V_2, float V_3);
-        float get_SOC(int cell_num);
+        int get_SOC(int cell_num);
 
         bool cycle_changed = 0;
         void next_cycle();
@@ -91,14 +85,13 @@ class SMPS {
     private:
         int state;
         int prev_state = -1;
-        bool recalibrating;
         float discharge_current = 0;
 
         // Need to install Moving Average Library for this
         // Initialise within init method
-        MovingAverage<float> SoC_1_arr = MovingAverage<float>(60); // don't go anymore than this
-        MovingAverage<float> SoC_2_arr = MovingAverage<float>(60);
-        MovingAverage<float> SoC_3_arr = MovingAverage<float>(60);
+        MovingAverage<float> SoC_1_arr = MovingAverage<float>(1); // don't go anymore 60
+        MovingAverage<float> SoC_2_arr = MovingAverage<float>(1);
+        MovingAverage<float> SoC_3_arr = MovingAverage<float>(1);
         int arr_size = 0; // compute manually when FIFO not full
 
         float current_ref;
@@ -123,11 +116,6 @@ class SMPS {
         //FIXME: Instead of using voltage threshold, use an SoC Threshold
         float SoC_LT = 20;
         float SoC_HT = 80;
-
-        String discharge_SoC_filename = "dv_SoC.csv";
-        String charge_SoC_filename = "cv_SoC.csv";
-        String capacity_filename = "Stats.csv";
-        String cycle_filename = "Cycles.csv";
 
         String dataString;
         File myFile;

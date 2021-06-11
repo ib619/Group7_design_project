@@ -170,6 +170,13 @@ for i = 1:length
     end
 end
 
+remaining_time = zeros(length,1);
+for i = 1:length
+    gross_Charge = SOC(i,1)*nominal_charge;
+    remaining_Ws = (voltage(i,1)-2500)/1000*gross_Charge;
+    remaining_time(i,1) = remaining_Ws/0.825/0.8;
+end
+
 %% Plots
 % each time interval is 1s. convenient!
 
@@ -214,3 +221,8 @@ set(gca, 'FontName', 'Arial')
 
 set(gca, 'FontName', 'Arial')
 sgtitle('Battery Characteristic','FontName', 'Arial');
+
+figure(3);
+plot(remaining_time);
+xlabel('Time(s)');
+ylabel('Remaining Time (s)');

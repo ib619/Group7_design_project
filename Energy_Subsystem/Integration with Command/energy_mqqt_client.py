@@ -6,7 +6,7 @@ import logging
 from collections import deque
 import serial
 
-arduino = serial.Serial('/dev/cu.usbmodem1461301', 9600, timeout=.1)
+arduino = serial.Serial('/dev/cu.usbmodem14301', 9600, timeout=.1)
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -23,16 +23,24 @@ class MqttServer:
         self.username = name
         self.password = pw
 
-        # Global variables
-        self.SoH_1 = 100
+        ########## Things to send to MQTT ##########
+        self.state_num = 0
+        self.SoH_1 = 100 # state of health
         self.SoH_2 = 100
         self.SoH_3 = 100
-        self.SoC_1 = 0
+        self.SoC_1 = 0 # state of charge
         self.SoC_2 = 0
         self.SoC_3 = 0
-        self.range = 0
+        self.range = 0 # range in cm
+        self.runtime = 0 #remaining time in seconds
+        self.error1 = 0 # type of error: (0 no error) (1 overvoltage) (2 undervoltage) (3 )
+        self.error2 = 0
+        self.error3 = 0
+        self.cycle1 = 0
+        self.cycle2 = 0
+        self.cycle3 = 0
 
-        # Things to send
+        # Things to receive from MQTT and send to arduino
         self.cmd = 0
         self.x,self.y = 0,0
         self.dist_travelled = 0
@@ -78,16 +86,20 @@ class MqttServer:
             self.cmd = str(msg.payload.decode("utf-8", "ignore"))
         if msg.topic == 'position/update':
             data = str(msg.payload.decode("utf-8", "ignore"))
+            data = json.loads(data)
             self.x = data["x"]
             self.y = data["y"]
         if msg.topic == 'rover/status':
             data = str(msg.payload.decode("utf-8", "ignore"))
-            self.drive_status = data["drive_status"]
+            data = json.loads(data)
+            print("rover status received" + str(data))
+            self.drive_status = int(data["drive_status"])
         if msg.topic == "drive/discrete" or msg.topic == "drive/t2c":
             data = str(msg.payload.decode("utf-8", "ignore"))
+            data = json.loads(data)
             self.speed = data["speed"]
             
-        # TODO: write to arduino
+        #NOTE: write to arduino
         arduino.write((",".join([str(self.cmd), str(self.x), str(self.y), str(self.dist_travelled), str(self.drive_status), str(self.speed)]) + "\n").encode('utf-8'))
         
     ### Event Handlers
@@ -100,7 +112,7 @@ class MqttServer:
             # publish recent 5 obstacles every 5s and saves recent most obstacle value to db
             time.sleep(0.5)
 
-            # TODO: write from arduino
+            #NOTE: write from arduino
             data = arduino.readline()[:-2] #the last bit gets rid of the new-line chars
 
             if data:
@@ -108,9 +120,9 @@ class MqttServer:
                 print(data) #strip out the new lines for now
                 
                 # Either
-                    # 1, status, SoC1,2,3, range (cm)
+                    # 1, status, SoC1,2,3, range (mm to cm), time (s), error1,2,3
                 # OR
-                    # 2, SOH1,2,3, 
+                    # 2, SOH1,2,3, cycle1,2,3
                 # Ignore
                     # 3,....... (diagnosis)
                 if data[0].isdigit():
@@ -120,55 +132,66 @@ class MqttServer:
 
                     if header == 1 and (self.SoH_1 != 0 and self.SoH_2 != 0 and self.SoH_3 != 0):
                         current_line = data.split(",")
-                        state_num = int(current_line[1])
+                        self.state_num = int(current_line[1])
                         self.SoC_1 = int(float(current_line[2]))
                         self.SoC_2 = int(float(current_line[3]))
                         self.SoC_3 = int(float(current_line[4]))
                         self.range = int(float(current_line[5]))
+                        self.runtime = int(float(current_line[6]))
+                        self.error1 = int(float(current_line[7]))
+                        self.error2 = int(float(current_line[8]))
+                        self.error3 = int(float(current_line[9]))
           
                         cell1_res = {
-                            "cell":0, 
                             "battery_level":self.SoC_1, 
                             "battery_soh":self.SoH_1, 
-                            "battery_state":state_num
+                            "cycles":self.cycle1,
+                            "error":self.error1
                         }
                         json_data = json.dumps(cell1_res)
-                        self.energy_client.publish("battery/status", json_data, qos=1)
+                        self.energy_client.publish("battery/status/cell0", json_data, qos=1)
 
                         cell2_res = {
-                            "cell":1, 
                             "battery_level":self.SoC_2, 
                             "battery_soh":self.SoH_2, 
-                            "battery_state":state_num
+                            "cycles":self.cycle2,
+                            "error":self.error2
                         }
                         json_data = json.dumps(cell2_res)
-                        self.energy_client.publish("battery/status", json_data, qos=1)
+                        self.energy_client.publish("battery/status/cell1", json_data, qos=1)
 
                         cell3_res = {
-                            "cell":2, 
                             "battery_level":self.SoC_3, 
                             "battery_soh":self.SoH_3, 
-                            "battery_state":state_num
+                            "cycles":self.cycle3,
+                            "error":self.error3
                         }
                         json_data = json.dumps(cell3_res)
-                        self.energy_client.publish("battery/status", json_data, qos=1)
+                        self.energy_client.publish("battery/status/cell2", json_data, qos=1)
 
                         range_res = {
-                            "range":self.range
+                            "range":self.range/100,
+                            "time":self.runtime
                         }
                         json_data = json.dumps(range_res)
-                        self.energy_client.publish("rover/status/range", json_data, qos=1)
+                        self.energy_client.publish("rover/status/energy", json_data, qos=1)
+
+                        status_res = self.state_num
+                        self.energy_client.publish("battery/status", status_res, qos=1)
 
                     if header == 2:
                         current_line = data.split(",")
                         self.SoH_1 = int(float(current_line[1]))
                         self.SoH_2 = int(float(current_line[2]))
                         self.SoH_3 = int(float(current_line[3]))
+                        self.cycle1 = int(float(current_line[4]))
+                        self.cycle2 = int(float(current_line[5]))
+                        self.cycle3 = int(float(current_line[6]))
                     
 
 def main():
-    ip  = "35.177.181.61"
-    # ip = "localhost"
+    # ip  = "35.177.181.61"
+    ip = "localhost"
     port = 1883
     name = "admin"
     password = "marsrover"
