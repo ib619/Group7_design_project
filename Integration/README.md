@@ -35,29 +35,18 @@
 ## ROVER
 
 ### First Time Setup
-1. Navigate to Mosquitto MQTT Broker installation folder
-2. In the `mosquitto.conf` file, add the following lines:
-```
-listener 1883
-protocol mqtt
-listener 8080
-protocol websockets
-
-allow_anonymous true
-```
-3. Navigate to /path/Command_Subsystem/client
-4. Run in terminal: npm install
+- Follow instructions within Command_Subsystem folder
 
 
 ### Rover Setup
 1. Open Mosquitto with: mosquitto.exe -c mosquitto.conf -v
 2. Run 'npm start' within /path/Command_Subsystem/client
 3. Run 'start_server.sh' within /path/Command_Subsystem/server
-4. Upload the .sof file found in /path/Integration using the Quartus Programmer
-5. Upload the .elf file found in /path/Integration using nios2
+4. Upload the .sof file found in /path/Integration/FPGA using the Quartus Programmer
+5. Upload the .elf file found in /path/Integration/FPGA using nios2
 6. Upload the Arduino file found in /path/Integration/Arduino using the Arduino IDE with the correct settings
 7. Unplug the UART cables from the ESP32
-8. Upload the ESP32 file found in /path/Integration/ESP322 using the Arduino IDE with the correct settings
+8. Upload the ESP32 file found in /path/Integration/ESP32 using the Arduino IDE with the correct settings
 9. Plug in the UART cables again
 
 
