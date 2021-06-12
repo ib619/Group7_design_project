@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useMqttState, useSubscription } from "mqtt-react-hooks";
 import { Button } from "react-bootstrap";
+import FormAlert from "./FormAlert";
 import styled from "styled-components";
 
 const RoverStatus = () => {
   const { connectionStatus, client } = useMqttState();
   const { message } = useSubscription([
     "rover/status",
-    "rover/status/range",
+    "rover/status/energy",
     "position/update",
   ]);
   const [status, setStatus] = useState({
@@ -17,6 +18,7 @@ const RoverStatus = () => {
   });
   const [range, setRange] = useState(500); // in cm
   const [pos, setPos] = useState({ x: 0, y: 0, heading: 0 });
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (message) {
@@ -24,9 +26,9 @@ const RoverStatus = () => {
       if (message.topic === "rover/status") {
         // on rover status update
         setStatus(data);
-      } else if (message.topic === "rover/status/range") {
+      } else if (message.topic === "rover/status/energy") {
         // on remaning range update
-        setRange(data);
+        setRange(data["range"]);
       } else if (message.topic === "position/update") {
         // on position update
         setPos(data);
@@ -61,15 +63,20 @@ const RoverStatus = () => {
 
   return (
     <Container>
-      <p>MQTT: {connectionStatus}</p>
-      <p>{mapStatus()}</p>
-      <p>Total distance travelled: {status["distance_travelled"]} mm</p>
-      <Button name={1} variant="outline-light" onClick={handleClick}>
-        Reset
-      </Button>
-      <Button name={2} variant="outline-danger" onClick={handleClick}>
-        Stop
-      </Button>
+      <React.Fragment>
+        <FormAlert home={true} show={show} setShow={setShow} />
+      </React.Fragment>
+      <div className="status">
+        <p>MQTT: {connectionStatus}</p>
+        <p>{mapStatus()}</p>
+        <p>Total distance travelled: {status["distance_travelled"]} mm</p>
+        <Button name={1} variant="outline-light" onClick={handleClick}>
+          Reset
+        </Button>
+        <Button name={2} variant="outline-danger" onClick={handleClick}>
+          Stop
+        </Button>
+      </div>
     </Container>
   );
 };
@@ -78,9 +85,15 @@ export default RoverStatus;
 
 const Container = styled.div`
   display: flex;
-  margin: 1rem;
-  padding: 0.5rem;
-  justify-content: space-between;
+  flex-direction: column;
+
+  .status {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 1rem;
+    padding: 0.5rem;
+  }
 
   .p {
     color: ${({ theme }) => theme.text};

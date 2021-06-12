@@ -7,7 +7,6 @@ import FormAlert from "../components/FormAlert";
 const TargetPage = () => {
   const [target, setTarget] = useState({ x: "", y: "", speed: "" });
   const [show, setShow] = useState(false);
-  const [valid, setValid] = useState(false);
   const [errors, setErrors] = useState({});
 
   const { client } = useMqttState();
@@ -48,7 +47,6 @@ const TargetPage = () => {
     }
 
     setErrors(error);
-    setValid(formIsValid);
     return formIsValid;
   };
 
@@ -72,7 +70,7 @@ const TargetPage = () => {
       <FormAlert
         show={show}
         setShow={setShow}
-        valid={valid}
+        home={false}
         errors={errors}
         setErrors={setErrors}
       />

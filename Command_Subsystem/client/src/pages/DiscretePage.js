@@ -12,7 +12,6 @@ const DiscretePage = () => {
     distance: "",
   });
   const [show, setShow] = useState(false);
-  const [valid, setValid] = useState(false);
   const [errors, setErrors] = useState({});
 
   const { client } = useMqttState();
@@ -59,7 +58,6 @@ const DiscretePage = () => {
     }
 
     setErrors(error);
-    setValid(formIsValid);
     return formIsValid;
   };
 
@@ -85,7 +83,7 @@ const DiscretePage = () => {
       <FormAlert
         show={show}
         setShow={setShow}
-        valid={valid}
+        home={false}
         errors={errors}
         setErrors={setErrors}
       />

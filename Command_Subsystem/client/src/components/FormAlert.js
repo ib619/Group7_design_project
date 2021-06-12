@@ -9,13 +9,16 @@ const FormAlert = (props) => {
 
   return (
     <React.Fragment>
-      {props.valid === true ? (
-        <Alert show={props.show} variant="success">
-          <Alert.Heading>Success!!</Alert.Heading>
-          <p>Your commands are being sent to the rover :></p>
+      {props.home === true ? (
+        <Alert show={props.show} variant="danger">
+          <Alert.Heading>Low battery</Alert.Heading>
+          <p>Rover is returning home!!</p>
           <hr />
           <div className="d-flex justify-content-end">
-            <Button onClick={() => handleOnClick()} variant="outline-success">
+            <Button
+              onClick={() => props.setShow(false)}
+              variant="outline-danger"
+            >
               Ok bye!
             </Button>
           </div>

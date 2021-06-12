@@ -10,48 +10,65 @@ import Level4 from "../assets/battery-level-4.svg";
 import ErrorIcon from "../assets/error-triangle.svg";
 
 // component to display current battery levels and health
-
 const Battery = () => {
-  const { message } = useSubscription(["battery/status", "rover/status"]);
+  const { message } = useSubscription([
+    "battery/status",
+    "rover/status",
+    "rover/status/energy",
+    "battery/status/cell0",
+    "battery/status/cell1",
+    "battery/status/cell2",
+  ]);
   const [home, setHome] = useState(true);
   const [battery, setBattery] = useState(100);
   const [show, setShow] = useState(false);
-  const [error, setError] = useState(false);
+  const [state, setState] = useState(0);
+  const [status, setStatus] = useState({
+    range: 500,
+    time: 100,
+  });
   const [cell0, setcell0] = useState({
     battery_level: 100,
     battery_soh: 100,
-    battery_state: 0,
+    cycles: 0,
+    error: "",
   });
   const [cell1, setcell1] = useState({
     battery_level: 100,
     battery_soh: 100,
-    battery_state: 0,
+    cycles: 0,
+    error: "",
   });
   const [cell2, setcell2] = useState({
     battery_level: 100,
     battery_soh: 100,
-    battery_state: 0,
+    cycles: 0,
+    error: "",
   });
 
   useEffect(() => {
     if (message) {
+      let data = JSON.parse(message.message);
       if (message.topic === "battery/status") {
         // set state of each cell
-        let data = JSON.parse(message.message);
-        let cell = data["cell"];
-        if (cell === 0) {
-          setcell0(data);
-        } else if (cell === 1) {
-          setcell1(data);
-        } else if (cell === 2) {
-          setcell2(data);
-        }
+        setState(data);
       } else if (message.topic === "rover/status") {
         let data = JSON.parse(message.message);
         if (data["drive_status"] === 2) {
           setHome(true);
         } else {
           setHome(false);
+        }
+      } else if (message.topic === "rover/status/energy") {
+        setStatus(data);
+      } else {
+        let cell = message.topic.slice(-1);
+        if (cell === 0) {
+          setcell0(data);
+        } else if (cell === 1) {
+          setcell1(data);
+        } else if (cell === 2) {
+          setcell2(data);
         }
       }
     }
@@ -66,16 +83,6 @@ const Battery = () => {
       3;
 
     setBattery(avg);
-    setError(false);
-
-    // check if any of the battery states are 5
-    if (cell0["battery_state"] === 5) {
-      setError(true);
-    } else if (cell1["battery_state"] === 5) {
-      setError(true);
-    } else if (cell2["battery_state"] === 5) {
-      setError(true);
-    }
   }, [cell0, cell1, cell2]);
 
   const toggleShow = () => {
@@ -85,7 +92,7 @@ const Battery = () => {
   return (
     <React.Fragment>
       <div onClick={toggleShow}>
-        {error === true ? (
+        {state === 5 ? (
           <ImgContainer src={ErrorIcon} />
         ) : battery <= 20 ? (
           <ImgContainer src={Level0} />
@@ -106,6 +113,8 @@ const Battery = () => {
             cell0={cell0}
             cell1={cell1}
             cell2={cell2}
+            state={state}
+            status={status}
             ishome={home}
           />
         )}
