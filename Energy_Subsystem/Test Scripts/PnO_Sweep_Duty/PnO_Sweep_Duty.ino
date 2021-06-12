@@ -1,22 +1,25 @@
-// ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
-// V/I Limit: 5V, 230mA
-// Perturb and Observe Algorithm
-// LED is ON when sweeping.
-// Switch on Lamp!!!
-// Sweep IV curve: From 0 to -230mA. Stay at each current for 3 seconds
-// 0: IDLE
-// 1: SWEEP
-// 2: SWEEP COMPLETE
+ /* 
 
-// How bout we try to control the current on the output side?
-  // Panel connected to V_B
-  // 120R + 75R resistor connected to A
-  // Synchronous
+ATTEMPT TO IMPLEMENT PnO Algorithm for MPPT
+V/I Limit: 5V, 230mA
+Perturb and Observe Algorithm
+LED is ON when sweeping.
+Switch on Lamp!!!
 
-// Final test: asynchronous: J1 left, J2 right
+Sweep IV curve: From 0 to -230mA. Stay at each current for 3 seconds
+0: IDLE
+1: SWEEP
+2: SWEEP COMPLETE
 
-// VB halved with a potential divider, so multiply by 2
-// VA is passed through a potential divider, multiply by 5
+How bout we try to control the current on the output side?
+  Panel connected to V_B
+  120R + 75R resistor connected to A
+  Synchronous
+
+Final test: 
+  asynchronous boost J1 left, J2 right
+  asynchronous buck J1 right, J2 left
+*/
   
 
 //Packages
@@ -65,8 +68,8 @@ float current_measure; // obtained from ina219 (inductor current)
 float current_ref = 0, error_amps; // Current Control
 float pwm_out;
 float closed_pwm;
-float V_B; // voltage at terminal VB
-float V_A; // voltage at terminal VA
+double V_B; // voltage at terminal VB
+double V_A; // voltage at terminal VA
 boolean input_switch; // OLCL switch. 0 means back to IDLE
 
 bool move_on = 0;
@@ -116,6 +119,7 @@ void setup() {
   //Analogue input, currently the battery voltage (also port B voltage)
   // TODO: Do we want to connect the solar PV panel in boost or or in Buck? Boost would be more convenient
   pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
 
   // TimerA0 initialization for 1kHz control-loop interrupt.
   TCA0.SINGLE.PER = 999; //
@@ -136,8 +140,10 @@ void loop() {
   // FAST LOOP (1kHZ)
   if (loop_trigger == 1){
       state_num = next_state; //state transition
-      V_B = analogRead(A0)*4.096/1.03* 4.1626; //manual correction for potential divider
-      V_A = analogRead(A1)*4.096/1.03* 4.1626; //mannual correction for potential divider
+      //V_B = analogRead(A0)*4.096/1.03* 4.1626* 0.39; //manual correction for potential divider
+      V_B = analogRead(A0)*4.096/1.03* 1.481816;
+      //V_A = analogRead(A1)*4.096/1.03* 4.1626* 0.39; //mannual correction for potential divider
+      V_A = analogRead(A1)*4.096/1.03* 4.142073;
       if (V_B > 21000) { //Checking for Error states (just battery voltage for now) //TODO: adjust value for one PV panel
           state_num = 5; //go directly to jail
           next_state = 5; // stay in jail
@@ -231,7 +237,7 @@ void loop() {
     
     // Print values to serial monitor and csv
     // State number, PV Voltage Reference(V), PV Voltage(V), PV Power(W)
-    dataString = String(state_num) + "," + String(closed_pwm) + "," + String(V_B) + ","+ String(current_measure) + "," + String(V_A); //build a datastring for the CSV file
+    dataString = String(state_num) + "," + String(closed_pwm) + "," + String(V_B) + ","+ String(current_measure) + "," + String(V_A) + "," + String(V_B*current_measure/1000000); //build a datastring for the CSV file
     Serial.println(dataString); // send it to serial as well in case a computer is connected
 
     File dataFile = SD.open("PVPWMSwe.csv", FILE_WRITE); // open our CSV file

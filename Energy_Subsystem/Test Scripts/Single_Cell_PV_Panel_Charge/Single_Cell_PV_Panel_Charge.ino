@@ -139,8 +139,7 @@ void loop() {
         pwm_out = 0;
         if (input_switch == 1) { // if switch, move to charge
           // First time, so reset voltage panel values
-          pwm_out = 0.5; // initial pwm value
-          
+          pwm_out = 0.5; // initial pwm value   
           v1 = V_PD;
           i1 = current_measure;
           p1 = v1*i1;
@@ -187,7 +186,7 @@ void loop() {
           pwm_out = pwm_out - 0.05;
         } else if ((abs(v_diff) >= 10) && (i_diff/v_diff <= -i0/v0) || (abs(v_diff) < 10) && (i_diff <= 0)) {
           // vref = vref - 100;
-          pwm_out = pwm_out + 0.05;
+          pwm_out = pwm_out + 0.05;   
         } else {
           Serial.println("Not incrementing or decrementing");
         }

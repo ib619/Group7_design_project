@@ -299,7 +299,7 @@ void loop() {
         break;
       }
       case SLOW_DISCHARGE: { // 3 Slow discharge (-500mA)
-        current_ref = -250;
+        current_ref = -125;
         if (V_1 > V_LOWLIM && V_2 > V_LOWLIM && V_3 > V_LOWLIM) { // While not at minimum volts, stay here
           next_state = SLOW_DISCHARGE;
           digitalWrite(PIN_YELLED,false);
@@ -360,7 +360,7 @@ void loop() {
     SoC_3 = mySMPS.get_SOC(3);
   
     // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
+    dataString = String(state_num) + "," + String (pwm_out) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
     Serial.println(dataString);
     
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE);

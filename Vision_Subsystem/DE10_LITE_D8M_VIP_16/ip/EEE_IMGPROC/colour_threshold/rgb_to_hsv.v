@@ -1,22 +1,18 @@
 module  rgb_to_hsv(
     input                       clk,
     input                       rst_n,
-    input      [21:0]           pixel_addr,
     input	     [7:0]            rgb_r,
     input	     [7:0]            rgb_g,
     input	     [7:0]            rgb_b,	
     output reg   [8:0]            hsv_h,//  0 - 360
     output reg   [7:0]            hsv_s,// 0- 255
     output reg   [7:0]            hsv_v, // 0- 255
-    output reg   [21:0]           pixel_addr_out,
     output reg                    valid_out,
-    input                         sop,
-    input                         valid_in
-	 //Testing
-//	 output [13:0]  top60_check,
-//	 output [13:0]  quotient_check,
-//	 output [7:0]   cdiff_reg_check,
-//	 output [13:0]  quotient_before
+    input                         valid_in,
+    //Testing
+    output [13:0]  top60_check,
+    output [13:0]  quotient_check,
+    output [7:0]   cdiff_reg_check
 );
 
 
@@ -58,8 +54,6 @@ reg [7:0] division_reg;//division
 reg [8:0] hsv_s_interm2;
 reg [8:0] hsv_v_interm;
 
-reg [21:0] pixel_addr1;
-reg [21:0] pixel_addr2;
 
 reg valid1;
 reg valid2;
@@ -70,7 +64,6 @@ assign cdiff_reg_check = cdiff_reg;
 assign quotient_check = quotient_s;
 
 
-wire valid = ~sop & valid_in;
 assign r_more_g = (rgb_r > rgb_g)? 1'b1:1'b0; 
 assign r_more_b = (rgb_r > rgb_b)? 1'b1:1'b0; 
 assign g_more_b = (rgb_g > rgb_b)? 1'b1:1'b0; 
@@ -104,9 +97,9 @@ always@(posedge clk)
     begin
         if (~rst_n) begin
             cmax_reg <= 8'd0;
-				cmax_reg1 <= 8'd0;
+            cmax_reg1 <= 8'd0;
             cdiff_reg <= 8'd0;
-				cdiff_reg1 <= 8'd0;
+            cdiff_reg1 <= 8'd0;
             r_more_g_reg1 <= 1'b0;
             r_more_b_reg1 <= 1'b0;
             g_more_b_reg1 <= 1'b0;
@@ -119,13 +112,12 @@ always@(posedge clk)
             top_60 <= 14'd0;
                 
             valid1 <= 1'b0;
-            pixel_addr1 <= 20'd0;
             end
         else begin
             cmax_reg <= cmax;
-				cmax_reg1 <= cmax_reg;
+            cmax_reg1 <= cmax_reg;
             cdiff_reg <= cdiff;
-				cdiff_reg1 <= cdiff_reg;
+            cdiff_reg1 <= cdiff_reg;
             r_more_g_reg1 <= r_more_g;
             r_more_b_reg1 <= r_more_b;
             g_more_b_reg1 <= g_more_b;
@@ -138,14 +130,11 @@ always@(posedge clk)
             b_more_g_reg2 <= b_more_g_reg1;
             top_60 <= {top,6'b000000} - {top,2'b00};
                 
-            valid1 <= valid;
-            pixel_addr1 <= pixel_addr;
+            valid1 <= valid_in;
                 
-            end
+        end
     end
 
-
-assign quotient_before = $signed(top_60)/cdiff_reg;
 
 divider1	divide_h (
 	.aclr ( ~rst_n ),
@@ -191,17 +180,11 @@ assign hsv_s_interm =  (cmax_reg1 == 8'd0)? 8'd0: quotient_s ;
 always@(posedge clk) 
     begin
         if (~rst_n) begin
-//            division_reg <= 8'd0;
-//            hsv_s_interm2 <= 8'd0;
             hsv_v_interm <= 8'd0;
-            pixel_addr2 <= 20'd0;
             valid2 <= 1'b0;
             end
         else begin
-//            division_reg <= division;	
-//            hsv_s_interm2 <= hsv_s_interm;
             hsv_v_interm <= cmax_reg;	
-            pixel_addr2 <= pixel_addr1;
             valid2 <= valid1;
         end
     end
@@ -239,7 +222,6 @@ always@(posedge clk)
             hsv_h <= hsv_h_interm;	
             hsv_s <= hsv_s_interm;
             hsv_v <= hsv_v_interm;
-            pixel_addr_out <= pixel_addr2;
             valid_out <= valid2;
         end
     end

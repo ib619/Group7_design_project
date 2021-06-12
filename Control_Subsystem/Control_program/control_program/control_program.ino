@@ -10,7 +10,7 @@
 #define BASE_ADDRESS 0x40000
 #define FPGA_I2C_ADDRESS 0x55
 
-#define COLLISION_THRESHOLD 70  // currently in cm cos object distance comes in cm
+#define COLLISION_THRESHOLD 50  // currently in cm cos object distance comes in cm
 
 #define RSSI_UPDATE_INTERVAL 100
 #define VISION_UPDATE_INTERVAL 500
@@ -181,14 +181,16 @@ void loop() {
               collisionFlag=2;
             }
             else  {
-              if(rover.drive_mode==2) { //save target coordinates/speed if in t2c mode
-                command_holder.drive_mode=2;
-                command_holder.target_x=rover.target_x;
-                command_holder.target_y=rover.target_y;
-                command_holder.speed=rover.speed;
+              if(rover.drive_mode!=0) {
+                if(rover.drive_mode==2) { //save target coordinates/speed if in t2c mode
+                  command_holder.drive_mode=2;
+                  command_holder.target_x=rover.target_x;
+                  command_holder.target_y=rover.target_y;
+                  command_holder.speed=rover.speed;
+                }
+                rover.drive_mode=0;
+                updateFlag=1;
               }
-              rover.drive_mode=0;
-              updateFlag=1;
             }
             break;
            case 2:              //turn right 90 degrees then move 250mm

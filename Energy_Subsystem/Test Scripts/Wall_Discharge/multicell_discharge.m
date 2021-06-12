@@ -95,31 +95,70 @@ for i = 1:length
     end
 end
 
+remaining_time = zeros(length,1);
+for i = 1:length
+    % gross_Charge = (SOC1(i,1)+SOC2(i,1)+SOC3(i,1))*1800/100;
+    amphr_cap = (min([SOC1(i,1) SOC2(i,1) SOC3(i,1)]))*1800/100;
+    % remaining_Ws = (V_1(i,1)+V_2(i,1)+V_3(i,1)-3*2500)/1000*amphr_cap;
+    remaining_Ws = (3*(min([V_1(i,1) V_2(i,1) V_3(i,1)])-2400))/1000*amphr_cap;
+    remaining_time(i,1) = remaining_Ws/2 * 1.5;
+end
+
 %% 
 
 figure(1);
 
 subplot(3,1,1);
-plot(V_1); hold on;
-plot(V_2); hold on;
-plot(V_3);
+plot(V_1,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(V_2,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(V_3,'Linewidth', 2, 'MarkerSize', 8);
 ylabel('Voltage (mV)');
 xlabel('Time (s)');
-legend('V_1','V_2','V_3');
+legend('V_1','V_2','V_3','Location','Best');
 ylim([2400 3700]);
+set(gca,'LineWidth',2);
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
 
 subplot(3,1,2);
-plot(current_ref); hold on;
-plot(current_measure);
+plot(current_ref,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(current_measure,'Linewidth', 2, 'MarkerSize', 8);
 ylabel('Current (mA)');
 xlabel('Time (s)');
-legend('Reference Current','Measured Current');
+legend('Reference Current','Measured Current','Location','Best');
+set(gca,'LineWidth',2);
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
 
 subplot(3,1,3);
-plot(SOC1); hold on;
-plot(SOC2); hold on;
-plot(SOC3);
+plot(disc1,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(disc2,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(disc3,'Linewidth', 2, 'MarkerSize', 8); hold on;
+ylabel('Discharge ON/OFF');
+xlabel('Time (s)');
+legend('Cell 1 Discharge','Cell 2 Discharge','Cell 3 Discharge','Location','Best');
+set(gca,'LineWidth',2);
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+sgtitle('Series Cells Discharging Characteristic','FontName', 'Arial');
+
+figure(2);
+plot(SOC1,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(SOC2,'Linewidth', 2, 'MarkerSize', 8); hold on;
+plot(SOC3,'Linewidth', 2, 'MarkerSize', 8);
 ylabel('SOC (%)');
 xlabel('Time (s)');
-legend('SOC1','SOC2','SOC3');
-ylim([-10 110]);
+legend('SOC1','SOC2','SOC3','Location','Best');
+ylim([0 110]);
+set(gca,'LineWidth',2);
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+sgtitle('Series Cells Discharging SoC','FontName', 'Arial');
+
+figure(3);
+plot(remaining_time);
+xlabel('Time(s)');
+ylabel('Remaining Time (s)');

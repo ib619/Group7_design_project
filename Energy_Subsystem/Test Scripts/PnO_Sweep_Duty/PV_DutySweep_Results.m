@@ -1,6 +1,9 @@
 clear; close all;
 
-import = readmatrix('PVPWMSWE.CSV');
+import = readmatrix('4_parallelcells_test6_home.CSV');
+
+% Series Test 2,5 is the best for series
+% Parallel Test 4 is the best for parallel
 
 % Test 1: 120R resistor on port A, asynchronous
 % Newest Test: 120+75R resistor on port A, synchronous

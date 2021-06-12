@@ -51,7 +51,7 @@ void SMPS::init() {
     /* Need to Initialise
         Current statistics: current maximal charge, determined from last calibration
         Charge discharge curves, from SD
-        Threshold voltages
+        Cycles
     */
 
    SoC_1_arr.fill(0);
@@ -96,9 +96,30 @@ void SMPS::init() {
     SoH_2 = q2_now/q2_0*100;
     SoH_3 = q3_now/q3_0*100;
 
+    if (SD.exists("Cycles.csv")) {
+        myFile = SD.open("Cycles.csv");  
+        if(myFile) {    
+            for (int i = 0; i < 2; i++) {
+                content = myFile.readStringUntil(',');
+                //Serial.println(content);
+                if (i == 0) {
+                    cycle1 = content.toFloat();
+                }
+                if (i == 1) {
+                    cycle2 = content.toFloat();
+                }
+            }
+            // Finally
+            content = myFile.readStringUntil('\n');
+            cycle3 = content.toFloat();
+        }
+    } else {
+        Serial.println("Cycles File not open");
+    }
+
     // Initialise discharge and charge tables
-    if (SD.exists(discharge_SoC_filename)) {
-        myFile = SD.open(discharge_SoC_filename);
+    if (SD.exists("dv_SoC.csv")) {
+        myFile = SD.open("dv_SoC.csv");
         if (myFile) {
             for (int i = 0; i < 100; i++) {
                 content = myFile.readStringUntil(',');
@@ -128,8 +149,8 @@ void SMPS::init() {
     }
     myFile.close();
 
-    if (SD.exists(charge_SoC_filename)) {
-        myFile = SD.open(charge_SoC_filename);
+    if (SD.exists("cv_SoC.csv")) {
+        myFile = SD.open("cv_SoC.csv");
         if (myFile) {
             for (int i = 0; i < 100; i++) {
                 content = myFile.readStringUntil(',');
@@ -219,7 +240,7 @@ void SMPS::decode_command(int cmd, int speed, int pos_x, int pos_y, int drive_st
     }
 }
 
-float SMPS::estimate_range(int x0, int y0, int distance, int drive_status) {
+int SMPS::estimate_range(int x0, int y0, float distance, int drive_status) {
     if ((x0 ==0 && y0 == 0) || drive_status == 2) {
         x0 = 0, y0 = 0;
         return 0;
@@ -228,26 +249,33 @@ float SMPS::estimate_range(int x0, int y0, int distance, int drive_status) {
         SoC_2_start = SoC_2;
         SoC_3_start = SoC_3;
     } else if  ((SoC_1_start - SoC_1 > 20) && (SoC_2_start - SoC_2 > 20) & (SoC_3_start - SoC_3 > 20)) {
-        float grossSoCDrop = (SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3);
-        float grossSoC = SoC_1 + SoC_2 + SoC_3;
-        float distance_travelled = static_cast<float>(distance);
-        return distance_travelled*grossSoC/grossSoCDrop;        
+        //float grossSoCDrop = (SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3);
+        //float grossSoC = SoC_1 + SoC_2 + SoC_3;
+        //float result = distance_travelled*grossSoC/grossSoCDrop;
+        return static_cast<int>(distance* ((SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3)) /(SoC_1 + SoC_2 + SoC_3));     
     }
     x1 = x0, y1 = y0;
 }
 
-/*
-float SMPS::estimate_time() {
-    float gross_Charge = (SoC_1*q1_now + SoC_2*q2_now + SoC_3*q3_now)/100;
-    float remaining_Ws = 3.2 * gross_Charge; // Very rough: Discharge curve at around 3.2V most of the time
-    
-   // Assume average power dissipated is 5.01V x 0.14A = 0.7014W
-   float remaining_Time = remaining_Ws/0.7014; // seconds
- 
-   // Return in Hours
-   return remaining_Time * 0.55 / 60 / 24; // From lab results, efficiency of boost at I_in = 250mA is approx 65%
+float SMPS::minimum(float item_1, float item_2, float item_3) {
+  if (item_1 <= item_2 && item_1 <= item_3) {
+    return item_1;
+  }
+  if (item_2 <= item_1 && item_2 <= item_3) {
+    return item_2;
+  }
+  if (item_3 <= item_1 && item_3 <= item_1) {
+    return item_3;
+  }
 }
-*/
+
+int SMPS::estimate_time(float V_1, float V_2, float V_3) {
+    //float amphr_capacity = minimum(SoC_1, SoC_2, SoC_3)*minimum(q1_now, q2_now, q3_now)/100;
+    //float remaining_Ws = 3*(V_1+V_2+V_3)/1000 * amphr_capacity; // Voltage in mV
+   // Assume idle power is 2W
+   // Return in Seconds
+   return static_cast<int>(minimum(SoC_1, SoC_2, SoC_3)*minimum(q1_now, q2_now, q3_now)/100 * ((V_1+V_2+V_3)-3*2500)/1000 /2/ 0.8); // From lab results, efficiency is no less than 80%
+}
 
 void SMPS::charge() {
     command_running = 1;
@@ -267,7 +295,7 @@ void SMPS::determine_discharge_current(int speed, float V_1, float V_2, float V_
         } else if (speed > drive_speed[i] && speed <= drive_speed[i+1]) {
             Serial.println("Looked up discharge table");
             float drive_power_flt = static_cast<float>(drive_power[i]);
-            discharge_current =  -(drive_power_flt/(V_1+V_2+V_3))/0.5; // accounting for inefficiencies
+            discharge_current =  -(drive_power_flt/(V_1+V_2+V_3))/0.9; // accounting for inefficiencies
         }
     }
 }
@@ -297,14 +325,8 @@ void SMPS::recalibrate_SOH() {
     d_iterator = 0;
 }
 
-// should not halt recalibration process
-bool SMPS::get_recalibrate() {
-    state = 1;
-    return recalibrating;
-}
-
 // q1, q2, q3 will vary because we might use the discharge to divert some of the current
-void SMPS::send_current_cap(float q1, float q2, float q3) {
+void SMPS::send_current_cap() {
     q1_now = q1;
     q2_now = q2;
     q3_now = q3;
@@ -329,6 +351,51 @@ void SMPS::send_current_cap(float q1, float q2, float q3) {
     myFile.close();
 }
 
+void SMPS::next_cycle() {
+    if (q1 > q1_now) {
+        q1 = 0;
+        cycle1 = cycle1 + 0.5;
+        cycle_changed = 1;
+    }
+    if (q2 > q2_now) {
+        q2 = 0;
+        cycle2 = cycle2 + 0.5;
+        cycle_changed = 1;
+    }
+    if (q3 > q3_now) {
+        q3 = 0;
+        cycle3 = cycle3 + 0.5;
+        cycle_changed = 1;
+    }
+
+    if (cycle_changed == 1){
+        dataString = String(cycle1) + "," + String(cycle2) + "," + String(cycle3);
+
+        if (SD.exists("Cycles.csv")) {
+            SD.remove("Cycles.csv");
+        }
+
+        myFile = SD.open("Cycles.csv", FILE_WRITE);
+        if (myFile){ 
+            myFile.println(dataString); 
+        } else {
+            Serial.println("File not open"); 
+        }
+        myFile.close();
+    }
+}
+
+int SMPS::get_cycle(int cell_num) {
+   if (cell_num == 1) {
+    return static_cast<int>(cycle1);
+  } else if (cell_num == 2) {
+    return static_cast<int>(cycle2);
+  } else if (cell_num == 3) {
+    return static_cast<int>(cycle3);
+  }
+  cycle_changed = 0;
+}
+
 int SMPS::get_SOH(int cell_num) {
     if (cell_num == 1) {
         return static_cast<int>(SoH_1);
@@ -339,7 +406,7 @@ int SMPS::get_SOH(int cell_num) {
   }
 }
 
-void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float charge_1, float charge_2, float charge_3) {
+void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3) {
     float temp1 = SoC_1;
     float temp2 = SoC_2;
     float temp3 = SoC_3;
@@ -369,21 +436,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         if (V_1 > c_ocv_u || V_1 < c_ocv_l) { // LOOKUP        
             temp1 = lookup_c_table(1, V_1, V_2, V_3); 
         } else { // COULOMB COUNTING
-            temp1 = temp1 + charge_1/q1_now*100;
+            temp1 = temp1 + dq1/q1_now*100;
             lookup = 0;
             Serial.println("CC1");
         }
         if (V_2 > c_ocv_u || V_2 < c_ocv_l) { // LOOKUP
             temp2 = lookup_c_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING  
-            temp2 = temp2 + charge_2/q2_now*100;
+            temp2 = temp2 + dq2/q2_now*100;
             lookup = 0;
             Serial.println("CC2");
         }
         if (V_3 > c_ocv_u || V_3 < c_ocv_l) { // LOOKUP  
             temp3 = lookup_c_table(3, V_1, V_2, V_3);          
         } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
+            temp3 = temp3 + dq3/q3_now*100;
             lookup = 0;
             Serial.println("CC3");
         }
@@ -391,21 +458,21 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
         if (V_1 > d_ocv_u || V_1 < d_ocv_l) { // LOOKUP
             temp1 = lookup_d_table(1, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
-            temp1 = temp1 + charge_1/q1_now*100;
+            temp1 = temp1 + dq1/q1_now*100;
             lookup = 0;
             Serial.println("CC1");
         }
         if (V_2 > d_ocv_u || V_2 < d_ocv_l) { // LOOKUP           
             temp2 = lookup_d_table(2, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
-            temp2 = temp2 + charge_2/q2_now*100;
+            temp2 = temp2 + dq2/q2_now*100;
             lookup = 0;
             Serial.println("CC2");
         }
         if (V_3 > d_ocv_u || V_3 < d_ocv_l) { // LOOKUP
             temp3 = lookup_d_table(3, V_1, V_2, V_3);
         } else { // COULOMB COUNTING
-            temp3 = temp3 + charge_3/q3_now*100;
+            temp3 = temp3 + dq3/q3_now*100;
             lookup = 0;
             Serial.println("CC3");
         }
@@ -467,27 +534,17 @@ void SMPS::compute_SOC(int state_num, float V_1, float V_2, float V_3, float cha
 
      //Assign previous state
     prev_state = state_num;
-
-    // Now Print all values to serial and SD
-    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3)  + "," + String(q1_now) + "," + String(q2_now)  + "," + String(q3_now);
-    // Serial.println(dataString);
-
-    myFile = SD.open("Diagnose.csv", FILE_WRITE);
-    if (myFile){ 
-      myFile.println(dataString);
-    } else {
-      Serial.println("File not open"); 
-    }
-    myFile.close();
+    dq1 = 0; dq2 = 0; dq3 = 0;
+    next_cycle();
 }
 
-float SMPS::get_SOC(int cell_num) {
+int SMPS::get_SOC(int cell_num) {
   if (cell_num == 1) {
-    return SoC_1;
+    return static_cast<int>(SoC_1);
   } else if (cell_num == 2) {
-    return SoC_2;
+    return static_cast<int>(SoC_2);
   } else if (cell_num == 3) {
-    return SoC_3;
+    return static_cast<int>(SoC_3);
   }
 }
 
@@ -556,11 +613,11 @@ float SMPS::lookup_d_table(int cell_num, float V_1, float V_2, float V_3) {
 
 void SMPS::clear_lookup() {
     // Clear lookup table on SD
-    if (SD.exists(discharge_SoC_filename)) {
-        SD.remove(discharge_SoC_filename);
+    if (SD.exists("dv_SoC.csv")) {
+        SD.remove("dv_SoC.csv");
     }
-    if (SD.exists(charge_SoC_filename)) {
-        SD.remove(charge_SoC_filename);
+    if (SD.exists("cv_SoC.csv")) {
+        SD.remove("cv_SoC.csv");
     }
 
     // Erase Tables
@@ -609,10 +666,10 @@ void SMPS::create_SoC_table() {
     memset(c_SoC, 0, sizeof(c_SoC));
 
     //Need to erase file first. Not the same for SoH file, which keeps the entire battery history
-    if (SD.exists(discharge_SoC_filename)) {
-        SD.remove(discharge_SoC_filename);
+    if (SD.exists("dv_SoC.csv")) {
+        SD.remove("dv_SoC.csv");
     }
-    myFile = SD.open(discharge_SoC_filename, FILE_WRITE);
+    myFile = SD.open("dv_SoC.csv", FILE_WRITE);
     for(int i = 0; i < d_iterator; i++){
         if (i == d_iterator - 1) {
             dataString = String(d_v_1[i]) + "," + String(d_v_2[i]) + "," + String(d_v_3[i]) + "," + String(0);
@@ -626,10 +683,10 @@ void SMPS::create_SoC_table() {
     }
     myFile.close();
 
-    if (SD.exists(charge_SoC_filename)) {
-        SD.remove(charge_SoC_filename);
+    if (SD.exists("cv_SoC.csv")) {
+        SD.remove("cv_SoC.csv");
     }
-    myFile = SD.open(charge_SoC_filename, FILE_WRITE);
+    myFile = SD.open("cv_SoC.csv", FILE_WRITE);
     for(int i = 0; i < c_iterator; i++){
         if (i == c_iterator - 1) {
             dataString = String(c_v_1[i]) + "," + String(c_v_2[i]) + "," + String(c_v_3[i]) + "," + String(100);
@@ -643,6 +700,107 @@ void SMPS::create_SoC_table() {
     }
     myFile.close();
 
+}
+
+void SMPS::charge_discharge(float current_measure) {
+    dq1 = dq1 + current_measure/1000.0;
+    dq2 = dq2 + current_measure/1000.0;
+    dq3 = dq3 + current_measure/1000.0;
+
+    if (relay_on == 1) {
+      dq1 = dq1*0.87;
+      dq2 = dq2*0.87;
+      dq3 = dq3*0.87;
+      relay_on = 0;
+    }
+
+    q1 = q1 + dq1;
+    q2 = q2 + dq2;
+    q3 = q3 + dq3;
+}
+
+void SMPS::charge_balance(float V_1, float V_2, float V_3, float current_measure) {
+    // Rationale: Discharge current in the more higher charged cells
+    // Connect to discharging relay if a battery is significantly lower  
+    if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+        disc1 = 0, disc2 = 1, disc3 = 1;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
+        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
+    } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+        disc1 = 1, disc2 = 0, disc3 = 1;
+        dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
+    } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
+        disc1 = 1, disc2 = 1, disc3 = 0;
+        dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
+        dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    } else {
+        disc1 = 0, disc2 = 0, disc3 = 0;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    }
+    digitalWrite(PIN_DISC1, disc1);
+    digitalWrite(PIN_DISC2, disc2);
+    digitalWrite(PIN_DISC3, disc3);
+
+    // The current is halted for a while when the relay is on.
+    if (relay_on == 1) {
+      dq1 = dq1*0.87;
+      dq2 = dq2*0.87;
+      dq3 = dq3*0.87;
+      relay_on = 0;
+    }
+
+    q1 = q1 + dq1;
+    q2 = q2 + dq2;
+    q3 = q3 + dq3;
+}
+
+void SMPS::discharge_balance(float V_1, float V_2, float V_3, float current_measure) {
+    if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
+        Serial.println("Cell 1 lowest");
+        disc1 = 1, disc2 = 0, disc3 = 0;
+        dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+        Serial.println("Cell 2 lowest");
+        disc1 = 0, disc2 = 1, disc3 = 0;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
+        Serial.println("Cell 3 lowest");
+        disc1 = 0, disc2 = 0, disc3 = 1;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
+    } else {
+        Serial.println("No balancing");
+        disc1 = 0, disc2 = 0, disc3 = 0;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    }
+    digitalWrite(PIN_DISC1, disc1);
+    digitalWrite(PIN_DISC2, disc2);
+    digitalWrite(PIN_DISC3, disc3);
+
+    // The current is halted for a while when the relay is on.
+    if (relay_on == 1) {
+      dq1 = dq1*0.87;
+      dq2 = dq2*0.87;
+      dq3 = dq3*0.87;
+      relay_on = 0;
+    }
+
+    q1 = q1 + dq1;
+    q2 = q2 + dq2;
+    q3 = q3 + dq3;
 }
 
 /*
