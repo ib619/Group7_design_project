@@ -40,11 +40,6 @@ const Map = () => {
     }
   }, [message, setObstacles, setPos]);
 
-  useEffect(() => {
-    console.log(show);
-    console.log(path);
-  }, [show]);
-
   return (
     <React.Fragment>
       <Border>
@@ -62,9 +57,9 @@ const Map = () => {
         </Button>
         <MapInteractionCSS
           showControls={true}
-          // minScale={0.5}
+          minScale={0.5}
           maxScale={2}
-          // translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
+          translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
           // value={map}
           // onChange={(val) => {
           //   setMap(val);
@@ -149,7 +144,7 @@ const Obstacle = styled.div.attrs((props) => ({
 
 const Point = styled.div.attrs((props) => ({
   style: {
-    left: props.coords[0] * 0.2 + 2880,
+    left: props.coords[0] * 0.2 + 2900,
     bottom: props.coords[1] * 0.2 + 2230,
   },
 }))`
