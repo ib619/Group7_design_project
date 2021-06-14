@@ -103,7 +103,6 @@ class MqttServer:
     def on_message_position(self, client, userdata, msg):
         db = create_connection('db/marsrover.db')
         if msg.topic == 'position/update':
-            logging.debug(self.counter)
             if self.counter == 5:
                 # only add to db if 10th position update
                 data = str(msg.payload.decode("utf-8", "ignore"))
