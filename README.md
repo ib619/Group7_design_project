@@ -35,16 +35,18 @@
 ## ROVER
 
 ### First Time Setup
-- Follow "Setting up..." instructions within Command_Subsystem folder for either local or AWS server
+- Follow "Setting up..." instructions within the Command_Subsystem folder for either local or AWS server
+- Follow "Drive_Control_integration.ino" instructions within the Drive_Subsystem folder to setup APIs for the Arduino
+- Configure `config.h` in `/path/Control_Subsystem/Control_program/control_program` using the instructions within Control_Subsystem folder
 
 
 ### Rover Setup
 1. Turn on SMPS power, unplug UART cables
 2. Follow "How to start..." instructions within Command_Subsystem folder for either local or AWS server
 3. Run 'start_server.sh' within `/path/Command_Subsystem/server`
-4. Upload the .sof file found in `to be filled` using the Quartus Programmer
-5. Upload the .elf file found in `to be filled` using nios2
-6. Upload the Arduino file found in `to be filled` using the Arduino IDE with the correct settings
+4. Upload the .sof file found in `/path/Vision_Subsystem/sof_elf_files/v8_final` using the Quartus Programmer
+5. Upload the .elf file found in `/path/Vision_Subsystem/sof_elf_files/v8_final` using nios2
+6. Upload the Arduino file `Drive_Control_Integration.ino` found in `/path/Drive_Subsystem/Arduino_Code` using the Arduino IDE with the correct settings
 7. Unplug the UART cables from the ESP32
 8. Upload the ESP32 file found in `/path/Control_Subsystem/Control_program/control_program` using the Arduino IDE with the correct settings
 9. Plug in the UART cables
@@ -52,5 +54,6 @@
 
 ### Sending Instructions to Rover
 1. Navigate to the website `npm start` opened
-2. Select Discrete or Coordinate mode from the top menu
-3. Send instructions using boxes the provided fields
+2. Login using the appropriate credentials found within the Command_Subsystem folder
+3. Select Discrete or Coordinate mode from the top menu
+4. Send instructions using boxes the provided fields
