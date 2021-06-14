@@ -1,3 +1,7 @@
+# Y2 Group 7 EEE/EIE Design Project Repository
+
+<br />
+
 ## DEPENDENCIES
 
 ### List of non-standard Arduino libraries needed for final rover:
@@ -27,8 +31,8 @@
 - Board Name/Type: Arduino Nano Every
 
 ### Known Problems With Uploading Scripts
-1. Arduino will not accept sketch uploads if SMPS is not powered
-2. ESP32 will not upload if UART cables are still plugged in
+- Arduino will not accept sketch uploads if SMPS is not powered
+- ESP32 will not upload if UART cables are still plugged in
 
 <br />
 
