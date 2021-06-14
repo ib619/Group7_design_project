@@ -1,0 +1,76 @@
+--sign_div_unsign DEN_REPRESENTATION="UNSIGNED" DEN_WIDTH=8 LPM_PIPELINE=1 MAXIMIZE_SPEED=5 NUM_REPRESENTATION="SIGNED" NUM_WIDTH=16 SKIP_BITS=0 aclr clken clock denominator numerator quotient remainder
+--VERSION_BEGIN 16.1 cbx_cycloneii 2016:10:24:15:04:16:SJ cbx_lpm_abs 2016:10:24:15:04:16:SJ cbx_lpm_add_sub 2016:10:24:15:04:16:SJ cbx_lpm_divide 2016:10:24:15:04:16:SJ cbx_mgl 2016:10:24:15:05:03:SJ cbx_nadder 2016:10:24:15:04:16:SJ cbx_stratix 2016:10:24:15:04:16:SJ cbx_stratixii 2016:10:24:15:04:16:SJ cbx_util_mgl 2016:10:24:15:04:16:SJ  VERSION_END
+
+
+-- Copyright (C) 2016  Intel Corporation. All rights reserved.
+--  Your use of Intel Corporation's design tools, logic functions 
+--  and other software and tools, and its AMPP partner logic 
+--  functions, and any output files from any of the foregoing 
+--  (including device programming or simulation files), and any 
+--  associated documentation or information are expressly subject 
+--  to the terms and conditions of the Intel Program License 
+--  Subscription Agreement, the Intel Quartus Prime License Agreement,
+--  the Intel MegaCore Function License Agreement, or other 
+--  applicable license agreement, including, without limitation, 
+--  that your use is for the sole purpose of programming logic 
+--  devices manufactured by Intel and sold by Intel or its 
+--  authorized distributors.  Please refer to the applicable 
+--  agreement for further details.
+
+
+FUNCTION alt_u_div_fug (aclr, clk_en, clock, denominator[7..0], numerator[15..0])
+RETURNS ( den_out[7..0], quotient[15..0], remainder[7..0]);
+
+--synthesis_resources = lut 128 reg 50 
+SUBDESIGN sign_div_unsign_nvi
+( 
+	aclr	:	input;
+	clken	:	input;
+	clock	:	input;
+	denominator[7..0]	:	input;
+	numerator[15..0]	:	input;
+	quotient[15..0]	:	output;
+	remainder[7..0]	:	output;
+) 
+VARIABLE 
+	divider : alt_u_div_fug;
+	DFF_Num_Sign[0..0] : dffe;
+	adder_result_int[8..0]	:	WIRE;
+	adder_cin	:	WIRE;
+	adder_dataa[7..0]	:	WIRE;
+	adder_datab[7..0]	:	WIRE;
+	adder_result[7..0]	:	WIRE;
+	adder_out[7..0]	: WIRE;
+	gnd_wire	: WIRE;
+	neg_num[15..0]	: WIRE;
+	neg_quot[15..0]	: WIRE;
+	norm_num[15..0]	: WIRE;
+	protect_quotient[15..0]	: WIRE;
+	protect_remainder[7..0]	: WIRE;
+
+BEGIN 
+	divider.aclr = aclr;
+	divider.clk_en = clken;
+	divider.clock = clock;
+	divider.denominator[] = denominator[];
+	divider.numerator[] = norm_num[];
+	DFF_Num_Sign[].clk = clock;
+	DFF_Num_Sign[].clrn = (! aclr);
+	DFF_Num_Sign[].d = ( numerator[15..15]);
+	DFF_Num_Sign[].ena = clken;
+	adder_result_int[] = (adder_dataa[], 0) - (adder_datab[], !adder_cin);
+	adder_result[] = adder_result_int[8..1];
+	adder_cin = gnd_wire;
+	adder_dataa[] = divider.den_out[];
+	adder_datab[] = protect_remainder[];
+	adder_out[] = adder_result[];
+	gnd_wire = B"0";
+	neg_num[] = (! numerator[]);
+	neg_quot[] = (! protect_quotient[]);
+	norm_num[] = ((numerator[] & (! numerator[15..15])) # (neg_num[] & numerator[15..15]));
+	protect_quotient[] = divider.quotient[];
+	protect_remainder[] = divider.remainder[];
+	quotient[] = ((protect_quotient[] & (! DFF_Num_Sign[0].q)) # (neg_quot[] & DFF_Num_Sign[0].q));
+	remainder[] = ((protect_remainder[] & (! DFF_Num_Sign[0].q)) # (adder_out[] & DFF_Num_Sign[0].q));
+END;
+--VALID FILE

@@ -1,0 +1,101 @@
+# Reading C:/intelFPGA_lite/16.1/modelsim_ase/tcl/vsim/pref.tcl
+# do rgb_to_hsv_tb_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 10.5b Lib Mapping Utility 2016.10 Oct  5 2016
+# vmap work rtl_work 
+# Copying C:/intelFPGA_lite/16.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider1.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:11:23 on Jun 13,2021
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb" C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider1.v 
+# -- Compiling module divider1
+# 
+# Top level modules:
+# 	divider1
+# End time: 22:11:23 on Jun 13,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider2.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:11:23 on Jun 13,2021
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb" C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider2.v 
+# -- Compiling module divider2
+# 
+# Top level modules:
+# 	divider2
+# End time: 22:11:23 on Jun 13,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:11:23 on Jun 13,2021
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb" C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v 
+# -- Compiling module rgb_to_hsv
+# 
+# Top level modules:
+# 	rgb_to_hsv
+# End time: 22:11:23 on Jun 13,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:11:24 on Jun 13,2021
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb" C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v 
+# -- Compiling module rgb_to_hsv_tb
+# 
+# Top level modules:
+# 	rgb_to_hsv_tb
+# End time: 22:11:24 on Jun 13,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs="+acc"  rgb_to_hsv_tb
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs=""+acc"" rgb_to_hsv_tb 
+# Start time: 22:11:24 on Jun 13,2021
+# Loading work.rgb_to_hsv_tb
+# Loading work.rgb_to_hsv
+# Loading work.divider1
+# Loading lpm_ver.lpm_divide
+# Loading lpm_ver.LPM_HINT_EVALUATION
+# Loading work.divider2
+# ** Warning: (vsim-3017) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Too few port connections. Expected 20, found 10.
+#    Time: 0 ps  Iteration: 0  Instance: /rgb_to_hsv_tb/dut File: C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'numer60_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'quotient_s_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'quotient_h_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'division_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'cdiff_reg_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'cdiff_reg1_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'r_more_g_reg1_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'r_more_b_reg1_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'g_more_b_reg1_check'.
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(81): [TFMPC] - Missing connection for port 'b_more_g_reg1_check'.
+# ** Warning: (vsim-3017) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v(156): [TFMPC] - Too few port connections. Expected 7, found 6.
+#    Time: 0 ps  Iteration: 0  Instance: /rgb_to_hsv_tb/dut/divide_h File: C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider1.v
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v(156): [TFMPC] - Missing connection for port 'remain'.
+# ** Warning: (vsim-3017) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v(186): [TFMPC] - Too few port connections. Expected 7, found 6.
+#    Time: 0 ps  Iteration: 0  Instance: /rgb_to_hsv_tb/dut/divide_s File: C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/divider2.v
+# ** Warning: (vsim-3722) C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv.v(186): [TFMPC] - Missing connection for port 'remain'.
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# hue=  0, sat=  0, val=  0
+# hue=  0, sat=  0, val=  0
+# hue=162, sat= 70, val=135
+# hue=238, sat=177, val=255
+# hue= 30, sat=205, val=251
+# hue=  0, sat=  0, val=200
+# hue=  0, sat=  0, val=200
+# ** Note: $finish    : C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v(78)
+#    Time: 322 ns  Iteration: 0  Instance: /rgb_to_hsv_tb
+# 1
+# Break in Module rgb_to_hsv_tb at C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/colour_threshold/rgb_to_hsv_tb/rgb_to_hsv_tb.v line 78
+# End time: 22:12:41 on Jun 13,2021, Elapsed time: 0:01:17
+# Errors: 0, Warnings: 15
