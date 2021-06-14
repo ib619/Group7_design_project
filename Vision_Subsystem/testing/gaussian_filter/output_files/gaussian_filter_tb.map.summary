@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Mon Jun 14 01:28:13 2021
+Quartus Prime Version : 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+Revision Name : gaussian_filter_tb
+Top-level Entity Name : separableconvolution5x5_gaussian
+Family : MAX 10
+Total logic elements : 225
+    Total combinational functions : 185
+    Dedicated logic registers : 98
+Total registers : 98
+Total pins : 161
+Total virtual pins : 0
+Total memory bits : 224
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

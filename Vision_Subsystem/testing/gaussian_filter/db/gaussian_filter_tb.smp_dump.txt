@@ -1,0 +1,5 @@
+
+State Machine - |separableconvolution5x5_gaussian|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 

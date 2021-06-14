@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSubscription } from "mqtt-react-hooks";
 import GridLines from "react-gridlines";
 import { MapInteractionCSS } from "react-map-interaction";
-import BootstrapSwitchButton from "bootstrap-switch-button-react";
-import { ToggleButton } from "react-bootstrap";
 import styled from "styled-components";
 import pointerwhite from "../assets/pointer-white.svg";
 import home from "../assets/home.svg";

@@ -24,6 +24,17 @@ const BatteryPopup = (props) => {
     return map[state];
   };
 
+  const maperror = (error) => {
+    let map = {
+      0: "no error",
+      1: "overcharge",
+      2: "undercharge",
+      3: "overheating",
+    };
+
+    return map[error];
+  };
+
   const handleClick = (e) => {
     client.publish("battery/command", e.target.name);
   };
@@ -36,20 +47,35 @@ const BatteryPopup = (props) => {
             <h3>Cell 0</h3>
             <p>Battery level: {props.cell0["battery_level"].toFixed(2)}%</p>
             <p>Battery soh: {props.cell0["battery_soh"].toFixed(2)}%</p>
-            <p>Battery state: {mapstates(props.cell0["battery_state"])}</p>
+            <p>Number of cycles: {props.cell0["cycles"]}</p>
+            {props.state === 5 && (
+              <p>Error type: {maperror(props.cell0["error"])}</p>
+            )}
           </div>
           <div className="cell">
             <h3>Cell 1</h3>
             <p>Battery level: {props.cell1["battery_level"].toFixed(2)}%</p>
             <p>Battery soh: {props.cell1["battery_soh"].toFixed(2)}%</p>
-            <p>Battery state: {mapstates(props.cell1["battery_state"])}</p>
+            <p>Number of cycles: {props.cell1["cycles"]}</p>
+            {props.state === 5 && (
+              <p>Error type: {maperror(props.cell1["error"])}</p>
+            )}
           </div>
           <div className="cell">
             <h3>Cell 2</h3>
             <p>Battery level: {props.cell2["battery_level"].toFixed(2)}%</p>
             <p>Battery soh: {props.cell2["battery_soh"].toFixed(2)}%</p>
-            <p>Battery state: {mapstates(props.cell2["battery_state"])}</p>
+            <p>Number of cycles: {props.cell2["cycles"]}</p>
+            {props.state === 5 && (
+              <p>Error type: {maperror(props.cell2["error"])}</p>
+            )}
           </div>
+        </Content>
+        <br />
+        <Content>
+          <p>Battery State: {mapstates(props.state)} </p>
+          <p>Remaining Time: {props.status["time"].toFixed(2)}s</p>
+          <p>Remaining Range: {props.status["range"]}cm</p>
         </Content>
         <Buttons>
           <Button

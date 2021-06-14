@@ -1,0 +1,589 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "tap0[0]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[1]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[2]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[3]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[4]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[5]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[6]",
+					"strict" : false
+				},
+				{
+					"name" : "tap0[7]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "tap1[7]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[0]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[1]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[2]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[3]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[4]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[5]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[6]",
+					"strict" : false
+				},
+				{
+					"name" : "tap2[7]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[0]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[1]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[2]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[3]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[4]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[5]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[6]",
+					"strict" : false
+				},
+				{
+					"name" : "tap3[7]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[0]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[1]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[2]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[3]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[4]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[5]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[6]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pixel[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel1_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel2_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixel3_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelEnable_check",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[8]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[9]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[10]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[11]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[12]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[13]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[14]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[15]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[16]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[17]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelCounter1[18]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[8]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelRowCounter1[9]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[8]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[9]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[10]",
+					"strict" : false
+				},
+				{
+					"name" : "pixelStartUpCounter_check[11]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "first_conv_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[8]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[9]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[10]",
+					"strict" : false
+				},
+				{
+					"name" : "second_conv_check[11]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[0]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[1]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[2]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[3]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[4]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[5]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[6]",
+					"strict" : false
+				},
+				{
+					"name" : "shift_out_check[7]",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel_valid",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[0]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[1]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[2]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[3]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[4]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[5]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[6]",
+					"strict" : false
+				},
+				{
+					"name" : "i_pixel[7]",
+					"strict" : false
+				},
+				{
+					"name" : "rst_n",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
