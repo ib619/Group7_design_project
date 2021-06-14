@@ -31,19 +31,19 @@ const Battery = () => {
     battery_level: 100,
     battery_soh: 100,
     cycles: 0,
-    error: "",
+    error: 0,
   });
   const [cell1, setcell1] = useState({
     battery_level: 100,
     battery_soh: 100,
     cycles: 0,
-    error: "",
+    error: 0,
   });
   const [cell2, setcell2] = useState({
     battery_level: 100,
     battery_soh: 100,
     cycles: 0,
-    error: "",
+    error: 0,
   });
 
   useEffect(() => {
@@ -61,15 +61,12 @@ const Battery = () => {
         }
       } else if (message.topic === "rover/status/energy") {
         setStatus(data);
-      } else {
-        let cell = message.topic.slice(-1);
-        if (cell === 0) {
-          setcell0(data);
-        } else if (cell === 1) {
-          setcell1(data);
-        } else if (cell === 2) {
-          setcell2(data);
-        }
+      } else if (message.topic === "battery/status/cell0") {
+        setcell0(data);
+      } else if (message.topic === "battery/status/cell1") {
+        setcell1(data);
+      } else if (message.topic === "battery/status/cell2") {
+        setcell2(data);
       }
     }
   }, [message]);

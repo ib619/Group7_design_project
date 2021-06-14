@@ -13,15 +13,6 @@ const FormAlert = (props) => {
         <Alert show={props.show} variant="danger">
           <Alert.Heading>Low battery</Alert.Heading>
           <p>Rover is returning home!!</p>
-          <hr />
-          <div className="d-flex justify-content-end">
-            <Button
-              onClick={() => props.setShow(false)}
-              variant="outline-danger"
-            >
-              Ok bye!
-            </Button>
-          </div>
         </Alert>
       ) : (
         <Alert show={props.show} variant="danger">

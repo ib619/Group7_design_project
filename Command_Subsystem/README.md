@@ -8,7 +8,7 @@
 
 ## Setting up the MQTT broker and connections (if running local broker)
 1. Install the mosquitto broker using your local package manager
-2. Copy the acl and pwdfile from `server` into the mosquitto directory
+2. Copy the acl and pwdfile from `server` into the mosquitto directory (only do this if running on Ubuntu)
 3. In the `mosquitto.conf` file, add the following lines:
 
 ```
@@ -20,6 +20,16 @@ protocol websockets
 allow_anonymous false
 password_file path to pwdfile]
 acl_file [path to acl file]
+```
+
+- If not using Ubuntu, add these lines instead:
+```
+listener 1883
+protocol mqtt
+listener 8080
+protocol websockets
+
+allow_anonymous true
 ```
 4. On mac, the config file is located at `/usr/local/etc/mosquitto/mosquitto.conf`
 5. To start the local mosquitto broker with the config file run: `/usr/local/sbin/mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf -v`
