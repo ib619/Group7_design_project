@@ -252,7 +252,7 @@ int SMPS::estimate_range(int x0, int y0, float distance, int drive_status) {
         //float grossSoCDrop = (SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3);
         //float grossSoC = SoC_1 + SoC_2 + SoC_3;
         //float result = distance_travelled*grossSoC/grossSoCDrop;
-        return static_cast<int>(distance* ((SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3)) /(SoC_1 + SoC_2 + SoC_3));     
+        return static_cast<int>(distance* ((SoC_1 + SoC_2 + SoC_3)/(SoC_1_start - SoC_1) + (SoC_2_start - SoC_2) + (SoC_3_start - SoC_3)));     
     }
     x1 = x0, y1 = y0;
 }
@@ -720,24 +720,26 @@ void SMPS::charge_discharge(float current_measure) {
 }
 
 void SMPS::charge_balance(float V_1, float V_2, float V_3, float current_measure) {
-    // Rationale: Discharge current in the more higher charged cells
-    // Connect to discharging relay if a battery is significantly lower  
     if ((SoC_2 - SoC_1) > 5  && (SoC_3 - SoC_1) > 5) {  // Cell 1 Lowest
-        disc1 = 0, disc2 = 1, disc3 = 1;
-        dq1 = dq1 + current_measure/1000.0;
-        dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
-        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-    } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
-        disc1 = 1, disc2 = 0, disc3 = 1;
+        Serial.println("Cell 1 lowest");
+        disc1 = 1, disc2 = 0, disc3 = 0;
         dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
         dq2 = dq2 + current_measure/1000.0;
-        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
-    } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5)  { // Cell 3 Lowest
-        disc1 = 1, disc2 = 1, disc3 = 0;
-        dq1 = dq1 + (current_measure - V_1/150.0)/1000.0;
+        dq3 = dq3 + current_measure/1000.0;
+    } else if ((SoC_1 - SoC_2) > 5 && (SoC_3 - SoC_2) > 5) { // Cell 2 Lowest
+        Serial.println("Cell 2 lowest");
+        disc1 = 0, disc2 = 1, disc3 = 0;
+        dq1 = dq1 + current_measure/1000.0;
         dq2 = dq2 + (current_measure - V_2/150.0)/1000.0;
         dq3 = dq3 + current_measure/1000.0;
+    } else if ((SoC_1 - SoC_3) > 5 && (SoC_2 - SoC_3) > 5) { // Cell 3 Lowest
+        Serial.println("Cell 3 lowest");
+        disc1 = 0, disc2 = 0, disc3 = 1;
+        dq1 = dq1 + current_measure/1000.0;
+        dq2 = dq2 + current_measure/1000.0;
+        dq3 = dq3 + (current_measure - V_3/150.0)/1000.0;
     } else {
+        Serial.println("No balancing");
         disc1 = 0, disc2 = 0, disc3 = 0;
         dq1 = dq1 + current_measure/1000.0;
         dq2 = dq2 + current_measure/1000.0;
