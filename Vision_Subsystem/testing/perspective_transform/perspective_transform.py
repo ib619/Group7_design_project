@@ -26,10 +26,14 @@ def get_fixed_point():
 def image_perspective(image_path = '../images/perspective.jpg'):
     frame = cv2.imread(image_path)
     frame = cv2.resize(frame, (640, 480))
-    x1, y1 = 482, 58
-    x2, y2 = 401, 393
-    x3, y3 = 250, 375
-    x4, y4 = 316, 237
+#     x1, y1 = 280, 310
+#     x2, y2 = 370, 310
+#     x3, y3 = 20, 470
+#     x4, y4 = 630, 470
+    x1, y1 = 260, 360
+    x2, y2 = 390, 360
+    x3, y3 = 100, 420
+    x4, y4 = 500, 420
     cv2.circle(frame,(x1,y1),4,(0, 0, 255), 3)    
     cv2.circle(frame,(x2,y2),4,(0, 0, 255), 3)    
     cv2.circle(frame,(x3,y3),4,(0, 0, 255), 3)    
@@ -86,6 +90,6 @@ def live_perspective():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    live_perspective()
-    # image_perspective()
+#     live_perspective()
+    image_perspective()
     # get_fixed_point()

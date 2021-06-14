@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Sun Jun 13 12:16:40 2021
+Quartus Prime Version : 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+Revision Name : perspective_transform_tb
+Top-level Entity Name : perspective_transform
+Family : MAX 10
+Total logic elements : 2,284
+    Total combinational functions : 2,283
+    Dedicated logic registers : 208
+Total registers : 208
+Total pins : 522
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

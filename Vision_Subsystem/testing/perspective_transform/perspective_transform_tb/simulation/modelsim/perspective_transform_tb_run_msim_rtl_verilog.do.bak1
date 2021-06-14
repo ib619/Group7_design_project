@@ -1,0 +1,10 @@
+transcript on
+if {[file exists rtl_work]} {
+	vdel -lib rtl_work -all
+}
+vlib rtl_work
+vmap work rtl_work
+
+vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/perspective_transform/perspective_transform_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/perspective_transform/perspective_transform_tb/signed_divide_delay.v}
+vlog -vlog01compat -work work +incdir+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/perspective_transform/perspective_transform_tb {C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/perspective_transform/perspective_transform_tb/perspective_transform.v}
+
