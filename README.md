@@ -8,6 +8,16 @@
 - [2. DEPENDENCIES](#2-dependencies)
   - [2.1. List of non-standard Arduino libraries needed for final rover](#21-list-of-non-standard-arduino-libraries-needed-for-final-rover)
   - [2.2. Tools needed to configure final rover](#22-tools-needed-to-configure-final-rover)
+- [3. ARDUINO IDE SETTINGS](#3-arduino-ide-settings)
+  - [3.1. ESP32 Upload Settings](#31-esp32-upload-settings)
+  - [3.2. Arduino Upload Settings](#32-arduino-upload-settings)
+  - [3.3. Known Problems With Uploading Scripts](#33-known-problems-with-uploading-scripts)
+- [4. ROVER](#4-rover)
+  - [4.1. First Time Setup](#41-first-time-setup)
+  - [4.2. Rover Setup](#42-rover-setup)
+  - [4.3. Sending Instructions to Rover](#43-sending-instructions-to-rover)
+
+<br />
 
 ## 1. TEAM MEMBERS
 - Command - Zhao, Siting (01709075)
@@ -60,7 +70,6 @@
 - Follow "Drive_Control_integration.ino" instructions within the Drive_Subsystem folder to setup APIs for the Arduino
 - Configure `config.h` in `/path/Control_Subsystem/Control_program/control_program` using the instructions within Control_Subsystem folder
 
-
 ### 4.2. Rover Setup
 1. Turn on SMPS power, unplug UART cables
 2. Follow "How to start..." instructions within Command_Subsystem folder for either local or AWS server
@@ -73,7 +82,7 @@
 9. Plug in the UART cables
 10. Wait for LED8 on SMPS to turn on before sending instructions
 
-### Sending Instructions to Rover
+### 4.3. Sending Instructions to Rover
 1. Navigate to the website `npm start` opened
 2. Login using the appropriate credentials found within the Command_Subsystem folder
 3. Select Discrete or Coordinate mode from the top menu
