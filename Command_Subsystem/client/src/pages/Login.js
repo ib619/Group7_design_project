@@ -14,7 +14,7 @@ const Login = (props) => {
 
     if (!data["broker"]) {
       formIsValid = false;
-    } else if (!data["broker"].startsWith("ws://")) {
+    } else if (!data["broker"].startsWith("ws")) {
       formIsValid = false;
     }
 

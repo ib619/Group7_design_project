@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSubscription } from "mqtt-react-hooks";
 import GridLines from "react-gridlines";
+import { Button } from "react-bootstrap";
 import { MapInteractionCSS } from "react-map-interaction";
 import styled from "styled-components";
 import pointerwhite from "../assets/pointer-white.svg";
@@ -11,9 +12,13 @@ const Map = () => {
   // for the map stuff
   const [pos, setPos] = useState({ x: 0, y: 0, heading: 0 });
   const [obstacles, setObstacles] = useState({});
-  // const [show, setShow] = useState(false);
-  // const [path, setPath] = useState({});
-  const { message } = useSubscription(["obstacle/result", "position/update"]);
+  const [show, setShow] = useState(false);
+  const [path, setPath] = useState({});
+  const { message } = useSubscription([
+    "obstacle/result",
+    "position/update",
+    "path",
+  ]);
 
   // for the map zooming features
   // const [map, setMap] = useState({ scale: 1, translation: { x: 0, y: 0 } });
@@ -28,34 +33,33 @@ const Map = () => {
       } else if (message.topic === "position/update") {
         // on position update
         setPos(data);
+      } else if (message.topic === "path") {
+        // on path update
+        setPath(data);
       }
-      // else if (message.topic === "path") {
-      //   // on path update
-      //   setPath(data);
-      // }
     }
   }, [message, setObstacles, setPos]);
 
   return (
     <React.Fragment>
       <Border>
-        {/* <ToggleButton
-          checked={show}
+        <Button
           type="checkbox"
           variant="secondary"
+          checked={show}
           className="switch"
-          value={1}
-          onChange={(e) => {
-            setShow(e.currentTarget.checked);
+          // value="1"
+          onClick={(e) => {
+            setShow(!show);
           }}
         >
           Show Path
-        </ToggleButton> */}
+        </Button>
         <MapInteractionCSS
           showControls={true}
-          // minScale={0.5}
+          minScale={0.5}
           maxScale={2}
-          // translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
+          translationBounds={{ xMin: -495, xMax: 1250, yMin: -788, yMax: 1240 }}
           // value={map}
           // onChange={(val) => {
           //   setMap(val);
@@ -68,10 +72,10 @@ const Map = () => {
               Array.from(obstacles).map((data, i) => (
                 <Obstacle key={i} coords={data} />
               ))}
-            {/* {show &&
+            {show &&
               Array.from(path).map((data, i) => (
                 <Point key={i} coords={data} />
-              ))} */}
+              ))}
           </GridLines>
         </MapInteractionCSS>
       </Border>
@@ -138,19 +142,19 @@ const Obstacle = styled.div.attrs((props) => ({
 // left: 2810
 // bottom: -2740
 
-// const Point = styled.div.attrs((props) => ({
-//   style: {
-//     left: props.coords[0] * 0.2 + 2810,
-//     bottom: props.coords[1] * 0.2 - 2745,
-//   },
-// }))`
-//   background: white;
-//   width: 10px;
-//   height: 10px;
-//   border-radius: 50%;
-//   position: relative;
-//   transition: all 1s ease-out;
-// `;
+const Point = styled.div.attrs((props) => ({
+  style: {
+    left: props.coords[0] * 0.2 + 2900,
+    bottom: props.coords[1] * 0.2 + 2230,
+  },
+}))`
+  background: white;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  transition: all 1s ease-out;
+`;
 
 const Person = styled.img.attrs((props) => ({
   style: {
