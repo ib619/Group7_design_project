@@ -12,9 +12,7 @@ COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 WORKDIR /etc/mosquitto
-COPY mosquitto.conf .
-COPY pwdfile .
-COPY acl .
+COPY encrypt .
 
 WORKDIR /home
 COPY  . .

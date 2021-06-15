@@ -58,7 +58,7 @@ const BatteryPopup = (props) => {
             <p>Battery soh: {props.cell1["battery_soh"].toFixed(2)}%</p>
             <p>Number of cycles: {props.cell1["cycles"]}</p>
             {props.state === 5 && (
-              <p>Error type: {maperror(props.cell0["error"])}</p>
+              <p>Error type: {maperror(props.cell1["error"])}</p>
             )}
           </div>
           <div className="cell">
@@ -67,14 +67,14 @@ const BatteryPopup = (props) => {
             <p>Battery soh: {props.cell2["battery_soh"].toFixed(2)}%</p>
             <p>Number of cycles: {props.cell2["cycles"]}</p>
             {props.state === 5 && (
-              <p>Error type: {maperror(props.cell0["error"])}</p>
+              <p>Error type: {maperror(props.cell2["error"])}</p>
             )}
           </div>
         </Content>
         <br />
         <Content>
           <p>Battery State: {mapstates(props.state)} </p>
-          <p>Remaining Time: {props.status["time"]}s</p>
+          <p>Remaining Time: {props.status["time"].toFixed(2)}s</p>
           <p>Remaining Range: {props.status["range"]}cm</p>
         </Content>
         <Buttons>

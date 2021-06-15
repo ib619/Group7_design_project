@@ -7,7 +7,7 @@ from collections import deque
 import serial
 import pandas as pd
 
-arduino = serial.Serial('/dev/cu.usbmodem14301', 9600, timeout=.1)
+arduino = serial.Serial('/dev/cu.usbmodem14501', 9600, timeout=.1)
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -26,11 +26,11 @@ class MqttServer:
 
         self.col_names = ["SOC1","SOC2","SOC3","range","runtime"]
 
-        self.discharge_df = pd.read_csv("discharge_demo2.csv", names=self.col_names)
+        self.discharge_df = pd.read_csv("discharge_demo3.csv", names=self.col_names)
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             print(self.discharge_df)
-        self.charge_df = pd.read_csv("charge_demo2.csv", names=self.col_names)
+        self.charge_df = pd.read_csv("charge_demo3.csv", names=self.col_names)
 
         '''
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
@@ -56,9 +56,9 @@ class MqttServer:
         self.error1 = 0 # type of error: (0 no error) (1 overvoltage) (2 undervoltage) (3 )
         self.error2 = 0
         self.error3 = 0
-        self.cycle1 = 0
-        self.cycle2 = 0
-        self.cycle3 = 0
+        self.cycle1 = 15
+        self.cycle2 = 13
+        self.cycle3 = 9
 
         # Things to receive from MQTT and send to arduino
         self.prev_cmd = 0
@@ -138,7 +138,7 @@ class MqttServer:
             if self.prev_cmd == 2 or self.prev_cmd == 1:
                 self.cmd = 0
 
-            if self.seconds == 20:
+            if self.seconds == 3:
                 self.state_num = 5
                 self.error1 = 1
             elif self.i == 0:
@@ -229,7 +229,7 @@ class MqttServer:
             self.energy_client.publish("battery/status/cell2", json_data, qos=1)
 
             range_res = {
-                "range":self.range/100,
+                "range":self.range,
                 "time":self.runtime
             }
             json_data = json.dumps(range_res)
@@ -269,8 +269,8 @@ class MqttServer:
                     
 
 def main():
-    # ip  = "35.177.181.61"
-    ip = "localhost"
+    ip  = "35.177.181.61"
+    # ip = "localhost"
     port = 1883
     name = "admin"
     password = "marsrover"

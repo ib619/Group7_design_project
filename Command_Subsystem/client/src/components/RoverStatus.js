@@ -40,12 +40,19 @@ const RoverStatus = () => {
     // calculate distance, compare with range
     // publish 0,0 t2c
     let dist = Math.sqrt(Math.pow(pos.x, 2) + Math.pow(pos.y, 2)); // in mm
-    dist /= 10;
-    if (dist >= range - 50) {
+    dist /= 10; // in cm
+    if (dist >= range - 30) {
       let target = { x: 0, y: 0, speed: 150 };
       client.publish("drive/t2c", JSON.stringify(target));
+      setShow(true);
     }
-  }, [pos]);
+  }, [pos, range]);
+
+  useEffect(() => {
+    if (status["drive_status"] === 2) {
+      setShow(false);
+    }
+  }, [status]);
 
   const handleClick = (e) => {
     client.publish("reset", e.target.name);
@@ -64,7 +71,7 @@ const RoverStatus = () => {
   return (
     <Container>
       <React.Fragment>
-        <FormAlert home={true} show={show} setShow={setShow} />
+        <FormAlert home={true} show={show} />
       </React.Fragment>
       <div className="status">
         <p>MQTT: {connectionStatus}</p>

@@ -14,6 +14,7 @@ Evaluates the SoC using the SoC voltage lookup table
 3 CELLS IN SERIES!!!!
 
 Flow chart
+typical: 0 > 1 > 2 > 3 > 4 > 1 > 2 > 3 > 4 > ......
 recalibrate: 0 > 1 > 6 > 2 > 3 > 4 > 1 > 6 > 2 > 7 > 0
 discharge: 0 > 8 > 4 > 0
 rapid_discharge: 0 > 9 > 8 > 4 > 0
@@ -48,10 +49,15 @@ Rationale for SOC
 #include <SD.h>
 #include <MovingAverage.h>
 #include "Power.h"
+#include "ControlInterface.h"
 
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
 
 SMPS mySMPS;
+ControlInterface ci(&Serial1);
+
+// Which cell are we using?
+int CELL = 1;
 
 #define PIN_OLCL 2
 #define PIN_PWM 6
@@ -124,9 +130,10 @@ float V_PD = 0;
 // Series Batteries Variables
 float V_1 = 0, V_2 = 0, V_3 =0;
 float V_UPLIM = 3590;
-float V_LOWLIM = 2510;
+float V_LOWLIM = 2500;
 
 // State Machine Stuff
+boolean input_switch;
 int state_num = 0,next_state;
 bool started_discharge = 0;
 bool stop = 0;
@@ -135,21 +142,15 @@ int error1 = 0, error2 = 0, error3 = 0; // 0 for no error, 1 for overcharge, 2 f
 // Blinking LED for state 6
 boolean blink = 0;
 
-bool relay_on = 0;
-
 int SoC_1 = 0, SoC_2 = 0, SoC_3 = 0; // Use SoC for balancing
 int SoH_1 = 100, SoH_2 = 100, SoH_3 = 100; // SoH
+bool relay_on = 0;
 
 // From command reception
-int cmd = 0;
-int speed = 0; //PWM
-int pos_x = 0;
-int pos_y = 0;
-int dist_travelled = 0;
-int drive_status = 2;
-int range; // to be sent back to python
-int remain_time; // in seconds
-int cycle1, cycle2, cycle3;
+int cmd;
+int speed; //PWM
+int pos_x;
+int pos_y;
 
 void setup() {
 
@@ -158,31 +159,12 @@ void setup() {
   Wire.setClock(700000); // set the comms speed for i2c
   ina219.init(); // this initiates the current sensor
   Serial.begin(9600); // USB Communications
-  // Serial.setTimeout(5);
 
   mySMPS.init();
 
-  SoH_1 = mySMPS.get_SOH(1);
-  SoH_2 = mySMPS.get_SOH(2);
-  SoH_3 = mySMPS.get_SOH(3);
-  cycle1 = mySMPS.get_cycle(1);
-  cycle2 = mySMPS.get_cycle(2);
-  cycle3 = mySMPS.get_cycle(3);
-
-  dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3) + "," 
-            + String(cycle1) + "," + String(cycle2)  + "," + String(cycle3);
-  Serial.println(dataString);
-  
-  if (SD.exists("BatCycle.csv")) {
-        SD.remove("BatCycle.csv");
-  }
-  if (SD.exists("Diagnose.csv")) {
-      SD.remove("Diagnose.csv");
-  }
-  
   noInterrupts(); //disable all interrupts
   analogReference(EXTERNAL); // We are using an external analogue reference for the ADC
-  
+
   //SMPS Pins
   pinMode(13, OUTPUT); // Using the LED on Pin D13 to indicate status
   pinMode(PIN_OLCL, INPUT_PULLUP); // Pin 2 is the input from the CL/OL switch
@@ -196,7 +178,6 @@ void setup() {
   pinMode(PIN_V1, INPUT);
   pinMode(PIN_V2, INPUT);
   pinMode(PIN_V3, INPUT);
-  pinMode(PIN_VA, INPUT);
 
   //Discharge for battery 1,2,3
   pinMode(PIN_DISC1, OUTPUT);
@@ -218,50 +199,53 @@ void setup() {
   TCB0.CTRLA = TCB_CLKSEL_CLKDIV1_gc | TCB_ENABLE_bm; //62.5kHz
 
   interrupts();  //enable interrupts.
-  analogWrite(PIN_PWM, 120); //just a default state to start with
+  analogWrite(6, 120); //just a default state to start with
+
+  // Control Iinterface
+  ci.setBaudrate(115200);
+  ci.setTimeout(5);
+  ci.begin();
+  delay(3000);
+  ci.flushReadBuffer();
+  ci.writeSOH(0, mySMPS.get_SOH(1));
+  ci.writeSOH(1, mySMPS.get_SOH(2));
+  ci.writeSOH(2, mySMPS.get_SOH(3));
 }
 
 void loop() {
 
-   //TODO: command reception loop
-   if(Serial.available() > 0)  {
+    //NOTE: command reception loop
+    if(ci.fetchData())  {
+      cmd = ci.getCommand();
+      speed = ci.getSpeed();
+      pos_x = ci.getPositionX();
+      pos_y = ci.getPositionY();
+      Serial.println("Command Received");
 
-      cmd = (Serial.readStringUntil(',')).toInt();
-      pos_x = (Serial.readStringUntil(',')).toInt();
-      pos_y = (Serial.readStringUntil(',')).toInt();
-      dist_travelled = (Serial.readStringUntil(',')).toInt();
-      drive_status = (Serial.readStringUntil(',')).toInt();
-      speed = (Serial.readStringUntil('\n')).toInt();
+      //TODO: need to implement drive status via GPIO connection
+      mySMPS.decode_command(cmd, speed, pos_x, pos_y, 1, V_1, V_2, V_3);
 
-      mySMPS.decode_command(cmd, speed, pos_x, pos_y, drive_status, V_1, V_2, V_3);
-      Serial.println("Command received");
-
-      // RESET is cmd 2
-      // Can override command at anytime, unless recalibrating
-      if (mySMPS.error == 0 && mySMPS.recalibrating == 0) {
+      if (mySMPS.recalibrating == 0 && mySMPS.error == 0) {
         next_state = mySMPS.get_state();
-        Serial.println("New command decoded");
         if (cmd == 1) {
            mySMPS.clear_lookup(); // reset tables
         }
       } else if (cmd == 2) {
         next_state = IDLE;
-        mySMPS.reset();
-        Serial.println("Reset");
-      } else {
-        Serial.println("Do not interrupt during recalibration.");
+        mySMPS.command_running = 0;
       }
 
       // If in recalibration, do not halt recalibration
       if (mySMPS.recalibrating == 0) {
         next_state = mySMPS.get_state();
       }
-   }
+  }
 
 //In rests state, if command was running (but not calibration), command complete
   if (loop_trigger == 1){ // FAST LOOP (currently 200HZ)
       state_num = next_state; //state transition
-       
+      ci.writeState(state_num);
+      
       //Checking for Error states (individual battery voltages defined)
       if ((V_1 > 3700 || V_1 < 2400) || (V_2 > 3700 || V_2 < 2400) || (V_3 > 3700 || V_3 < 2400)) { 
           state_num = ERROR; //go directly to jail
@@ -297,27 +281,26 @@ void loop() {
       }
 
       V_PD = analogRead(PIN_VA)*4.096/1.03* 4.1626; //mannual correction for potential divider
-      current_measure = ina219.getCurrent_mA(); // sample the inductor current (via the sensor chip)
+      current_measure = (ina219.getCurrent_mA()); // sample the inductor current (via the sensor chip)
      
-      // Use constant voltage with respect to battery 1
-      // Use voltage then current PID controller for constant voltage (only in state 6)
-      if (current_ref === 2000) {
+      if (current_ref == 2000) {
         // do not use PID voltage or current controllers.
-      } else if (vref == 3600) { 
-        ev = (vref - V_1)/1000.0;  //voltage error at this time
-        cv = pidv(ev);  //voltage pid
-        cv = saturation(cv, 0.25, 0); //current demand saturation
-        ei = (cv - current_measure)/1000.0; ; //current error
-        pwm_out = pidi(ei);  //current pid
+      } else if (vref == 3600) { //CONSTANT VOLTAGE CHARGING
+        ev = (vref - V_1)/1000.0; 
+        cv = pidv(ev); 
+        cv = saturation(cv, 0.25, 0); 
+        ei = (cv - current_measure)/1000.0; ;
+        pwm_out = pidi(ei); 
       } else if (vref == 0) { // Use Current PID controller in all other scenarios
-        error_amps = (current_ref - current_measure) / 1000.0; //PID error calculation
-        pwm_out = pidi(error_amps); //Perform the PID controller calculation       
+        error_amps = (current_ref - current_measure) / 1000.0;
+        pwm_out = pidi(error_amps);
       }
       pwm_out = saturation(pwm_out, 0.99, 0.01); //duty_cycle saturation.
       analogWrite(PIN_PWM, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
       int_count++; //count how many interrupts since this was last reset to zero
       rly_timer++;
       loop_trigger = 0; //reset the trigger and move on with life
+  
   }
   
   // Relay timer is reset every second. Like int_count, it also increments per millisecond.
@@ -342,21 +325,10 @@ void loop() {
     digitalWrite(PIN_RLY3,false);
     relay_on = 1;
   }
-    /*
-    dataString2 = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3); // + "," + String(current_ref) + "," + String(current_measure) + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," + String(disc1) + "," + String(disc2) + "," + String(disc3);
-    Serial.println(dataString2);
-    File dataFile = SD.open("Diagnose.csv", FILE_WRITE);
-    if (dataFile){ 
-      dataFile.println(dataString2);
-    } else {
-      Serial.println("Batcycle not open"); 
-    }
-    dataFile.close();
-    */
-    
  
-  // This still 
-  if (int_count == 200) {
+  // This still runs every second
+  if (int_count == 200) { // SLOW LOOP (1Hz)
+    input_switch = digitalRead(PIN_OLCL); //get the OL/CL switch status
     switch (state_num) { // STATE MACHINE (see diagram)
       case IDLE:{ // 0 Idle state (no current, no LEDs)
         current_ref = mySMPS.get_discharge_current();
@@ -365,7 +337,7 @@ void loop() {
         break;
       }
       case CHARGE:{ // 1 Charge state (250mA and a green LED)
-        current_ref = 2000;
+        current_ref = 2000; // DO NOT USE PID CONTROLLER
 
         //NOTE: Instead of using wall charging, use PV charging
         // Assign values
@@ -550,49 +522,27 @@ void loop() {
       SoC_1 = mySMPS.get_SOC(1);
       SoC_2 = mySMPS.get_SOC(2);
       SoC_3 = mySMPS.get_SOC(3);
+      ci.writeSOC(1, static_cast<int>(SoC_1));
+      ci.writeSOC(2, static_cast<int>(SoC_2));
+      ci.writeSOC(3, static_cast<int>(SoC_3));
     }
 
-
-    ////////////////// START DIAGNOSIS ////////////////// 
-    dataString = String(3) + "," + String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + ","
-              + String(current_ref) + "," + String(current_measure) 
-              + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," 
-              + String(mySMPS.disc1) + "," + String(mySMPS.disc2) + "," + String(mySMPS.disc3);
+    ci.sendUpdates();
+  
+    // Now Print all values to serial and SD
+    dataString = String(state_num) + "," + String(V_1) + "," + String(V_2) + "," + String(V_3) + "," + String(current_ref) + "," +String(current_measure) + "," + String(mySMPS.disc1) + "," + String(mySMPS.disc2) + "," + String(mySMPS.disc3);
     Serial.println(dataString);
+    
     File dataFile = SD.open("BatCycle.csv", FILE_WRITE);
     if (dataFile){ 
       dataFile.println(dataString);
     } else {
-      Serial.println("Batcycle File not open"); 
+      Serial.println("File not open"); 
     }
     dataFile.close();
-    ////////////////// END DIAGNOSIS //////////////////
 
-    ////////////////// START PRINTING TO MQTT //////////////////
-    range = mySMPS.estimate_range(pos_x, pos_y, static_cast<float>(dist_travelled), drive_status);
-    remain_time = mySMPS.estimate_time(V_1, V_2, V_3);
-
-    if (mySMPS.cycle_changed == 1) {
-      cycle1 = mySMPS.get_cycle(1);
-      cycle2 = mySMPS.get_cycle(2);
-      cycle3 = mySMPS.get_cycle(3);
-
-      // Print with SoH
-      dataString = String(2) + "," + String(SoH_1) + "," + String(SoH_2)  + "," + String(SoH_3) + "," 
-            + String(cycle1) + "," + String(cycle2)  + "," + String(cycle3);
-      Serial.println(dataString);
-    }
-    
-    //NOTE: Printing to serial for MQTT
-    dataString = String(1) + "," + String(state_num) + "," 
-              + String(SoC_1) + "," + String(SoC_2)  + "," + String(SoC_3) + "," 
-              + String(range) +  "," + String(remain_time) + "," 
-              + String(error1) +  "," + String(error2) +  "," + String(error3);
-    Serial.println(dataString);
-    
-    ////////////////// END PRINTING TO MQTT //////////////////
+    int_count = 0; 
     sec_count++;
-    int_count = 0;
   }
 
   if (sec_count % 5 == 0) {
@@ -609,6 +559,7 @@ void loop() {
       }
       sec_count = 0;
   }
+  
 }
 
 // Timer A CMP1 interrupt. Every 1000.0us the program enters this interrupt. This is the fast 1kHz loop

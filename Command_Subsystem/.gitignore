@@ -360,3 +360,7 @@ pip-selfcheck.json
 
 ## Ubuntu
 .swp
+
+## SSL/TLS stuff for broker security
+certs/
+ca_certificates/

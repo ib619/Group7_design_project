@@ -77,6 +77,7 @@ class SMPS {
 
         bool command_running = 0; 
         // NOTE: command_running even when there is an error
+        // to reset, call reset()
 
         int SD_CS = 10;
         bool error = 0;

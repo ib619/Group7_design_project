@@ -2,7 +2,7 @@
 
 AIM FOR THIS FILE
 - Given the array of new cv1,2,3 and dv1,2,3, generate the SoCs and store them in a new file
-- no hardware connected
+- no hardware connected (no pins)
 
 initial state of charge for cells (coulombs)
 Cell 1: 1793
