@@ -1,0 +1,5 @@
+
+State Machine - |convolution3x3_erosion|state
+Name state.FILTER_ON 
+state.START_UP 0 
+state.FILTER_ON 1 

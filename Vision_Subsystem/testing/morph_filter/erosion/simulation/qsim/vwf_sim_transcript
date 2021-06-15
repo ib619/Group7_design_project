@@ -1,0 +1,146 @@
+Determining the location of the ModelSim executable...
+
+Using: C:\intelFPGA_lite\16.1\modelsim_ase\win32aloem
+
+To specify a ModelSim executable directory, select: Tools -> Options -> EDA Tool Options
+Note: if both ModelSim-Altera and ModelSim executables are available, ModelSim-Altera will be used.
+
+**** Generating the ModelSim Testbench ****
+
+quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off erosion_filter_tb -c erosion_filter_tb --vector_source="C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/Waveform.vwf" --testbench_file="C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/Waveform.vwf.vt"
+
+Info: *******************************************************************
+Info: Running Quartus Prime EDA Netlist Writer
+    Info: Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+    Info: Copyright (C) 2016  Intel Corporation. All rights reserved.
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and its AMPP partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel MegaCore Function License Agreement, or other 
+    Info: applicable license agreement, including, without limitation, 
+    Info: that your use is for the sole purpose of programming logic 
+    Info: devices manufactured by Intel and sold by Intel or its 
+    Info: authorized distributors.  Please refer to the applicable 
+    Info: agreement for further details.
+    Info: Processing started: Tue Jun 15 19:07:46 2021
+Info: Command: quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off erosion_filter_tb -c erosion_filter_tb --vector_source=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/Waveform.vwf --testbench_file=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/Waveform.vwf.vt
+Info (119006): Selected device 10M08DAF484C8G for design "erosion_filter_tb"
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+
+p7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/Waveform.vwf.vt for simulation
+Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 56 warnings
+    Info: Peak virtual memory: 4620 megabytes
+    Info: Processing ended: Tue Jun 15 19:07:47 2021
+    Info: Elapsed time: 00:00:01
+    Info: Total CPU time (on all processors): 00:00:01
+
+Completed successfully. 
+
+Completed successfully. 
+
+**** Generating the functional simulation netlist ****
+
+quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/" erosion_filter_tb -c erosion_filter_tb
+
+Info: *******************************************************************
+Info: Running Quartus Prime EDA Netlist Writer
+    Info: Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+    Info: Copyright (C) 2016  Intel Corporation. All rights reserved.
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and its AMPP partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel MegaCore Function License Agreement, or other 
+    Info: applicable license agreement, including, without limitation, 
+    Info: that your use is for the sole purpose of programming logic 
+    Info: devices manufactured by Intel and sold by Intel or its 
+    Info: authorized distributors.  Please refer to the applicable 
+    Info: agreement for further details.
+    Info: Processing started: Tue Jun 15 19:07:48 2021
+Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/ erosion_filter_tb -c erosion_filter_tb
+Info (119006): Selected device 10M08DAF484C8G for design "erosion_filter_tb"
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (204019): Generated file erosion_filter_tb.vo in folder "C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim//" for EDA simulation tool
+Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
+    Info: Peak virtual memory: 4638 megabytes
+    Info: Processing ended: Tue Jun 15 19:07:49 2021
+    Info: Elapsed time: 00:00:01
+    Info: Total CPU time (on all processors): 00:00:01
+
+Completed successfully. 
+
+**** Generating the ModelSim .do script ****
+
+C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/erosion_filter_tb.do generated.
+
+Completed successfully. 
+
+**** Running the ModelSim simulation ****
+
+C:/intelFPGA_lite/16.1/modelsim_ase/win32aloem/vsim -c -do erosion_filter_tb.do
+
+Reading C:/intelFPGA_lite/16.1/modelsim_ase/tcl/vsim/pref.tcl
+
+# 10.5b
+
+
+# do erosion_filter_tb.do
+
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 19:07:50 on Jun 15,2021
+# vlog -work work erosion_filter_tb.vo 
+# -- Compiling module convolution3x3_erosion
+
+# 
+# Top level modules:
+# 	convolution3x3_erosion
+# End time: 19:07:50 on Jun 15,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 19:07:50 on Jun 15,2021
+# vlog -work work Waveform.vwf.vt 
+
+# -- Compiling module convolution3x3_erosion_vlg_vec_tst
+# 
+# Top level modules:
+# 	convolution3x3_erosion_vlg_vec_tst
+# End time: 19:07:50 on Jun 15,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+
+# vsim -novopt -c -t 1ps -L fiftyfivenm_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.convolution3x3_erosion_vlg_vec_tst 
+# Start time: 19:07:50 on Jun 15,2021
+# Loading work.convolution3x3_erosion_vlg_vec_tst
+# Loading work.convolution3x3_erosion
+# Loading altera_ver.dffeas
+# Loading altera_ver.PRIM_GDFF_LOW
+
+# after#23
+# ** Note: $finish    : Waveform.vwf.vt(79)
+#    Time: 1 us  Iteration: 0  Instance: /convolution3x3_erosion_vlg_vec_tst
+# End time: 19:07:51 on Jun 15,2021, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+
+Completed successfully. 
+
+**** Converting ModelSim VCD to vector waveform ****
+
+Reading C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/Waveform.vwf...
+
+Reading C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/erosion_filter_tb.msim.vcd...
+
+Processing channel transitions... 
+
+Writing the resulting VWF to C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim/erosion_filter_tb_20210615190751.sim.vwf
+
+Finished VCD to VWF conversion.
+
+Completed successfully. 
+
+All completed.

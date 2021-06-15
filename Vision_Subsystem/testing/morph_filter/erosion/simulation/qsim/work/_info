@@ -1,0 +1,52 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/morph_filter/erosion/simulation/qsim
+vconvolution3x3_erosion
+Z1 !s110 1623780470
+!i10b 1
+!s100 Sgi@Tn>>e9h2FTGHYJG@k2
+Ih3j^=ge^gIFmETVf9Ui>60
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1623780469
+8erosion_filter_tb.vo
+Ferosion_filter_tb.vo
+L0 32
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1623780470.000000
+!s107 erosion_filter_tb.vo|
+!s90 -work|work|erosion_filter_tb.vo|
+!i113 1
+Z5 o-work work
+Z6 tCvgOpt 0
+vconvolution3x3_erosion_vlg_vec_tst
+R1
+!i10b 1
+!s100 a;B3ag3f@VJHM5LlE8;U^1
+ID4W=JA^I;fBFkj_;T0n541
+R2
+R0
+w1623780467
+8Waveform.vwf.vt
+FWaveform.vwf.vt
+L0 30
+R3
+r1
+!s85 0
+31
+R4
+!s107 Waveform.vwf.vt|
+!s90 -work|work|Waveform.vwf.vt|
+!i113 1
+R5
+R6

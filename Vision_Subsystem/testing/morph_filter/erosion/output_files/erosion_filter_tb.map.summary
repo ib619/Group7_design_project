@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Tue Jun 15 20:23:22 2021
+Quartus Prime Version : 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+Revision Name : erosion_filter_tb
+Top-level Entity Name : convolution3x3_erosion
+Family : MAX 10
+Total logic elements : 84
+    Total combinational functions : 75
+    Dedicated logic registers : 58
+Total registers : 58
+Total pins : 57
+Total virtual pins : 0
+Total memory bits : 14
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0
