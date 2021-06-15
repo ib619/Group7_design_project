@@ -113,7 +113,7 @@ class MqttServer:
                 self.counter = 0
             else:
                 self.counter += 1
-            
+
             # Publish path on every new position update 
             path = select_all_positions(db, self.rover_id)
             json_path = json.dumps(path)

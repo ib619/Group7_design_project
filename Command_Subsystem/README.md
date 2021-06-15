@@ -126,3 +126,11 @@ yanni | password | read access
     - MQTT protocol for communication between ESP32, backend and frontend
     - obstacle/update: stream of detected obstacle position, keeps track of recent ones and stores in a db
     - position/update: stores positions in a db to be sent on path 
+
+## Testing Procedure
+### Testing the server
+1. In the `server` folder, run `python3 mqtt_server.py` then run `python3 test_mqtt_server.py` in a separate terminal
+2. Check the test script terminal for outputs to make sure the result is as expected
+
+### Testing the database 
+1. Run `python3 test_database.py` and check the terminal outputs to ensure that the results are correct
