@@ -1,4 +1,28 @@
-#Control Program
+# Control Program
+The control program runs on the rover's ESP32 and is the bridge between Vision, Drive and Energy subsystems, and Command subsystem. 
+
+This folder contains the main control program along with the control interface APIs for the Drive and Energy subsystems. 
+
+### Folders
+##### Control_program
+This folder contains the Arduino project for the ESP32. The main file is called control_program.ino and the project folder comes with all the custom libraries required. Compile and install this program onto the rover's ESP32. 
+
+Board Settings:
+* Board: ESP32 Dev Module
+* Partition Scheme: Huge (3MB No OTA/1MB SPIFFS)
+* Core Level Debug: None
+* PSRAM: Disabled
+
+Required External Library Dependencies:
+* PubSubClient (https://github.com/knolleary/pubsubclient)
+* ArduinoJson (https://arduinojson.org/)
+<br>
+##### Arduino-ESP32 Interface
+* arduino_code: control interface libraries for the Drive Arduino. Copy these to the same project folder as the Drive program
+* esp32_code: drive interface libraries for the Control ESP32. These 
+
+
+/////////////////////////////////////////////////////
 The main program for the ESP32 is located in "Control_program/control_program". This code integrates the communication with all sub-modules together into a single program
 
 The folder contains the arduino .ino file along with all the library dependencies. These libraries are the latest versions
@@ -18,15 +42,18 @@ The local "config.h" file can be created using the "config_template.h" file prov
 <br>
 
 **FPGA LED Indicators**
+The FPGA LEDs indicate various rover statuses: 
 * LEDR 9: WiFi Connected
 * LEDR 8: MQTT Broker Connected
 * LEDR 7: Main Loop entry
 * LEDR 6: command execution status (on: busy, off: free)
+* LEDR 5: rover status
+* LEDR 3: obstacle detected
 * LEDR 2: drive_mode 2 engaged
 * LEDR 1: drive_mode 1 engaged
 * LEDR 0: collision avoidance routine engaged
 
-(if LEDR 1 and LEDR 2 are off, drive_mode is 0)
+(if LEDR 1 and LEDR 2 are both off, drive_mode is 0)
 <br>
 ### Arduino-ESP32 API Master Source files
 Drive: Control_Subsystem/Arduino-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)
