@@ -75,7 +75,7 @@
 2. Follow "How to start..." instructions within Command_Subsystem folder for either local or AWS server
 3. Run 'start_server.sh' within `/path/Command_Subsystem/server`
 4. Upload the .sof file found in `/path/Vision_Subsystem/sof_elf_files/v8_final` using the Quartus Programmer
-5. Upload the .elf file found in `/path/Vision_Subsystem/sof_elf_files/v8_final` using nios2
+5. Upload the .elf file found in `/path/Vision_Subsystem/sof_elf_files/v8_final` using NIOS II
 6. Upload the Arduino file `Drive_Control_Integration.ino` found in `/path/Drive_Subsystem/Arduino_Code` using the Arduino IDE with the correct settings
 7. Unplug the UART cables from the ESP32
 8. Upload the ESP32 file found in `/path/Control_Subsystem/Control_program/control_program` using the Arduino IDE with the correct settings
