@@ -1,21 +1,9 @@
 # Command Subsystem
-## Setting up the MQTT broker and connections (if running local broker)
+## Setting up the MQTT broker (without authentication)
+- If you're running MQTT broker on AWS you can skip this step
 1. Install the mosquitto broker using your local package manager
-2. Copy the acl and pwdfile from `server` into the mosquitto directory (only do this if running on Ubuntu)
-3. In the `mosquitto.conf` file, add the following lines:
+2. In the `mosquitto.conf` file, add the following lines:
 
-```
-listener 1883
-protocol mqtt
-listener 8080
-protocol websockets
-
-allow_anonymous false
-password_file path to pwdfile]
-acl_file [path to acl file]
-```
-
-- If not using AWS server (Ubuntu), add these lines instead:
 ```
 listener 1883
 protocol mqtt
@@ -45,7 +33,7 @@ allow_anonymous true
 4. Can also run the script `./start_server.sh` in the `server` directory to set up the database and server
     - `chmod +x start_server.sh` first
 
-## How to set up AWS server
+## How to set up AWS server 
 1. Create EC2 Ubuntu Server and open the following ports:
     - Custom TCP 8080 (Used for websockets with React, May not need to open this if React is on EC2 itself)
     - Cusom TCP 1883 (Used for MQTT)
