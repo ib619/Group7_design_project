@@ -1,5 +1,53 @@
 # Vision Subsystem
 
+## Folder Structure
+```
+Vision_Subsystem
+│   README.md  
+│
+└───DE10_LITE_D8M_VIP_16                     
+│   └───ip            
+|   |   |    └───EEE_IMGPROC   
+|   |   |   |    └───colour_threshold 
+|   |   |   |    └───gaussian_filter
+|   |   |   |    └───line_buffers
+|   |   |   |    └───morph_filters
+|   |   |   |    └───perspective_transform
+|   |   |   |    ...
+|   |   |    └───i2c_opencores  
+|   |   |    └───TERASIC_AUTO_FOCUS
+|   |   |    └───TERASIC_CAMERA
+|   |   |    i2c_adapter.v     
+|   |
+|   └───software       
+|   |   |    └───D8M_Cam_v2   
+|   |   |    └───D8M_Camera_Test_bsp
+|   |   |    ...            
+|   |   ...
+|   ...
+|                 
+└───doc      
+|            
+└───sof_elf_files --> Contains various iterations of the SOF and ELF files      
+|
+└───test
+    └───colour_threshold
+    └───gaussian_filter
+    └───hsv_hist --> Histogram plotting of the Coloured Balls
+    └───images --> Contains all the testing images
+    └───morph_filter
+    └───perspective_transform
+```
+## Capabilities
+1. 5x5 Gaussian Filter  (Separable Convolution)
+2. RGB to HSV conversion
+3. Erosion Filter
+4. Dilation Filter
+5. Perspective Transform Mapping
+
+## Testing
+The tests have been arranged based on their respective capabilities. Each capabilities contain Python scripts that use OpenCV and Skimage to run test on images captured from the VGA output of the FPGA. The Altera-Modelsim simulation for the verilog implementation is also contained in those folders.
+
 ## Running it
 1. Connect the FPGA and the esp32.
 2. Plug in the JTAG UART cable and the vga cable to the vga capture.
