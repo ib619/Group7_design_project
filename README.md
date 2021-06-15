@@ -2,16 +2,33 @@
 
 <br />
 
-## DEPENDENCIES
+## TABLE OF CONTENTS
 
-### List of non-standard Arduino libraries needed for final rover:
+- [1. TEAM MEMBERS](#1-team-members)
+- [2. DEPENDENCIES](#2-dependencies)
+  - [2.1. List of non-standard Arduino libraries needed for final rover](#21-list-of-non-standard-arduino-libraries-needed-for-final-rover)
+  - [2.2. Tools needed to configure final rover](#22-tools-needed-to-configure-final-rover)
+
+## 1. TEAM MEMBERS
+- Command - Zhao, Siting (01709075)
+- Control - Lim, Joshua (01578189)
+- Drive - Bodnar, Igor (01739540)
+- Energy - Chau, Yan To (01705211)
+- Integration - Kitikul, Chackrarat (01743965)
+- Vision - Tan, Si Yu (01701371)
+
+<br />
+
+## 2. DEPENDENCIES
+
+### 2.1. List of non-standard Arduino libraries needed for final rover:
 1. [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
 2. [ESP32 API](https://github.com/espressif/arduino-esp32) 
 3. INA219_WE (Download from Arduino library manager)
 4. PubSubClient (Download from Arduino library manager)
 5. Arduino MegaAVR Boards (Download from Arduino library manager)
 
-### Tools needed to configure final rover:
+### 2.2. Tools needed to configure final rover:
 1. [Arduino IDE 1.8.15](https://www.arduino.cc/en/software)
 2. [npm](https://www.npmjs.com/get-npm)
 3. [Python 3.X.X](https://www.python.org/downloads/)
@@ -21,30 +38,30 @@
 
 <br />
 
-## ARDUINO IDE SETTINGS
+## 3. ARDUINO IDE SETTINGS
 
-### ESP32 Upload Settings:
+### 3.1. ESP32 Upload Settings:
 - Board Name/Type: ESP32 Dev Module
 - Partition: HUGE APP
 
-### Arduino Upload Settings:
+### 3.2. Arduino Upload Settings:
 - Board Name/Type: Arduino Nano Every
 
-### Known Problems With Uploading Scripts
+### 3.3. Known Problems With Uploading Scripts
 - Arduino will not accept sketch uploads if SMPS is not powered
 - ESP32 will not upload if UART cables are still plugged in
 
 <br />
 
-## ROVER
+## 4. ROVER
 
-### First Time Setup
+### 4.1. First Time Setup
 - Follow "Setting up..." instructions within the Command_Subsystem folder for either local or AWS server
 - Follow "Drive_Control_integration.ino" instructions within the Drive_Subsystem folder to setup APIs for the Arduino
 - Configure `config.h` in `/path/Control_Subsystem/Control_program/control_program` using the instructions within Control_Subsystem folder
 
 
-### Rover Setup
+### 4.2. Rover Setup
 1. Turn on SMPS power, unplug UART cables
 2. Follow "How to start..." instructions within Command_Subsystem folder for either local or AWS server
 3. Run 'start_server.sh' within `/path/Command_Subsystem/server`
