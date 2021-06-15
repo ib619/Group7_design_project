@@ -18,30 +18,26 @@ Board Settings:
 Required External Library Dependencies:
 * PubSubClient (https://github.com/knolleary/pubsubclient)
 * ArduinoJson (https://arduinojson.org/)
-<br >
 
-#####Arduino-ESP32 Interface
+##### Arduino-ESP32 Interface
 * arduino_code: control interface libraries for the Drive Arduino. Copy these to the same project folder as the Drive program
 * esp32_code: drive interface libraries for the Control ESP32. These are already updated in the control_program project folder 
-<br>
+
 Library files for Drive Arduino: ControlInterface.h and ControlInterface.cpp
 Library files for Control ESP32: DriveInterface.h and DriveInterface.cpp
-<br>
 
-#####Energy-ESP32 Interface
+##### Energy-ESP32 Interface
 This folder contains the libraries for the interface between Energy and Control subsystems
 * arduino_code: libraries and ecample code for the Energy Arduino. Copy these to the same project folder as the Drive program 
 * The EnergyInterface library files for the Control ESP32 are in this folder. These are already updated in the control_program project folder
-<br>
+
 Library files for Energy Arduino: ControlInterface.h and ControlInterface.cpp
 Library files for Control ESP32: EnergyInterface.h and EnergyInterface.cpp<br >
 
-#####FPGA-ESP32 Interface
+##### FPGA-ESP32 Interface
 This folder contains the library files for the ESP32 to interface with the FPGA's DMA. These are already updated in the control_program project folder
-<br>
-Library files for Control ESP32: FPGAInterface.h and FPGAInterface.cpp
-<br>
 
+Library files for Control ESP32: FPGAInterface.h and FPGAInterface.cpp
 ### config.h file
 The control program requires settings for the WiFi network SSID and password as well as IP Address/Domain and credentials for the MQTT broker. These are defined in the "config.h" file which every user needs their own local copy of. 
 
@@ -52,9 +48,8 @@ The local "config.h" file can be created using the "config_template.h" file prov
 4) MQTT_PORT: port of MQTT broker (defaults to 1883)
 5) MQTT_USER: username for MQTT broker (can leave as default)
 6) MQTT_PASSWORD: password for MQTT broker (can leave as default)
-<br>
 
-**FPGA LED Indicators**
+##### FPGA LED Indicators
 The FPGA LEDs indicate various rover statuses: 
 * LEDR 9: WiFi Connected
 * LEDR 8: MQTT Broker Connected
@@ -67,7 +62,6 @@ The FPGA LEDs indicate various rover statuses:
 * LEDR 0: collision avoidance routine engaged
 
 (if LEDR 1 and LEDR 2 are both off, drive_mode is 0)
-<br>
 ### Arduino-ESP32 API Master Source files
 Drive: Control_Subsystem/Arduino-ESP32 Interface/arduino_code (ControlInterface.h and ControlInterface.cpp)
 
