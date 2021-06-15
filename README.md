@@ -39,7 +39,7 @@
 ## ROVER
 
 ### First Time Setup
-- Follow "Setting up..." instructions within the Command_Subsystem folder for either local or AWS server
+- Follow "How to..." instructions within the Command_Subsystem folder for either local or AWS server
 - Follow "Drive_Control_integration.ino" instructions within the Drive_Subsystem folder to setup APIs for the Arduino
 - Configure `config.h` in `/path/Control_Subsystem/Control_program/control_program` using the instructions within Control_Subsystem folder
 
