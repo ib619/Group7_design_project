@@ -242,6 +242,16 @@ void loop() {
               break;
         }
       }
+      if(collisionFlag==0)  { // return to base when battery is low
+        if(sqrt(sq(rover.x_axis)+sq(rover.y_axis))>=(rover.rover_range+1000)) {
+          if(rover.target_x!=0 && rover.target_y!=0 && rover.drive_mode!=2)  {
+            rover.drive_mode=2;
+            rover.target_x=0;
+            rover.target_y=0;
+            updateFlag=1;          
+          }
+        }
+      }
       if(updateFlag==1) { // send data to drive arduino
         fpga.writeLED(4,rover.reset);
         if(rover.speed==0)  {
