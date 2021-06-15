@@ -14,6 +14,7 @@
   - [3.1. Initial Battery Discharge Profiles](#31-initial-battery-discharge-profiles)
   - [3.2. Drive Power consumption](#32-drive-power-consumption)
 - [4. Pseudocode for State Machine](#4-pseudocode-for-state-machine)
+  - [Overview](#overview)
   - [4.1. Initialisation and Setup](#41-initialisation-and-setup)
   - [4.2. Main Loop](#42-main-loop)
   - [4.3. Main functions within the SMPS class](#43-main-functions-within-the-smps-class)
@@ -105,22 +106,13 @@ To perform this demo:
 The intended actions to be taken afterwards are:
 
 1. Reset the initial error,
-   - If using a local broker, run: 
-
-    ```mosquitto_pub -t battery/command -m 2```
-
+   - If using a local broker, run: ```mosquitto_pub -t battery/command -m 2```
    - A message "Energy SMPS Reset!" should be seen in the terminal.
 2. Send a drive status 1 (running) to  indicate that the rover is running and that the battery should be discharging; and,
-    - If using a local broker, run
-  
-    ```mosquitto_pub -t rover/status -m {\"drive_status\":1}```
-    
+    - If using a local broker, run ```mosquitto_pub -t rover/status -m {\"drive_status\":1}```
     - The terminal prints the drive status received.
 3. Send a drive status 2 as soon as the rover arrives at the charging station, to indicate that it should start charging with the PV panels. (In practice, the return is triggered upon a low range estimate.)
-   - If using a local broker, run 
-  
-    ```mosquitto_pub -t rover/status -m {\"drive_status\":2}```
-
+   - If using a local broker, run  ```mosquitto_pub -t rover/status -m {\"drive_status\":2}```
    - The terminal prints the drive status received. In addition, the Arduino would print "Here comes the sun" and start printing the diagnostic current, voltage, PWM values into the terminal.
 
 At anytime, to diagnose data sent to the local broker, the user can subscribe to designated topics, detailed in the Command Subsystem Appendix. For example, to subscribe to the status of the first cell, run:
@@ -180,6 +172,52 @@ The [Drive_Data](Drive_Data) folder includes an excel file of the drive power da
 
 # 4. Pseudocode for State Machine
 
+## Overview
+
+The Energy Arduino will need to receive:
+
+- Anything required by the drive submodule
+- Distance travelled (from drive)
+- Drive status (FREE, MOVING, AT HUB)
+- Instructions that will be run:
+  - Recalibrate the battery (command 1)
+    - Estimate the state of health SoH of battery
+    - Discharges and charges the entire battery, taking around 4 hours in total, (assuming the solar panel can charge as fast as a wall charger)
+  - Reset the battery (command 2)
+    - Useful when the SoC values greatly deviate from expected. This is a common problem during startup, since the first SoC value is obtained from lookup; however, the OCV varies very little across the middle SoC range.
+    - A reset is also necessary when the OCV measurements are beyond the upper and lower thresholds
+  - Discharge the battery
+    - Automatically triggered upon drive status 1 (MOVING)
+    - Note that the battery also discharges during IDLE, when the drive status is 0 (FREE), because the the motors drive power even when the speed is zero.
+  - Charge the battery
+    - Automatically triggered upon drive status 2 (AT CHARGING HUB), or when the drive coordinates are (0,0)
+    - Will trigger the MPPT P&O algorithm and charge the battery pack using the solar cells.
+
+Similarly, the Energy Arduino will send:
+
+- Range estimation information
+- State of charge information
+  - And also time till completion
+- Status of battery: 
+  - The battery charges with respect to a state machine structure, namely:
+    - 0 IDLE
+    - 1 CHARGE (yellow LED)
+    - 2 CHARGE REST (note: only records charge data after first discharge)
+    - 3 SLOW DISCHARGE (250mA)
+    - 4 DISCHARGE REST
+    - 5 ERROR (red LED)(must go to 0 next and restart)
+    - 6 CONSTANT VOLTAGE CHARGE (blinking yellow LED)
+    - 7 RECALIBRATION COMPLETE
+    - 8 NORMAL DISCHARGE (Nominally 500mA)
+    - 9 RAPID DISCHARGE (1A) - deprecated
+    - 10 RAPID CURRENT CHARGE (500mA) - deprecated
+  - The status of the battery is important. For example, in a real setup, when the battery is in an error state, it will stop delivering power to other modules and the motor. Most of the time however, it can simply be resolved by resetting the state machine to 0, and then entering charge or discharge mode.
+  - Make decisions depending on the last state of the battery. The states experienced by the batteries are as follows:
+    - recalibrate: 0 > 1 > 6 > 2 > 3 > 4 > 1 > 6 > 2 > 7 > 0
+    - discharge: 0 > 8 > 4 > 0
+    - rapid_discharge: 0 > 9 > 8 > 4 > 0
+    - charge: 0 > 1 > 6 > 2 > 0
+    - rapid_charge: 0 > 10 > 1 > 6 > 2 > 0
 
 ## 4.1. Initialisation and Setup
 
