@@ -1,7 +1,0 @@
-﻿Specification,Value,Notes
-Minimum discharge voltage,2V,
-Nominal Voltage,3.2V,
-Nominal Capacity (Max),500mAh,
-Minimum Rated Capacity,480mAh,
-Standard Charging current,0.5C/ 250mA,"Rapid (1C), Max Short (2C)"
-Cycles,1000 Cycles,

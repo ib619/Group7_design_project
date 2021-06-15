@@ -101,14 +101,16 @@ for i = 1:length
     amphr_cap = (min([SOC1(i,1) SOC2(i,1) SOC3(i,1)]))*1800/100;
     % remaining_Ws = (V_1(i,1)+V_2(i,1)+V_3(i,1)-3*2500)/1000*amphr_cap;
     remaining_Ws = (3*(min([V_1(i,1) V_2(i,1) V_3(i,1)])-2400))/1000*amphr_cap;
-    remaining_time(i,1) = remaining_Ws/2 * 1.5;
+    remaining_time(i,1) = remaining_Ws/2/0.9;
 end
 
 %% 
 
 figure(1);
 
-subplot(3,1,1);
+set(gcf, 'Position',  [50, 50, 1000, 800])
+
+subplot(3,2,1);
 plot(V_1,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(V_2,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(V_3,'Linewidth', 2, 'MarkerSize', 8);
@@ -120,7 +122,7 @@ set(gca,'LineWidth',2);
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
 
-subplot(3,1,2);
+subplot(3,2,2);
 plot(current_ref,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(current_measure,'Linewidth', 2, 'MarkerSize', 8);
 ylabel('Current (mA)');
@@ -130,22 +132,18 @@ set(gca,'LineWidth',2);
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
 
-subplot(3,1,3);
+subplot(3,2,3);
 plot(disc1,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(disc2,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(disc3,'Linewidth', 2, 'MarkerSize', 8); hold on;
 ylabel('Discharge ON/OFF');
 xlabel('Time (s)');
-legend('Cell 1 Discharge','Cell 2 Discharge','Cell 3 Discharge','Location','Best');
+legend('Cell 1 Discharge','Cell 2 Discharge','Cell 3 Discharge','Location','Northwest');
 set(gca,'LineWidth',2);
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
 
-set(gca,'FontSize',12)
-set(gca, 'FontName', 'Arial')
-sgtitle('Series Cells Discharging Characteristic','FontName', 'Arial');
-
-figure(2);
+subplot(3,2,4);
 plot(SOC1,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(SOC2,'Linewidth', 2, 'MarkerSize', 8); hold on;
 plot(SOC3,'Linewidth', 2, 'MarkerSize', 8);
@@ -156,9 +154,13 @@ ylim([0 110]);
 set(gca,'LineWidth',2);
 set(gca,'FontSize',12)
 set(gca, 'FontName', 'Arial')
-sgtitle('Series Cells Discharging SoC','FontName', 'Arial');
+% sgtitle('Series Cells Discharging SoC','FontName', 'Arial');
 
-figure(3);
-plot(remaining_time);
+subplot(3,2,5);
+plot(remaining_time, 'Linewidth', 2, 'MarkerSize', 8);
 xlabel('Time(s)');
 ylabel('Remaining Time (s)');
+set(gca,'LineWidth',2);
+set(gca,'FontSize',12)
+set(gca, 'FontName', 'Arial')
+sgtitle('Series Cells Discharging Characteristic','FontName', 'Arial');

@@ -16,6 +16,13 @@
 SMPS mySMPS;
 INA219_WE ina219; // this is the instantiation of the library for the current sensor
 
+#define PIN_OLCL 2
+#define PIN_VA A1
+#define PIN_VB A0
+#define PIN_PWM 6
+#define PIN_REDLED 7
+#define PIN_YELLED 8
+
 // set up variables using the SD utility library functions:
 Sd2Card card;
 SdVolume volume;

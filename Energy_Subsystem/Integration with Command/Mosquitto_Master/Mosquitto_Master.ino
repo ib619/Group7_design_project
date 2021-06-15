@@ -236,8 +236,8 @@ void loop() {
       mySMPS.decode_command(cmd, speed, pos_x, pos_y, drive_status, V_1, V_2, V_3);
       Serial.println("Command received");
 
-      //TODO: RESET is cmd 2
-      //TODO: Can override command at anytime
+      // RESET is cmd 2
+      // Can override command at anytime, unless recalibrating
       if (mySMPS.error == 0 && mySMPS.recalibrating == 0) {
         next_state = mySMPS.get_state();
         Serial.println("New command decoded");
@@ -313,10 +313,9 @@ void loop() {
         error_amps = (current_ref - current_measure) / 1000.0; //PID error calculation
         pwm_out = pidi(error_amps); //Perform the PID controller calculation       
       }
-      pwm_out = saturation(pwm_out, 0.99, 0.01); //duty_cycle saturation. NOT FIXME: PWM Modulate
+      pwm_out = saturation(pwm_out, 0.99, 0.01); //duty_cycle saturation.
       analogWrite(PIN_PWM, (int)(255 - pwm_out * 255)); // write it out (inverting for the Buck here)
       int_count++; //count how many interrupts since this was last reset to zero
-      //Serial.println("int count is " + String(int_count));
       rly_timer++;
       loop_trigger = 0; //reset the trigger and move on with life
   }
