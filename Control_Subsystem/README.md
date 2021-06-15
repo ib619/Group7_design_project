@@ -19,14 +19,14 @@ Required External Library Dependencies:
 * PubSubClient (https://github.com/knolleary/pubsubclient)
 * ArduinoJson (https://arduinojson.org/)
 <br>
-##### Arduino-ESP32 Interface
+##### Arduino-ESP32 Interface <br>
 * arduino_code: control interface libraries for the Drive Arduino. Copy these to the same project folder as the Drive program
 * esp32_code: drive interface libraries for the Control ESP32. These are already updated in the control_program project folder 
 <br>
 Library files for Drive Arduino: ControlInterface.h and ControlInterface.cpp<br>
 Library files for Control ESP32: DriveInterface.h and DriveInterface.cpp
 <br>
-##### Energy-ESP32 Interface
+##### Energy-ESP32 Interface <br>
 This folder contains the libraries for the interface between Energy and Control subsystems
 * arduino_code: libraries and ecample code for the Energy Arduino. Copy these to the same project folder as the Drive program 
 * The EnergyInterface library files for the Control ESP32 are in this folder. These are already updated in the control_program project folder
@@ -36,7 +36,7 @@ Library files for Control ESP32: EnergyInterface.h and EnergyInterface.cpp
 <br>
 
 <br>
-##### FPGA-ESP32 Interface
+##### FPGA-ESP32 Interface <br>
 This folder contains the library files for the ESP32 to interface with the FPGA's DMA. These are already updated in the control_program project folder
 <br>
 Library files for Control ESP32: FPGAInterface.h and FPGAInterface.cpp
