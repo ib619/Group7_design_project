@@ -12,8 +12,9 @@ Command_Subsystem
 |   |   └───mqtt_server.py
 |   |   └───requirements.txt
 |   |   └───start_server.sh
-|   |   |   |    ... 
-|   └───client      
+|   |   |   ... 
+|   └───client  
+|   |   └───package.json
 |   |   └───src  
 |   |   |   └───assets
 |   |   |   |   └───home.svg
@@ -30,8 +31,6 @@ Command_Subsystem
 |   |   |   └───App.js
 |   |   |   └───index.js
 |   |   |   |   ...            
-|   |   ...
-
 ```
 ## How to setup up the MQTT broker locally (without authentication)
 - If you're running MQTT broker on AWS you can skip this step
