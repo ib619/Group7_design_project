@@ -121,23 +121,23 @@ class MqttServer:
         # publish some obstacle values, and check if top 5 is accurately returned
         # check terminal print screen
         logging.debug("Testing top 5 obstacle functionality")
-        red_obstacle = {"colour": "red", "x": 1, "y": 1}
+        red_obstacle = {"colour": "red", "x": 100, "y": 100}
         for _ in range(8):
             time.sleep(1)
             data = json.dumps(red_obstacle)
             self.test_obstacle_server.publish("obstacle/update", data)
-            red_obstacle["x"] += 1
-            red_obstacle["y"] += 1  
+            red_obstacle["x"] += 30
+            red_obstacle["y"] += 30
         
         # send yellow obstacle and check if result is still correct
         # test with negative numbers to make sure db supports -ve numbers
-        yellow_obstacle = {"colour": "yellow", "x": 1, "y": 1}
+        yellow_obstacle = {"colour": "yellow", "x": -30, "y": -30}
         for _ in range(8):
             time.sleep(1)
             data = json.dumps(yellow_obstacle)
             self.test_obstacle_server.publish("obstacle/update", data)
-            yellow_obstacle["x"] -= 1
-            yellow_obstacle["y"] -= 1  
+            yellow_obstacle["x"] -= 40
+            yellow_obstacle["y"] -= 40 
         self.print_obstacle = False
 
         # publish some position values, and check if the path is returned accurately
@@ -148,8 +148,8 @@ class MqttServer:
             time.sleep(1)
             data = json.dumps(position)
             self.test_position_server.publish("position/update", data)
-            position["x"] += 1
-            position["y"] += 1
+            position["x"] += 5
+            position["y"] += 5
         self.print_path = False
 
         self.print_obstacle = True
@@ -166,8 +166,8 @@ class MqttServer:
             time.sleep(1)
             data = json.dumps(green_obstacle)
             self.test_obstacle_server.publish("obstacle/update", data)
-            green_obstacle["x"] += 5
-            green_obstacle["y"] += 5
+            green_obstacle["x"] += 20
+            green_obstacle["y"] += 20
         
         logging.debug("Testing is done!!")
        
