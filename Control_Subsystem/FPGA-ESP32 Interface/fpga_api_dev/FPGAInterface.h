@@ -18,8 +18,8 @@
 
 struct ColourObject {
     int detected=0;
-    int angle=0;
-    int distance=0;
+    int x=0;
+    int y=0;
 };
 
 class FPGAInterface {

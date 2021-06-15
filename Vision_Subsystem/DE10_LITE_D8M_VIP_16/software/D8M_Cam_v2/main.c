@@ -158,15 +158,11 @@ int main()
     alt_u16 bin_level = DEFAULT_LEVEL;
     alt_u8  manual_focus_step = 10;
     alt_u16  current_focus = 300;
-//    int boundingBoxColour = 0;
     alt_u32 exposureTime = EXPOSURE_INIT;
     alt_u16 gain = GAIN_INIT;
     alt_u8 time_delay = 0;
 
     alt_u16 x, y;
-    alt_u32 area1, area2;
-    alt_8 angle;
-    alt_16 dist;
     int bright_pix_count;
     alt_u16 centroid_x1, centroid_x2, centroid_y1, centroid_y2, h1, h2, w1, w2;
 
@@ -235,67 +231,48 @@ int main()
             h2 = bb[i*2 + 1][2];
             w1 = bb[i*2][3];
             w2 = bb[i*2 + 1][3];
-            area1 = h1*w1;
-            area2 = h2*w2;
+//            area1 = h1*w1;
+//            area2 = h2*w2;
             if (i == 0) {
                 printf("Color Red 1: ");
                 printf("Centroid1: (%d,%d), ",centroid_x1, centroid_y1);
                 printf("H_W: (%d,%d), ",h1, w1);
-    //                printf("Area: %d\n, ",area1);
-    //                printf("Color Red 2: ");
                 printf("Centroid2: (%d,%d), ", centroid_x2, centroid_y2);
                 printf("H_W: (%d,%d), ",h2, w2);
-    //                printf("Area: %d, ",area2);
             } else if (i == 1) {
                 printf("Color Green: ");
                 printf("Centroid1: (%d,%d), ",centroid_x1, centroid_y1);
-    //                printf("Area: %d, ",area1);
                 printf("H_W: (%d,%d), ",h1, w1);
-    //                printf("Color Green 2: ");
                 printf("Centroid2: (%d,%d), ",centroid_x2, centroid_y2);
-    //                printf("Area: %d, ",area2);
                 printf("H_W: (%d,%d), ",h2, w2);
             } else if (i == 2) {
                 printf("Color Blue: ");
                 printf("Centroid1: (%d,%d), ",centroid_x1, centroid_y1);
-    //                printf("Area: %d, ",area1);
                 printf("H_W: (%d,%d), ",h1, w1);
-    //                printf("Color Blue 2: ");
                 printf("Centroid2: (%d,%d), ",centroid_x2, centroid_y2);
-    //                printf("Area: %d, ",area2);
                 printf("H_W: (%d,%d), ",h2, w2);
             }else if (i == 3) {
                 printf("Color Grey: ");
                 printf("Centroid1: (%d,%d), ",centroid_x1, centroid_y1);
-    //                printf("Area: %d, ",area1);
                 printf("H_W: (%d,%d), ",h1, w1);
-    //                printf("Color Grey 2: ");
                 printf("Centroid2: (%d,%d), ",centroid_x2, centroid_y2);
-    //                printf("Area: %d, ",area2);
                 printf("H_W: (%d,%d), ",h2, w2);
             } else if (i == 4) {
                 printf("Color Yellow: ");
                 printf("Centroid1: (%d,%d), ",centroid_x1, centroid_y1);
-    //                printf("Area: %d, ",area1);
                 printf("H_W: (%d,%d), ",h1, w1);
-    //                printf("Color Yellow 2: ");
                 printf("Centroid2: (%d,%d), ",centroid_x2, centroid_y2);
-    //                printf("Area: %d, ",area2);
                 printf("H_W: (%d,%d), ",h2, w2);
             }
-
 
             //////////////////////////////////////////////////////////////////////
             // Send info to esp32 via i2C
             // Error in detection if area is more than a 20000 or if it is too high up the image
             // Check Colour 2 first because it is likely to be nearer to the camera
-            if  ((area2 <20000 ) & (centroid_x2 < 640) & (centroid_y2 < 480) & (h2 < 150) &  (w2 < 150)) {
+            if  ( (centroid_x2 < 640) & (centroid_y2 < 480) & (h2 < 150) &  (w2 < 150)) {
                 printf("Decided on Colour 2: ");
                 updateColour(0x40000,  1, centroid_x2, centroid_y2, i);
-            } else if (w2 < 150  & (centroid_x2 < 640) & (centroid_y2 < 480)) {
-                printf("Decided on Colour 2 assume reflection: ");
-                updateColour(0x40000,  1,  centroid_x2, centroid_y2, i);
-            } else if ((area1 <20000 ) & (centroid_x1 < 640) & (centroid_y1 < 480) & (h1 < 150) &  (w1 < 150)){
+            } else if ( (centroid_x1 < 640) & (centroid_y1 < 480) & (h1 < 150) &  (w1 < 150)){
                 printf("Decided on Colour 1: ");
                 updateColour(0x40000,  1, centroid_x1, centroid_y1,i);
             } else {
@@ -305,51 +282,27 @@ int main()
             printf(";\n");
         }
         printf("\n");
-//            if  ((area2 <20000 ) & (centroid_y2 > 100) & (h2 < 150) &  (w2 < 150)) {
-//                printf("Decided on Colour 2: ");
-//                angle = estimate_angle(centroid_x2);
-//                dist = estimate_dist(centroid_y2);
-//                printf("Dist: %d, Angle: %d", dist, angle);
-//                updateColour(0x40000,  1, angle, dist, i);
-//            } else if (w2 < 150) {
-//                printf("Decided on Colour 2 assume reflection: ");
-//                angle = estimate_angle(centroid_x2);
-//                dist = estimate_dist(centroid_y2 - h2/4);
-//                printf("Dist: %d, Angle: %d", dist, angle);
-//                updateColour(0x40000,  1, angle, dist, i);
-//            } else if ((area1 <20000 ) & (centroid_y1 > 100) & (h1 < 150) &  (w1 < 150)){
-//                printf("Decided on Colour 1: ");
-//                angle = estimate_angle(centroid_x1);
-//                dist = estimate_dist(centroid_y1);
-//                printf("Dist: %d, Angle: %d", dist, angle);
-//                updateColour(0x40000,  1, angle, dist, i);
-//            } else {
-//                printf("Not Detected/Error");
-//                updateColour(0x40000,  0, 0, 0, i);
-//            }
-//            printf(";\n");
-//        }
-//        printf("\n");
+
 
         //////////////////////////////////////////////////////////////////////
         // Auto Brightness
         printf("Number of bright pixels: %d\n ",bright_pix_count);
-//        if (time_delay == 0){
-//            if (bright_pix_count < 10000){
-//                if (gain < 2500) {
-//                    gain += GAIN_STEP;
-//                    OV8865SetGain(gain);
-//                    printf("Increasing Gain to %x\n", gain);
-//                }
-//            }
-//            if (bright_pix_count > 30000){
-//                if (gain > 180) {
-//                    gain -= GAIN_STEP;
-//                    OV8865SetGain(gain);
-//                    printf("Decreasing Gain to %x\n", gain);
-//                }
-//            }
-//        }
+        if (time_delay == 0){
+            if (bright_pix_count < 10000){
+                if (gain < 2500) {
+                    gain += GAIN_STEP;
+                    OV8865SetGain(gain);
+                    printf("Increasing Gain to %x\n", gain);
+                }
+            }
+            if (bright_pix_count > 30000){
+                if (gain > 180) {
+                    gain -= GAIN_STEP;
+                    OV8865SetGain(gain);
+                    printf("Decreasing Gain to %x\n", gain);
+                }
+            }
+        }
         time_delay += 1;
         if ( time_delay == 5) {
             time_delay = 0;

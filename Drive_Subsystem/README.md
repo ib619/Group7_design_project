@@ -4,7 +4,7 @@ This folder contains the Orientation API and Drive API for the rover(in DriveCon
 The purpose of this testing is to ensure the Drive Control Arduino is able to receive and execute commands sent by ESP32.
 
 * ESP32_Command_Simulation is able to receive commands from user via Serial port, and sending these commands to Drive System via Serial1 (UART).
-* Drive_Control_integration is able to receive drive commands from another Arduino/ESP32 via Serial1 (UART), decode them, and perform the desired actions.
+* Drive_Control_integration is able to receive drive commands from another Arduino/ESP32 via Serial1 (UART), decode them, and perform the desired actions. This is the sketch which is uploaded to the final build of the rover.
 
 ## Instructions
 Setup your Rover as shown in test_setup.png
@@ -40,6 +40,3 @@ Setup your Rover as shown in test_setup.png
 
 **IMPORTANT:** When direction command is non-zero, the rover will turn first, and then move straight for specified distance. In order to only turn without moving afterwards, the distance must be set to 1.
 
-## Further Objectives
-1. Design an Anti-Drift algorithm, for preventing side drifting when moving straight
-2. Attempt to fix the bug causing 0 distance leading to an error

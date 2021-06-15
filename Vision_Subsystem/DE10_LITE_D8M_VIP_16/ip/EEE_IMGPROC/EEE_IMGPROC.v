@@ -109,21 +109,6 @@ STREAM_REG #(.DATA_WIDTH(26)) in_reg1 (
 
 ///////////////////////////////////////////////////////////////////////
 // Gaussian Filter
-
-
-
-//median_filter3x3 medianfilter(
-//	.clk(clk),
-//	.rst_n(reset_n),
-//	.i_pixel_red(red_out1),
-//   .i_pixel_blue(blue_out1),
-//   .i_pixel_green(green_out1),
-//	.i_pixel_valid(in_valid1 & ~sop_in1 & packet_video1), // Both in_valid and packet video
-//	.o_convolved_data_red(red_median),
-//	.o_convolved_data_blue(blue_median),
-//	.o_convolved_data_green(green_median)
-//);
-
 gaussian_filter5x5 gaussianfilter(
     .clk(clk),
     .rst_n(reset_n),
@@ -216,9 +201,7 @@ colour_threshold c_th (
 	 .grey_edge_detect(grey_edge_detect),
 	 .yellow_edge_detect(yellow_edge_detect)
 );
-
-
-							
+			
 							
 // Find boundary of cursor box
 // Highlight detected areas
@@ -264,73 +247,37 @@ assign y_bb_active = (x == y_left) | (x == y_right) | (y == y_top) | (y == y_bot
 assign y2_bb_active = (x == y_left2) | (x == y_right2) | (y == y_top2) | (y == y_bottom2);
 
 assign new_image = (r_bb_active|r2_bb_active) ? {8'hff, 8'h0, 8'h0} : 
-//						 (r2_bb_active) ? {8'h0, 8'hff, 8'h0} : 
-//						 (g_bb_active) ? {8'hCC, 8'hff, 8'hff} : 
-//						 (g2_bb_active) ? {8'hff, 8'hff, 8'h0} : 
                    (b_bb_active|b2_bb_active) ? {8'hCC, 8'hff, 8'hff} :
                    (g_bb_active|g2_bb_active) ? {8'h0, 8'hff, 8'h0} :
                    (gr_bb_active|gr2_bb_active) ? {8'd223, 8'd0, 8'd254}:
                    (y_bb_active|y2_bb_active) ? {8'hff, 8'hff, 8'h0} :
                    obstacle_high;
-						 
-//Show edges
-wire [23:0] edges;
-//assign edges   = red_edge_detect ? {8'hff, 8'h0, 8'h0} : 
-//                 blue_edge_detect ? {8'hCC, 8'hff, 8'hff} :
-//					  green_edge_detect ? {8'h0, 8'hff, 8'h0} :
-assign edges   =  grey_edge_detect ? {8'd223, 8'd0, 8'd254} :
-//                 yellow_edge_detect ? {8'hff, 8'hff, 8'h0} :
-                 {8'd0, 8'd0, 8'd0};
+
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? ((edge_detection_mode) ? edges: new_image ): {red_out,green_out,blue_out};
+assign {red_inter_out, green_inter_out, blue_inter_out} = (mode & ~sop_in & packet_video) ? new_image : {red_out,green_out,blue_out};
 
 
 //Find first and last red pixels
 reg [10:0] r_x_min, r_y_min, r_x_max, r_y_max;
 reg [10:0] r_x_min2, r_y_min2, r_x_max2, r_y_max2;
-wire [11:0] r_x_mid = (r_x_min + r_x_max) >>1;
-//wire [11:0] r_y_mid =  (r_y_min + r_y_max)>>1;
-wire [10:0] r_x_diff =  x - r_x_max;
-//wire [10:0] r_x_diff3 = x - r_x_max3;
 wire [10:0] r_y_diff = y - r_y_max;
-wire [10:0] r_y_diff2 = y - r_y_max2;
 
 reg [10:0] g_x_min, g_y_min, g_x_max, g_y_max;
 reg [10:0] g_x_min2, g_y_min2, g_x_max2, g_y_max2;
-wire [11:0] g_x_mid = (g_x_min + g_x_max) >>1;
-//wire [11:0] g_y_mid =  (g_y_min + g_y_max)>>1;
-wire [10:0] g_x_diff1 = g_x_mid - x;
-wire [10:0] g_x_diff2 = x - g_x_mid;
-wire [10:0] g_x_diff = (g_x_diff1[10]) ? g_x_diff2 : g_x_diff1;
 wire [10:0] g_y_diff = y - g_y_max;
 
 reg [10:0] b_x_min, b_y_min, b_x_max, b_y_max;
 reg [10:0] b_x_min2, b_y_min2, b_x_max2, b_y_max2;
-wire [11:0] b_x_mid = (b_x_min + b_x_max) >>1;
-//wire [11:0] b_y_mid =  (b_y_min + b_y_max)>>1;
-wire [10:0] b_x_diff1 = b_x_mid - x;
-wire [10:0] b_x_diff2 = x - b_x_mid;
-wire [10:0] b_x_diff = (b_x_diff1[10]) ? b_x_diff2 : b_x_diff1;
 wire [10:0] b_y_diff = y - b_y_max;
 
 reg [10:0] gr_x_min, gr_y_min, gr_x_max, gr_y_max;
 reg [10:0] gr_x_min2, gr_y_min2, gr_x_max2, gr_y_max2;
-wire [11:0] gr_x_mid = (gr_x_min + gr_x_max) >>1;
-//wire [11:0] gr_y_mid =  (gr_y_min + gr_y_max)>>1;
-wire [10:0] gr_x_diff =  x - gr_x_max;
-//wire [10:0] gr_x_diff3 = x - gr_x_max3;
 wire [10:0] gr_y_diff = y - gr_y_max;
-wire [10:0] gr_y_diff2 = y - gr_y_max2;
 
 reg [10:0] y_x_min, y_y_min, y_x_max, y_y_max;
 reg [10:0] y_x_min2, y_y_min2, y_x_max2, y_y_max2;
-wire [11:0] y_x_mid = (y_x_min + y_x_max) >>1;
-//wire [11:0] y_y_mid =  (y_y_min + y_y_max)>>1;
-wire [10:0] y_x_diff1 = y_x_mid - x;
-wire [10:0] y_x_diff2 = x - y_x_mid;
-wire [10:0] y_x_diff = (y_x_diff1[10]) ? y_x_diff2 : y_x_diff1;
 wire [10:0] y_y_diff = y - y_y_max;
 
 reg [2:0] r_bb_state;
@@ -350,7 +297,7 @@ always @(posedge clk) begin
 				if (y < gr_y_min) gr_y_min <= y;
 				gr_y_max <= y;
 			end
-			if ((y > 11'd60) & (gr_y_min != IMAGE_H-11'h1) & (gr_y_diff > 11'd60) & (gr_y_diff2 > 11'd60)) begin
+			if ((y > 11'd60) & (gr_y_min != IMAGE_H-11'h1) & (gr_y_diff > 11'd60) ) begin
 				gr_bb_state <= 3'd1;
 			end
 		end
@@ -518,72 +465,6 @@ always@(posedge clk) begin
         bright_pix_count <= 20'd0;
     end
 end
-
-//always@(posedge clk) begin
-//    if ( in_valid ) begin        
-//			// Count the number of pixels with Value_b higher than 128, Used for auto brightness
-//        if (value_b[7] == 1'b1) begin
-//            bright_pix_count <= bright_pix_count + 20'd1;
-//        end
-//        if (x > 11'd10) begin
-//            if (blue_detect ) begin	//Update bounds when the pixel is blue
-//					  if (b_y_diff < 11'd60) begin //|( b_x_diff < 11'd120)
-//							if (x < b_x_min) b_x_min <= x;
-//							if (x >  b_x_max) b_x_max <= x;
-//							if (y < b_y_min) b_y_min <= y;
-//							b_y_max <= y;
-//					  end
-//					  else begin
-//							if (x < b_x_min2) b_x_min2 <= x;
-//							if (x >  b_x_max2) b_x_max2 <= x;
-//							if (y < b_y_min2) b_y_min2 <= y;
-//							b_y_max2 <= y;
-//					  end
-//            end 
-//            else if (yellow_detect) begin	//Update bounds when the pixel is yellow
-//					  if (y_y_diff < 11'd60) begin
-//							if (x < y_x_min) y_x_min <= x;
-//							if (x > y_x_max) y_x_max <= x;
-//							if (y < y_y_min) y_y_min <= y;
-//							y_y_max <= y;
-//					  end
-//					  else begin
-//							if (x < y_x_min2) y_x_min2 <= x;
-//							if (x > y_x_max2) y_x_max2 <= x;
-//							if (y < y_y_min2) y_y_min2 <= y;
-//							y_y_max2 <= y;
-//					  end
-//            end
-//        end
-//    end
-//    if (sop_in) begin	//Reset bounds on start of packet
-////        r_x_min <= IMAGE_W-11'h1; r_x_min2 <= IMAGE_W-11'h1;
-//        b_x_min <= IMAGE_W-11'h1; b_x_min2 <= IMAGE_W-11'h1;
-//        g_x_min <= IMAGE_W-11'h1; g_x_min2 <= IMAGE_W-11'h1;
-////        gr_x_min <= IMAGE_W-11'h1; gr_x_min2 <= IMAGE_W-11'h1; gr_x_min3 <= IMAGE_W-11'h1; gr_x_min4 <= IMAGE_W-11'h1;
-//        y_x_min <= IMAGE_W-11'h1; y_x_min2 <= IMAGE_W-11'h1;
-//        
-////        r_x_max <= 0; r_x_max2 <= 0;
-//        b_x_max <= 0; b_x_max2 <= 0;
-//        g_x_max <= 0; g_x_max2 <= 0;
-////        gr_x_max <= 0;gr_x_max2 <= 0; gr_x_max3 <= 0;gr_x_max4 <= 0;
-//        y_x_max <= 0; y_x_max2 <= 0;
-//        
-////        r_y_min <= IMAGE_H-11'h1; r_y_min2 <= IMAGE_H-11'h1;
-//        b_y_min <= IMAGE_H-11'h1; b_y_min2 <= IMAGE_H-11'h1;
-//        g_y_min <= IMAGE_H-11'h1; g_y_min2 <= IMAGE_H-11'h1;
-////        gr_y_min <= IMAGE_H-11'h1; gr_y_min2 <= IMAGE_H-11'h1; gr_y_min3 <= IMAGE_H-11'h1; gr_y_min4 <= IMAGE_H-11'h1;
-//        y_y_min <= IMAGE_H-11'h1; y_y_min2 <= IMAGE_H-11'h1;
-//        
-////        r_y_max <= 0; r_y_max2 <= 0;
-//        b_y_max <= 0;b_y_max2 <= 0;
-//        g_y_max <= 0; g_y_max2 <= 0;
-////        gr_y_max <= 0;gr_y_max2 <= 0; gr_y_max3 <= 0;gr_y_max4 <= 0;
-//        y_y_max <= 0; y_y_max2 <= 0;
-//        
-//        bright_pix_count <= 20'd0;
-//    end
-//end
 
 //Process bounding box at the end of the frame.
 reg [4:0] msg_state;

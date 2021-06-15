@@ -4,11 +4,17 @@ DriveInterface::DriveInterface(HardwareSerial *ser)  {
     serial=ser;
 }
 
-int DriveInterface::begin() {
-    serial->begin(baudrate);
+int DriveInterface::begin()    {
+    serial->begin(baudrate, SERIAL_8N1, RX_PIN, TX_PIN);
     serial->setTimeout(timeout);
     return 1;
 }
+
+// int DriveInterface::begin() {
+//     serial->begin(baudrate);
+//     serial->setTimeout(timeout);
+//     return 1;
+// }
 
 void DriveInterface::setBaudrate(long brate)    {
     baudrate=brate;
@@ -28,15 +34,11 @@ int DriveInterface::fetchData() {
             low_byte=serial->read();
             tmp[i]=(int16_t)((high_byte<<8)+low_byte);
         }
-        battery_level=tmp[0];
-        rover_range=tmp[1];
-        obstacle_detected=tmp[2];
-        alert=tmp[3];
-        x_axis=tmp[4];
-        y_axis=tmp[5];
-        rover_heading=tmp[6];
-        battery_SOH=tmp[7];
-        battery_state=tmp[8];
+        alert=tmp[0];
+        x_axis=tmp[1];
+        y_axis=tmp[2];
+        rover_heading=tmp[3];
+        total_distance = ((tmp[4]&65535)<<16) + (tmp[5]&65535);
         return 1;
     }
     else    {
@@ -88,18 +90,6 @@ void DriveInterface::writeReset(int rst)    {
     reset=rst;
 }
 
-int DriveInterface::getBatteryLevel() const {
-    return battery_level;
-}
-
-int DriveInterface::getRange() const    {
-    return rover_range;
-}
-
-int DriveInterface::getObstacle() const {
-    return obstacle_detected;
-}
-
 int DriveInterface::getAlert() const    {
     return alert;
 }
@@ -116,12 +106,8 @@ int DriveInterface::getRoverHeading() const {
     return rover_heading;
 }
 
-int DriveInterface::getBatterySOH() const   {
-    return battery_SOH;
-}
-
-int DriveInterface::getBatteryState() const {
-    return battery_state;
+unsigned long DriveInterface::getTotalDistance() const   {
+    return total_distance;
 }
 
 void DriveInterface::send_integer(int d)    {
