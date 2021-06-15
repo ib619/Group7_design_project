@@ -7,22 +7,22 @@ Vision_Subsystem
 │
 └───DE10_LITE_D8M_VIP_16                     
 │   └───ip            
-|   |   |    └───EEE_IMGPROC   
-|   |   |   |    └───colour_threshold 
-|   |   |   |    └───gaussian_filter
-|   |   |   |    └───line_buffers
-|   |   |   |    └───morph_filters
-|   |   |   |    └───perspective_transform
+|   |   |   └───EEE_IMGPROC   
+|   |   |   |   └───colour_threshold 
+|   |   |   |   └───gaussian_filter
+|   |   |   |   └───line_buffers
+|   |   |   |   └───morph_filters
+|   |   |   |   └───perspective_transform
 |   |   |   |    ...
-|   |   |    └───i2c_opencores  
-|   |   |    └───TERASIC_AUTO_FOCUS
-|   |   |    └───TERASIC_CAMERA
-|   |   |    i2c_adapter.v     
+|   |   |   └───i2c_opencores  
+|   |   |   └───TERASIC_AUTO_FOCUS
+|   |   |   └───TERASIC_CAMERA
+|   |   |   i2c_adapter.v     
 |   |
 |   └───software       
-|   |   |    └───D8M_Cam_v2   
-|   |   |    └───D8M_Camera_Test_bsp
-|   |   |    ...            
+|   |   |   └───D8M_Cam_v2   
+|   |   |   └───D8M_Camera_Test_bsp
+|   |   |   ...            
 |   |   ...
 |   ...
 |                 
