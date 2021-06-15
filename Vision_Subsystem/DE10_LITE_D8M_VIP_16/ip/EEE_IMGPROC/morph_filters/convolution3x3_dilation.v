@@ -9,27 +9,27 @@ module convolution3x3_dilation(
 	output [DATA_WIDTH - 1:0] o_pixel,
 	output [DATA_WIDTH - 1:0] pixel0_check,
 	output [DATA_WIDTH - 1:0] pixel1_check, 
-	output [DATA_WIDTH - 1:0] pixel2_check, 
+	output [DATA_WIDTH - 1:0] pixel2_check,
 	output [DATA_WIDTH - 1:0] pixel3_check, 
 	output [DATA_WIDTH - 1:0] pixel4_check, 
 	output [DATA_WIDTH - 1:0] pixel5_check, 
 	output [DATA_WIDTH - 1:0] pixel6_check, 
 	output [DATA_WIDTH - 1:0] pixel7_check, 
 	output [DATA_WIDTH - 1:0] pixel8_check,
-	output [8:0] pixelCounter1,
-	output [3:0] pixelRowCounter1,
-	output [4:0] pixelStartUpCounter_check
+	output [18:0] pixelCounter1,
+	output [9:0] pixelRowCounter1,
+	output [10:0] pixelStartUpCounter_check
 );
 
-localparam width = 9;
-localparam height = 4;
+localparam width = 640;
+localparam height = 480;
 // Parameter Declaration(s)
 parameter DATA_WIDTH = 8;
 
 reg [DATA_WIDTH - 1:0] pixel0, pixel1, pixel2, pixel3, pixel4, pixel5, pixel6, pixel7, pixel8;
-reg [8:0] pixelCounter;
-reg [3:0] pixelRowCounter;
-reg [4:0] pixelStartUpCounter;
+reg [18:0] pixelCounter;
+reg [9:0] pixelRowCounter;
+reg [10:0] pixelStartUpCounter;
 
 assign pixel0_check = pixel0;
 assign pixel1_check = pixel1;
@@ -44,15 +44,15 @@ assign pixelStartUpCounter_check = pixelStartUpCounter;
 
 initial
 	begin
-		pixel0<= 8'd0;
-		pixel1<= 8'd0;
-		pixel2<= 8'd0;
-		pixel3<= 8'd0;
-		pixel4<= 8'd0;
-		pixel5<= 8'd0;
-		pixel6<= 8'd0;
-		pixel7<= 8'd0;
-		pixel8<= 8'd0;
+		pixel0<= 1'd0;
+		pixel1<= 1'd0;
+		pixel2<= 1'd0;
+		pixel3<= 1'd0;
+		pixel4<= 1'd0;
+		pixel5<= 1'd0;
+		pixel6<= 1'd0;
+		pixel7<= 1'd0;
+		pixel8<= 1'd0;
 		
 	end
 	

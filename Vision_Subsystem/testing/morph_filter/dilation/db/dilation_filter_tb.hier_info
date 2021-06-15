@@ -1,0 +1,170 @@
+|convolution3x3_dilation
+clk => clk.IN1
+rst_n => state.OUTPUTSELECT
+rst_n => state.OUTPUTSELECT
+rst_n => data_ready.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => pixelStartUpCounter.OUTPUTSELECT
+rst_n => always1.IN1
+rst_n => always2.IN1
+rst_n => _.IN1
+i_pixel => i_pixel.IN1
+i_pixel_valid => i_pixel_valid.IN1
+tap0 << line_buffer3x3_1bit:lbuff.taps0x
+tap1 << line_buffer3x3_1bit:lbuff.taps1x
+o_pixel << o_pixel.DB_MAX_OUTPUT_PORT_TYPE
+pixel0_check << pixel0[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel1_check << pixel1[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel2_check << pixel2[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel3_check << pixel3[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel4_check << pixel4[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel5_check << pixel5[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel6_check << pixel6[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel7_check << pixel7[0].DB_MAX_OUTPUT_PORT_TYPE
+pixel8_check << pixel8[0].DB_MAX_OUTPUT_PORT_TYPE
+pixelEnable_check << pixelEnable.DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[0] << pixelCounter[0].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[1] << pixelCounter[1].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[2] << pixelCounter[2].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[3] << pixelCounter[3].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[4] << pixelCounter[4].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[5] << pixelCounter[5].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[6] << pixelCounter[6].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[7] << pixelCounter[7].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[8] << pixelCounter[8].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[9] << pixelCounter[9].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[10] << pixelCounter[10].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[11] << pixelCounter[11].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[12] << pixelCounter[12].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[13] << pixelCounter[13].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[14] << pixelCounter[14].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[15] << pixelCounter[15].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[16] << pixelCounter[16].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[17] << pixelCounter[17].DB_MAX_OUTPUT_PORT_TYPE
+pixelCounter1[18] << pixelCounter[18].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[0] << pixelRowCounter[0].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[1] << pixelRowCounter[1].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[2] << pixelRowCounter[2].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[3] << pixelRowCounter[3].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[4] << pixelRowCounter[4].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[5] << pixelRowCounter[5].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[6] << pixelRowCounter[6].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[7] << pixelRowCounter[7].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[8] << pixelRowCounter[8].DB_MAX_OUTPUT_PORT_TYPE
+pixelRowCounter1[9] << pixelRowCounter[9].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[0] << pixelStartUpCounter[0].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[1] << pixelStartUpCounter[1].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[2] << pixelStartUpCounter[2].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[3] << pixelStartUpCounter[3].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[4] << pixelStartUpCounter[4].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[5] << pixelStartUpCounter[5].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[6] << pixelStartUpCounter[6].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[7] << pixelStartUpCounter[7].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[8] << pixelStartUpCounter[8].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[9] << pixelStartUpCounter[9].DB_MAX_OUTPUT_PORT_TYPE
+pixelStartUpCounter_check[10] << pixelStartUpCounter[10].DB_MAX_OUTPUT_PORT_TYPE
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff
+aclr => aclr.IN1
+clken => clken.IN1
+clock => clock.IN1
+shiftin[0] => shiftin[0].IN1
+shiftout[0] <= altshift_taps:ALTSHIFT_TAPS_component.shiftout
+taps0x[0] <= altshift_taps:ALTSHIFT_TAPS_component.taps
+taps1x[0] <= altshift_taps:ALTSHIFT_TAPS_component.taps
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component
+shiftin[0] => shift_taps_dru:auto_generated.shiftin[0]
+clock => shift_taps_dru:auto_generated.clock
+clken => shift_taps_dru:auto_generated.clken
+shiftout[0] <= shift_taps_dru:auto_generated.shiftout[0]
+taps[0] <= shift_taps_dru:auto_generated.taps[0]
+taps[1] <= shift_taps_dru:auto_generated.taps[1]
+aclr => shift_taps_dru:auto_generated.aclr
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component|shift_taps_dru:auto_generated
+aclr => dffe4.IN0
+aclr => cntr_njg:cntr3.aset
+clken => altsyncram_j5c1:altsyncram2.clocken0
+clken => cntr_14f:cntr1.clk_en
+clken => cntr_njg:cntr3.clk_en
+clken => dffe4.ENA
+clock => altsyncram_j5c1:altsyncram2.clock0
+clock => cntr_14f:cntr1.clock
+clock => cntr_njg:cntr3.clock
+clock => dffe4.CLK
+shiftin[0] => altsyncram_j5c1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_j5c1:altsyncram2.q_b[1]
+taps[0] <= altsyncram_j5c1:altsyncram2.q_b[0]
+taps[1] <= altsyncram_j5c1:altsyncram2.q_b[1]
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component|shift_taps_dru:auto_generated|altsyncram_j5c1:altsyncram2
+aclr0 => ram_block5a0.CLR0
+aclr0 => ram_block5a1.CLR0
+address_a[0] => ram_block5a0.PORTAADDR
+address_a[0] => ram_block5a1.PORTAADDR
+address_a[1] => ram_block5a0.PORTAADDR1
+address_a[1] => ram_block5a1.PORTAADDR1
+address_a[2] => ram_block5a0.PORTAADDR2
+address_a[2] => ram_block5a1.PORTAADDR2
+address_b[0] => ram_block5a0.PORTBADDR
+address_b[0] => ram_block5a1.PORTBADDR
+address_b[1] => ram_block5a0.PORTBADDR1
+address_b[1] => ram_block5a1.PORTBADDR1
+address_b[2] => ram_block5a0.PORTBADDR2
+address_b[2] => ram_block5a1.PORTBADDR2
+clock0 => ram_block5a0.CLK0
+clock0 => ram_block5a1.CLK0
+clocken0 => ram_block5a0.ENA0
+clocken0 => ram_block5a1.ENA0
+data_a[0] => ram_block5a0.PORTADATAIN
+data_a[1] => ram_block5a1.PORTADATAIN
+q_b[0] <= ram_block5a0.PORTBDATAOUT
+q_b[1] <= ram_block5a1.PORTBDATAOUT
+wren_a => ram_block5a0.PORTAWE
+wren_a => ram_block5a1.PORTAWE
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component|shift_taps_dru:auto_generated|cntr_14f:cntr1
+clk_en => counter_reg_bit[2].IN0
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+q[0] <= counter_reg_bit[0].DB_MAX_OUTPUT_PORT_TYPE
+q[1] <= counter_reg_bit[1].DB_MAX_OUTPUT_PORT_TYPE
+q[2] <= counter_reg_bit[2].DB_MAX_OUTPUT_PORT_TYPE
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component|shift_taps_dru:auto_generated|cntr_14f:cntr1|cmpr_frb:cmpr7
+aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
+dataa[0] => data_wire[0].IN0
+dataa[1] => data_wire[0].IN0
+dataa[2] => data_wire[1].IN0
+datab[0] => data_wire[0].IN1
+datab[1] => data_wire[0].IN1
+datab[2] => data_wire[1].IN1
+
+
+|convolution3x3_dilation|line_buffer3x3_1bit:lbuff|altshift_taps:ALTSHIFT_TAPS_component|shift_taps_dru:auto_generated|cntr_njg:cntr3
+aset => counter_reg_bit[2].IN0
+clk_en => counter_reg_bit[2].IN0
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+cnt_en => _.IN0
+cout <= cout_actual.DB_MAX_OUTPUT_PORT_TYPE
+
+

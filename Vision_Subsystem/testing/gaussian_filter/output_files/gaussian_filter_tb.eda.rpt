@@ -1,5 +1,5 @@
 EDA Netlist Writer report for gaussian_filter_tb
-Mon Jun 14 00:27:32 2021
+Tue Jun 15 19:55:53 2021
 Quartus Prime Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition
 
 
@@ -37,7 +37,7 @@ agreement for further details.
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Mon Jun 14 00:27:32 2021 ;
+; EDA Netlist Writer Status ; Successful - Tue Jun 15 19:55:53 2021 ;
 ; Revision Name             ; gaussian_filter_tb                    ;
 ; Top-level Entity Name     ; separableconvolution5x5_gaussian      ;
 ; Family                    ; MAX 10                                ;
@@ -95,14 +95,14 @@ Info: Running Quartus Prime EDA Netlist Writer
     Info: devices manufactured by Intel and sold by Intel or its 
     Info: authorized distributors.  Please refer to the applicable 
     Info: agreement for further details.
-    Info: Processing started: Mon Jun 14 00:27:31 2021
+    Info: Processing started: Tue Jun 15 19:55:52 2021
 Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/gaussian_filter/simulation/qsim/ gaussian_filter_tb -c gaussian_filter_tb
 Info (119006): Selected device 10M08DAF484C8G for design "gaussian_filter_tb"
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (204019): Generated file gaussian_filter_tb.vo in folder "C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/gaussian_filter/simulation/qsim//" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4639 megabytes
-    Info: Processing ended: Mon Jun 14 00:27:32 2021
+    Info: Peak virtual memory: 4637 megabytes
+    Info: Processing ended: Tue Jun 15 19:55:53 2021
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 

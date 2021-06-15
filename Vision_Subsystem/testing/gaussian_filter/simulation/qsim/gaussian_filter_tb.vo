@@ -17,7 +17,7 @@
 // PROGRAM "Quartus Prime"
 // VERSION "Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition"
 
-// DATE "06/14/2021 00:27:32"
+// DATE "06/15/2021 19:55:53"
 
 // 
 // Device: Altera 10M08DAF484C8G Package FBGA484
@@ -253,6 +253,112 @@ wire \i_pixel[4]~input_o ;
 wire \i_pixel[5]~input_o ;
 wire \i_pixel[6]~input_o ;
 wire \i_pixel[7]~input_o ;
+wire \pixelRowCounter[0]~10_combout ;
+wire \pixelStartUpCounter[0]~12_combout ;
+wire \pixelStartUpCounter[3]~21 ;
+wire \pixelStartUpCounter[4]~22_combout ;
+wire \pixelStartUpCounter[5]~15_combout ;
+wire \pixelStartUpCounter[4]~23 ;
+wire \pixelStartUpCounter[5]~24_combout ;
+wire \pixelStartUpCounter[5]~25 ;
+wire \pixelStartUpCounter[6]~26_combout ;
+wire \pixelStartUpCounter[6]~27 ;
+wire \pixelStartUpCounter[7]~28_combout ;
+wire \Equal0~1_combout ;
+wire \pixelStartUpCounter[7]~29 ;
+wire \pixelStartUpCounter[8]~30_combout ;
+wire \pixelStartUpCounter[8]~31 ;
+wire \pixelStartUpCounter[9]~32_combout ;
+wire \pixelStartUpCounter[9]~33 ;
+wire \pixelStartUpCounter[10]~34_combout ;
+wire \pixelStartUpCounter[10]~35 ;
+wire \pixelStartUpCounter[11]~36_combout ;
+wire \Equal0~2_combout ;
+wire \pixelStartUpCounter[5]~14_combout ;
+wire \pixelStartUpCounter[0]~13 ;
+wire \pixelStartUpCounter[1]~16_combout ;
+wire \pixelStartUpCounter[1]~17 ;
+wire \pixelStartUpCounter[2]~18_combout ;
+wire \pixelStartUpCounter[2]~19 ;
+wire \pixelStartUpCounter[3]~20_combout ;
+wire \Equal0~0_combout ;
+wire \Equal0~3_combout ;
+wire \state~6_combout ;
+wire \state.FILTER_ON~q ;
+wire \data_ready~0_combout ;
+wire \data_ready~q ;
+wire \always2~0_combout ;
+wire \pixelRowCounter[6]~20_combout ;
+wire \pixelRowCounter[0]~11 ;
+wire \pixelRowCounter[1]~12_combout ;
+wire \pixelRowCounter[1]~13 ;
+wire \pixelRowCounter[2]~14_combout ;
+wire \pixelRowCounter[2]~15 ;
+wire \pixelRowCounter[3]~16_combout ;
+wire \pixelRowCounter[3]~17 ;
+wire \pixelRowCounter[4]~18_combout ;
+wire \pixelRowCounter[4]~19 ;
+wire \pixelRowCounter[5]~21_combout ;
+wire \pixelRowCounter[5]~22 ;
+wire \pixelRowCounter[6]~23_combout ;
+wire \pixelRowCounter[6]~24 ;
+wire \pixelRowCounter[7]~25_combout ;
+wire \Equal5~0_combout ;
+wire \Equal5~1_combout ;
+wire \pixelRowCounter[7]~26 ;
+wire \pixelRowCounter[8]~27_combout ;
+wire \pixelRowCounter[8]~28 ;
+wire \pixelRowCounter[9]~29_combout ;
+wire \Equal5~2_combout ;
+wire \pixelCounter[0]~19_combout ;
+wire \pixelCounter[3]~26 ;
+wire \pixelCounter[4]~27_combout ;
+wire \pixelCounter[4]~28 ;
+wire \pixelCounter[5]~29_combout ;
+wire \pixelCounter[5]~30 ;
+wire \pixelCounter[6]~31_combout ;
+wire \pixelCounter[6]~32 ;
+wire \pixelCounter[7]~33_combout ;
+wire \pixelCounter[7]~34 ;
+wire \pixelCounter[8]~35_combout ;
+wire \pixelCounter[8]~36 ;
+wire \pixelCounter[9]~37_combout ;
+wire \pixelEnable~2_combout ;
+wire \pixelCounter[9]~38 ;
+wire \pixelCounter[10]~39_combout ;
+wire \pixelCounter[10]~40 ;
+wire \pixelCounter[11]~41_combout ;
+wire \pixelCounter[11]~42 ;
+wire \pixelCounter[12]~43_combout ;
+wire \pixelCounter[12]~44 ;
+wire \pixelCounter[13]~45_combout ;
+wire \pixelEnable~3_combout ;
+wire \pixelCounter[13]~46 ;
+wire \pixelCounter[14]~47_combout ;
+wire \pixelCounter[14]~48 ;
+wire \pixelCounter[15]~49_combout ;
+wire \pixelCounter[15]~50 ;
+wire \pixelCounter[16]~51_combout ;
+wire \pixelCounter[16]~52 ;
+wire \pixelCounter[17]~53_combout ;
+wire \pixelEnable~4_combout ;
+wire \pixelCounter[17]~54 ;
+wire \pixelCounter[18]~55_combout ;
+wire \pixelEnable~5_combout ;
+wire \always1~0_combout ;
+wire \always1~1_combout ;
+wire \always1~2_combout ;
+wire \pixelCounter[0]~20 ;
+wire \pixelCounter[1]~21_combout ;
+wire \pixelCounter[1]~22 ;
+wire \pixelCounter[2]~23_combout ;
+wire \pixelCounter[2]~24 ;
+wire \pixelCounter[3]~25_combout ;
+wire \pixelEnable~0_combout ;
+wire \pixelEnable~1_combout ;
+wire \pixelEnable~6_combout ;
+wire \pixelEnable~7_combout ;
+wire \pixelEnable~8_combout ;
 wire \Add4~1 ;
 wire \Add4~3 ;
 wire \Add4~5 ;
@@ -347,114 +453,7 @@ wire \Add12~3 ;
 wire \Add12~5 ;
 wire \Add12~7 ;
 wire \Add12~8_combout ;
-wire \pixelRowCounter[0]~10_combout ;
-wire \pixelStartUpCounter[0]~12_combout ;
-wire \pixelStartUpCounter[3]~21 ;
-wire \pixelStartUpCounter[4]~22_combout ;
-wire \pixelStartUpCounter[5]~15_combout ;
-wire \pixelStartUpCounter[4]~23 ;
-wire \pixelStartUpCounter[5]~24_combout ;
-wire \pixelStartUpCounter[5]~25 ;
-wire \pixelStartUpCounter[6]~26_combout ;
-wire \pixelStartUpCounter[6]~27 ;
-wire \pixelStartUpCounter[7]~28_combout ;
-wire \Equal0~1_combout ;
-wire \pixelStartUpCounter[7]~29 ;
-wire \pixelStartUpCounter[8]~30_combout ;
-wire \pixelStartUpCounter[8]~31 ;
-wire \pixelStartUpCounter[9]~32_combout ;
-wire \pixelStartUpCounter[9]~33 ;
-wire \pixelStartUpCounter[10]~34_combout ;
-wire \pixelStartUpCounter[10]~35 ;
-wire \pixelStartUpCounter[11]~36_combout ;
-wire \Equal0~2_combout ;
-wire \pixelStartUpCounter[5]~14_combout ;
-wire \pixelStartUpCounter[0]~13 ;
-wire \pixelStartUpCounter[1]~16_combout ;
-wire \pixelStartUpCounter[1]~17 ;
-wire \pixelStartUpCounter[2]~18_combout ;
-wire \pixelStartUpCounter[2]~19 ;
-wire \pixelStartUpCounter[3]~20_combout ;
-wire \Equal0~0_combout ;
-wire \Equal0~3_combout ;
-wire \state~6_combout ;
-wire \state.FILTER_ON~q ;
-wire \data_ready~0_combout ;
-wire \data_ready~q ;
-wire \Equal5~2_combout ;
-wire \pixelEnable~1_combout ;
-wire \always2~0_combout ;
-wire \pixelRowCounter[6]~20_combout ;
-wire \pixelRowCounter[0]~11 ;
-wire \pixelRowCounter[1]~12_combout ;
-wire \pixelRowCounter[1]~13 ;
-wire \pixelRowCounter[2]~14_combout ;
-wire \pixelRowCounter[2]~15 ;
-wire \pixelRowCounter[3]~16_combout ;
-wire \pixelRowCounter[3]~17 ;
-wire \pixelRowCounter[4]~18_combout ;
-wire \pixelRowCounter[4]~19 ;
-wire \pixelRowCounter[5]~21_combout ;
-wire \pixelRowCounter[5]~22 ;
-wire \pixelRowCounter[6]~23_combout ;
-wire \pixelRowCounter[6]~24 ;
-wire \pixelRowCounter[7]~25_combout ;
-wire \Equal5~0_combout ;
-wire \pixelRowCounter[7]~26 ;
-wire \pixelRowCounter[8]~27_combout ;
-wire \pixelRowCounter[8]~28 ;
-wire \pixelRowCounter[9]~29_combout ;
-wire \Equal5~1_combout ;
-wire \pixelEnable~0_combout ;
-wire \pixelCounter[0]~19_combout ;
-wire \pixelCounter[3]~26 ;
-wire \pixelCounter[4]~27_combout ;
-wire \pixelCounter[4]~28 ;
-wire \pixelCounter[5]~29_combout ;
-wire \pixelCounter[5]~30 ;
-wire \pixelCounter[6]~31_combout ;
-wire \pixelCounter[6]~32 ;
-wire \pixelCounter[7]~33_combout ;
-wire \pixelCounter[7]~34 ;
-wire \pixelCounter[8]~35_combout ;
-wire \pixelEnable~2_combout ;
-wire \pixelCounter[8]~36 ;
-wire \pixelCounter[9]~37_combout ;
-wire \pixelCounter[9]~38 ;
-wire \pixelCounter[10]~39_combout ;
-wire \pixelCounter[10]~40 ;
-wire \pixelCounter[11]~41_combout ;
-wire \pixelCounter[11]~42 ;
-wire \pixelCounter[12]~43_combout ;
-wire \pixelEnable~3_combout ;
-wire \pixelCounter[12]~44 ;
-wire \pixelCounter[13]~45_combout ;
-wire \pixelCounter[13]~46 ;
-wire \pixelCounter[14]~47_combout ;
-wire \pixelCounter[14]~48 ;
-wire \pixelCounter[15]~49_combout ;
-wire \pixelCounter[15]~50 ;
-wire \pixelCounter[16]~51_combout ;
-wire \pixelEnable~4_combout ;
-wire \pixelCounter[16]~52 ;
-wire \pixelCounter[17]~53_combout ;
-wire \pixelCounter[17]~54 ;
-wire \pixelCounter[18]~55_combout ;
-wire \pixelEnable~5_combout ;
-wire \pixelEnable~6_combout ;
-wire \always1~0_combout ;
-wire \always1~1_combout ;
-wire \always1~2_combout ;
-wire \pixelCounter[0]~20 ;
-wire \pixelCounter[1]~21_combout ;
-wire \pixelCounter[1]~22 ;
-wire \pixelCounter[2]~23_combout ;
-wire \pixelCounter[2]~24 ;
-wire \pixelCounter[3]~25_combout ;
-wire \pixelEnable~7_combout ;
-wire \pixelEnable~8_combout ;
-wire \pixelEnable~9_combout ;
-wire \o_pixel~0_combout ;
+wire \o_pixel~16_combout ;
 wire \Add9~5 ;
 wire \Add9~6_combout ;
 wire \Add4~13 ;
@@ -475,7 +474,7 @@ wire \Add11~5 ;
 wire \Add11~6_combout ;
 wire \Add12~9 ;
 wire \Add12~10_combout ;
-wire \o_pixel~1_combout ;
+wire \o_pixel~17_combout ;
 wire \Add9~7 ;
 wire \Add9~8_combout ;
 wire \Add4~15 ;
@@ -496,7 +495,7 @@ wire \Add11~7 ;
 wire \Add11~8_combout ;
 wire \Add12~11 ;
 wire \Add12~12_combout ;
-wire \o_pixel~2_combout ;
+wire \o_pixel~18_combout ;
 wire \Add9~9 ;
 wire \Add9~10_combout ;
 wire \Add5~19 ;
@@ -513,7 +512,7 @@ wire \Add11~9 ;
 wire \Add11~10_combout ;
 wire \Add12~13 ;
 wire \Add12~14_combout ;
-wire \o_pixel~3_combout ;
+wire \o_pixel~19_combout ;
 wire \Add9~11 ;
 wire \Add9~12_combout ;
 wire \Add8~11 ;
@@ -524,7 +523,7 @@ wire \Add11~11 ;
 wire \Add11~12_combout ;
 wire \Add12~15 ;
 wire \Add12~16_combout ;
-wire \o_pixel~4_combout ;
+wire \o_pixel~20_combout ;
 wire \Add9~13 ;
 wire \Add9~14_combout ;
 wire \Add8~13 ;
@@ -535,7 +534,7 @@ wire \Add11~13 ;
 wire \Add11~14_combout ;
 wire \Add12~17 ;
 wire \Add12~18_combout ;
-wire \o_pixel~5_combout ;
+wire \o_pixel~21_combout ;
 wire \Add9~15 ;
 wire \Add9~16_combout ;
 wire \Add8~15 ;
@@ -546,14 +545,15 @@ wire \Add11~15 ;
 wire \Add11~16_combout ;
 wire \Add12~19 ;
 wire \Add12~20_combout ;
-wire \o_pixel~6_combout ;
+wire \o_pixel~22_combout ;
 wire \Add10~19 ;
 wire \Add10~20_combout ;
 wire \Add11~17 ;
 wire \Add11~18_combout ;
 wire \Add12~21 ;
 wire \Add12~22_combout ;
-wire \o_pixel~7_combout ;
+wire \o_pixel~23_combout ;
+wire \pixelEnable~9_combout ;
 wire \Add12~0_combout ;
 wire \Add12~2_combout ;
 wire \Add12~4_combout ;
@@ -1053,7 +1053,7 @@ defparam \tap3[7]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[0]~output (
-	.i(\o_pixel~0_combout ),
+	.i(\o_pixel~16_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1065,7 +1065,7 @@ defparam \o_pixel[0]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[1]~output (
-	.i(\o_pixel~1_combout ),
+	.i(\o_pixel~17_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1077,7 +1077,7 @@ defparam \o_pixel[1]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[2]~output (
-	.i(\o_pixel~2_combout ),
+	.i(\o_pixel~18_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1089,7 +1089,7 @@ defparam \o_pixel[2]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[3]~output (
-	.i(\o_pixel~3_combout ),
+	.i(\o_pixel~19_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1101,7 +1101,7 @@ defparam \o_pixel[3]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[4]~output (
-	.i(\o_pixel~4_combout ),
+	.i(\o_pixel~20_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1113,7 +1113,7 @@ defparam \o_pixel[4]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[5]~output (
-	.i(\o_pixel~5_combout ),
+	.i(\o_pixel~21_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1125,7 +1125,7 @@ defparam \o_pixel[5]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[6]~output (
-	.i(\o_pixel~6_combout ),
+	.i(\o_pixel~22_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -1137,7 +1137,7 @@ defparam \o_pixel[6]~output .open_drain_output = "false";
 // synopsys translate_on
 
 fiftyfivenm_io_obuf \o_pixel[7]~output (
-	.i(\o_pixel~7_combout ),
+	.i(\o_pixel~23_combout ),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
@@ -4835,6 +4835,1874 @@ defparam \lbuff3|ALTSHIFT_TAPS_component|auto_generated|altsyncram2|ram_block5a3
 defparam \lbuff3|ALTSHIFT_TAPS_component|auto_generated|altsyncram2|ram_block5a31 .ram_block_type = "M9K";
 // synopsys translate_on
 
+fiftyfivenm_lcell_comb \pixelRowCounter[0]~10 (
+// Equation(s):
+// \pixelRowCounter[0]~10_combout  = pixelRowCounter[0] $ (VCC)
+// \pixelRowCounter[0]~11  = CARRY(pixelRowCounter[0])
+
+	.dataa(pixelRowCounter[0]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(gnd),
+	.combout(\pixelRowCounter[0]~10_combout ),
+	.cout(\pixelRowCounter[0]~11 ));
+// synopsys translate_off
+defparam \pixelRowCounter[0]~10 .lut_mask = 16'h55AA;
+defparam \pixelRowCounter[0]~10 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[0]~12 (
+// Equation(s):
+// \pixelStartUpCounter[0]~12_combout  = pixelStartUpCounter[0] $ (VCC)
+// \pixelStartUpCounter[0]~13  = CARRY(pixelStartUpCounter[0])
+
+	.dataa(pixelStartUpCounter[0]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(gnd),
+	.combout(\pixelStartUpCounter[0]~12_combout ),
+	.cout(\pixelStartUpCounter[0]~13 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[0]~12 .lut_mask = 16'h55AA;
+defparam \pixelStartUpCounter[0]~12 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[3]~20 (
+// Equation(s):
+// \pixelStartUpCounter[3]~20_combout  = (pixelStartUpCounter[3] & (!\pixelStartUpCounter[2]~19 )) # (!pixelStartUpCounter[3] & ((\pixelStartUpCounter[2]~19 ) # (GND)))
+// \pixelStartUpCounter[3]~21  = CARRY((!\pixelStartUpCounter[2]~19 ) # (!pixelStartUpCounter[3]))
+
+	.dataa(pixelStartUpCounter[3]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[2]~19 ),
+	.combout(\pixelStartUpCounter[3]~20_combout ),
+	.cout(\pixelStartUpCounter[3]~21 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[3]~20 .lut_mask = 16'h5A5F;
+defparam \pixelStartUpCounter[3]~20 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[4]~22 (
+// Equation(s):
+// \pixelStartUpCounter[4]~22_combout  = (pixelStartUpCounter[4] & (\pixelStartUpCounter[3]~21  $ (GND))) # (!pixelStartUpCounter[4] & (!\pixelStartUpCounter[3]~21  & VCC))
+// \pixelStartUpCounter[4]~23  = CARRY((pixelStartUpCounter[4] & !\pixelStartUpCounter[3]~21 ))
+
+	.dataa(pixelStartUpCounter[4]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[3]~21 ),
+	.combout(\pixelStartUpCounter[4]~22_combout ),
+	.cout(\pixelStartUpCounter[4]~23 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[4]~22 .lut_mask = 16'hA50A;
+defparam \pixelStartUpCounter[4]~22 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~15 (
+// Equation(s):
+// \pixelStartUpCounter[5]~15_combout  = ((!\state.FILTER_ON~q  & ((\i_pixel_valid~input_o ) # (!\Equal0~3_combout )))) # (!\rst_n~input_o )
+
+	.dataa(\rst_n~input_o ),
+	.datab(\state.FILTER_ON~q ),
+	.datac(\Equal0~3_combout ),
+	.datad(\i_pixel_valid~input_o ),
+	.cin(gnd),
+	.combout(\pixelStartUpCounter[5]~15_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelStartUpCounter[5]~15 .lut_mask = 16'h7757;
+defparam \pixelStartUpCounter[5]~15 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[4] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[4]~22_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[4]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[4] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[4] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~24 (
+// Equation(s):
+// \pixelStartUpCounter[5]~24_combout  = (pixelStartUpCounter[5] & (!\pixelStartUpCounter[4]~23 )) # (!pixelStartUpCounter[5] & ((\pixelStartUpCounter[4]~23 ) # (GND)))
+// \pixelStartUpCounter[5]~25  = CARRY((!\pixelStartUpCounter[4]~23 ) # (!pixelStartUpCounter[5]))
+
+	.dataa(pixelStartUpCounter[5]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[4]~23 ),
+	.combout(\pixelStartUpCounter[5]~24_combout ),
+	.cout(\pixelStartUpCounter[5]~25 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[5]~24 .lut_mask = 16'h5A5F;
+defparam \pixelStartUpCounter[5]~24 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[5] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[5]~24_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[5]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[5] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[5] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[6]~26 (
+// Equation(s):
+// \pixelStartUpCounter[6]~26_combout  = (pixelStartUpCounter[6] & (\pixelStartUpCounter[5]~25  $ (GND))) # (!pixelStartUpCounter[6] & (!\pixelStartUpCounter[5]~25  & VCC))
+// \pixelStartUpCounter[6]~27  = CARRY((pixelStartUpCounter[6] & !\pixelStartUpCounter[5]~25 ))
+
+	.dataa(pixelStartUpCounter[6]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[5]~25 ),
+	.combout(\pixelStartUpCounter[6]~26_combout ),
+	.cout(\pixelStartUpCounter[6]~27 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[6]~26 .lut_mask = 16'hA50A;
+defparam \pixelStartUpCounter[6]~26 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[6] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[6]~26_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[6]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[6] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[6] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[7]~28 (
+// Equation(s):
+// \pixelStartUpCounter[7]~28_combout  = (pixelStartUpCounter[7] & (!\pixelStartUpCounter[6]~27 )) # (!pixelStartUpCounter[7] & ((\pixelStartUpCounter[6]~27 ) # (GND)))
+// \pixelStartUpCounter[7]~29  = CARRY((!\pixelStartUpCounter[6]~27 ) # (!pixelStartUpCounter[7]))
+
+	.dataa(pixelStartUpCounter[7]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[6]~27 ),
+	.combout(\pixelStartUpCounter[7]~28_combout ),
+	.cout(\pixelStartUpCounter[7]~29 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[7]~28 .lut_mask = 16'h5A5F;
+defparam \pixelStartUpCounter[7]~28 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[7] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[7]~28_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[7]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[7] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[7] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal0~1 (
+// Equation(s):
+// \Equal0~1_combout  = (pixelStartUpCounter[4]) # ((pixelStartUpCounter[6]) # ((pixelStartUpCounter[7]) # (!pixelStartUpCounter[5])))
+
+	.dataa(pixelStartUpCounter[4]),
+	.datab(pixelStartUpCounter[6]),
+	.datac(pixelStartUpCounter[7]),
+	.datad(pixelStartUpCounter[5]),
+	.cin(gnd),
+	.combout(\Equal0~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal0~1 .lut_mask = 16'hFEFF;
+defparam \Equal0~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[8]~30 (
+// Equation(s):
+// \pixelStartUpCounter[8]~30_combout  = (pixelStartUpCounter[8] & (\pixelStartUpCounter[7]~29  $ (GND))) # (!pixelStartUpCounter[8] & (!\pixelStartUpCounter[7]~29  & VCC))
+// \pixelStartUpCounter[8]~31  = CARRY((pixelStartUpCounter[8] & !\pixelStartUpCounter[7]~29 ))
+
+	.dataa(pixelStartUpCounter[8]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[7]~29 ),
+	.combout(\pixelStartUpCounter[8]~30_combout ),
+	.cout(\pixelStartUpCounter[8]~31 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[8]~30 .lut_mask = 16'hA50A;
+defparam \pixelStartUpCounter[8]~30 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[8] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[8]~30_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[8]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[8] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[8] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[9]~32 (
+// Equation(s):
+// \pixelStartUpCounter[9]~32_combout  = (pixelStartUpCounter[9] & (!\pixelStartUpCounter[8]~31 )) # (!pixelStartUpCounter[9] & ((\pixelStartUpCounter[8]~31 ) # (GND)))
+// \pixelStartUpCounter[9]~33  = CARRY((!\pixelStartUpCounter[8]~31 ) # (!pixelStartUpCounter[9]))
+
+	.dataa(pixelStartUpCounter[9]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[8]~31 ),
+	.combout(\pixelStartUpCounter[9]~32_combout ),
+	.cout(\pixelStartUpCounter[9]~33 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[9]~32 .lut_mask = 16'h5A5F;
+defparam \pixelStartUpCounter[9]~32 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[9] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[9]~32_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[9]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[9] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[9] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[10]~34 (
+// Equation(s):
+// \pixelStartUpCounter[10]~34_combout  = (pixelStartUpCounter[10] & (\pixelStartUpCounter[9]~33  $ (GND))) # (!pixelStartUpCounter[10] & (!\pixelStartUpCounter[9]~33  & VCC))
+// \pixelStartUpCounter[10]~35  = CARRY((pixelStartUpCounter[10] & !\pixelStartUpCounter[9]~33 ))
+
+	.dataa(pixelStartUpCounter[10]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[9]~33 ),
+	.combout(\pixelStartUpCounter[10]~34_combout ),
+	.cout(\pixelStartUpCounter[10]~35 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[10]~34 .lut_mask = 16'hA50A;
+defparam \pixelStartUpCounter[10]~34 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[10] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[10]~34_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[10]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[10] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[10] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[11]~36 (
+// Equation(s):
+// \pixelStartUpCounter[11]~36_combout  = pixelStartUpCounter[11] $ (\pixelStartUpCounter[10]~35 )
+
+	.dataa(pixelStartUpCounter[11]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(gnd),
+	.cin(\pixelStartUpCounter[10]~35 ),
+	.combout(\pixelStartUpCounter[11]~36_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelStartUpCounter[11]~36 .lut_mask = 16'h5A5A;
+defparam \pixelStartUpCounter[11]~36 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[11] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[11]~36_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[11]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[11] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[11] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal0~2 (
+// Equation(s):
+// \Equal0~2_combout  = (pixelStartUpCounter[8]) # ((pixelStartUpCounter[9]) # ((pixelStartUpCounter[10]) # (pixelStartUpCounter[11])))
+
+	.dataa(pixelStartUpCounter[8]),
+	.datab(pixelStartUpCounter[9]),
+	.datac(pixelStartUpCounter[10]),
+	.datad(pixelStartUpCounter[11]),
+	.cin(gnd),
+	.combout(\Equal0~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal0~2 .lut_mask = 16'hFFFE;
+defparam \Equal0~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~14 (
+// Equation(s):
+// \pixelStartUpCounter[5]~14_combout  = ((!\Equal0~0_combout  & (!\Equal0~1_combout  & !\Equal0~2_combout ))) # (!\rst_n~input_o )
+
+	.dataa(\rst_n~input_o ),
+	.datab(\Equal0~0_combout ),
+	.datac(\Equal0~1_combout ),
+	.datad(\Equal0~2_combout ),
+	.cin(gnd),
+	.combout(\pixelStartUpCounter[5]~14_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelStartUpCounter[5]~14 .lut_mask = 16'h5557;
+defparam \pixelStartUpCounter[5]~14 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[0] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[0]~12_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[0]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[0] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[0] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[1]~16 (
+// Equation(s):
+// \pixelStartUpCounter[1]~16_combout  = (pixelStartUpCounter[1] & (!\pixelStartUpCounter[0]~13 )) # (!pixelStartUpCounter[1] & ((\pixelStartUpCounter[0]~13 ) # (GND)))
+// \pixelStartUpCounter[1]~17  = CARRY((!\pixelStartUpCounter[0]~13 ) # (!pixelStartUpCounter[1]))
+
+	.dataa(pixelStartUpCounter[1]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[0]~13 ),
+	.combout(\pixelStartUpCounter[1]~16_combout ),
+	.cout(\pixelStartUpCounter[1]~17 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[1]~16 .lut_mask = 16'h5A5F;
+defparam \pixelStartUpCounter[1]~16 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[1] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[1]~16_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[1]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[1] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[1] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelStartUpCounter[2]~18 (
+// Equation(s):
+// \pixelStartUpCounter[2]~18_combout  = (pixelStartUpCounter[2] & (\pixelStartUpCounter[1]~17  $ (GND))) # (!pixelStartUpCounter[2] & (!\pixelStartUpCounter[1]~17  & VCC))
+// \pixelStartUpCounter[2]~19  = CARRY((pixelStartUpCounter[2] & !\pixelStartUpCounter[1]~17 ))
+
+	.dataa(pixelStartUpCounter[2]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelStartUpCounter[1]~17 ),
+	.combout(\pixelStartUpCounter[2]~18_combout ),
+	.cout(\pixelStartUpCounter[2]~19 ));
+// synopsys translate_off
+defparam \pixelStartUpCounter[2]~18 .lut_mask = 16'hA50A;
+defparam \pixelStartUpCounter[2]~18 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[2] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[2]~18_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[2]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[2] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[2] .power_up = "low";
+// synopsys translate_on
+
+dffeas \pixelStartUpCounter[3] (
+	.clk(\clk~input_o ),
+	.d(\pixelStartUpCounter[3]~20_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\pixelStartUpCounter[5]~14_combout ),
+	.sload(gnd),
+	.ena(\pixelStartUpCounter[5]~15_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelStartUpCounter[3]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelStartUpCounter[3] .is_wysiwyg = "true";
+defparam \pixelStartUpCounter[3] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal0~0 (
+// Equation(s):
+// \Equal0~0_combout  = (pixelStartUpCounter[3]) # (((!pixelStartUpCounter[2]) # (!pixelStartUpCounter[1])) # (!pixelStartUpCounter[0]))
+
+	.dataa(pixelStartUpCounter[3]),
+	.datab(pixelStartUpCounter[0]),
+	.datac(pixelStartUpCounter[1]),
+	.datad(pixelStartUpCounter[2]),
+	.cin(gnd),
+	.combout(\Equal0~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal0~0 .lut_mask = 16'hBFFF;
+defparam \Equal0~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal0~3 (
+// Equation(s):
+// \Equal0~3_combout  = (\Equal0~0_combout ) # ((\Equal0~1_combout ) # (\Equal0~2_combout ))
+
+	.dataa(\Equal0~0_combout ),
+	.datab(\Equal0~1_combout ),
+	.datac(\Equal0~2_combout ),
+	.datad(gnd),
+	.cin(gnd),
+	.combout(\Equal0~3_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal0~3 .lut_mask = 16'hFEFE;
+defparam \Equal0~3 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \state~6 (
+// Equation(s):
+// \state~6_combout  = (\rst_n~input_o  & ((\state.FILTER_ON~q ) # (!\Equal0~3_combout )))
+
+	.dataa(\rst_n~input_o ),
+	.datab(\state.FILTER_ON~q ),
+	.datac(gnd),
+	.datad(\Equal0~3_combout ),
+	.cin(gnd),
+	.combout(\state~6_combout ),
+	.cout());
+// synopsys translate_off
+defparam \state~6 .lut_mask = 16'h88AA;
+defparam \state~6 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas \state.FILTER_ON (
+	.clk(\clk~input_o ),
+	.d(\state~6_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(gnd),
+	.sload(gnd),
+	.ena(vcc),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(\state.FILTER_ON~q ),
+	.prn(vcc));
+// synopsys translate_off
+defparam \state.FILTER_ON .is_wysiwyg = "true";
+defparam \state.FILTER_ON .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \data_ready~0 (
+// Equation(s):
+// \data_ready~0_combout  = (\rst_n~input_o  & ((\data_ready~q ) # ((!\state.FILTER_ON~q  & !\Equal0~3_combout ))))
+
+	.dataa(\state.FILTER_ON~q ),
+	.datab(\Equal0~3_combout ),
+	.datac(\data_ready~q ),
+	.datad(\rst_n~input_o ),
+	.cin(gnd),
+	.combout(\data_ready~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \data_ready~0 .lut_mask = 16'hF100;
+defparam \data_ready~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas data_ready(
+	.clk(\clk~input_o ),
+	.d(\data_ready~0_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(gnd),
+	.sload(gnd),
+	.ena(vcc),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(\data_ready~q ),
+	.prn(vcc));
+// synopsys translate_off
+defparam data_ready.is_wysiwyg = "true";
+defparam data_ready.power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \always2~0 (
+// Equation(s):
+// \always2~0_combout  = ((\i_pixel_valid~input_o  & ((\Equal5~2_combout ) # (!\data_ready~q )))) # (!\rst_n~input_o )
+
+	.dataa(\i_pixel_valid~input_o ),
+	.datab(\Equal5~2_combout ),
+	.datac(\data_ready~q ),
+	.datad(\rst_n~input_o ),
+	.cin(gnd),
+	.combout(\always2~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \always2~0 .lut_mask = 16'h8AFF;
+defparam \always2~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[6]~20 (
+// Equation(s):
+// \pixelRowCounter[6]~20_combout  = (\i_pixel_valid~input_o ) # (!\rst_n~input_o )
+
+	.dataa(\rst_n~input_o ),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(\i_pixel_valid~input_o ),
+	.cin(gnd),
+	.combout(\pixelRowCounter[6]~20_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelRowCounter[6]~20 .lut_mask = 16'hFF55;
+defparam \pixelRowCounter[6]~20 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[0] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[0]~10_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[0]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[0] .is_wysiwyg = "true";
+defparam \pixelRowCounter[0] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[1]~12 (
+// Equation(s):
+// \pixelRowCounter[1]~12_combout  = (pixelRowCounter[1] & (!\pixelRowCounter[0]~11 )) # (!pixelRowCounter[1] & ((\pixelRowCounter[0]~11 ) # (GND)))
+// \pixelRowCounter[1]~13  = CARRY((!\pixelRowCounter[0]~11 ) # (!pixelRowCounter[1]))
+
+	.dataa(pixelRowCounter[1]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[0]~11 ),
+	.combout(\pixelRowCounter[1]~12_combout ),
+	.cout(\pixelRowCounter[1]~13 ));
+// synopsys translate_off
+defparam \pixelRowCounter[1]~12 .lut_mask = 16'h5A5F;
+defparam \pixelRowCounter[1]~12 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[1] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[1]~12_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[1]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[1] .is_wysiwyg = "true";
+defparam \pixelRowCounter[1] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[2]~14 (
+// Equation(s):
+// \pixelRowCounter[2]~14_combout  = (pixelRowCounter[2] & (\pixelRowCounter[1]~13  $ (GND))) # (!pixelRowCounter[2] & (!\pixelRowCounter[1]~13  & VCC))
+// \pixelRowCounter[2]~15  = CARRY((pixelRowCounter[2] & !\pixelRowCounter[1]~13 ))
+
+	.dataa(pixelRowCounter[2]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[1]~13 ),
+	.combout(\pixelRowCounter[2]~14_combout ),
+	.cout(\pixelRowCounter[2]~15 ));
+// synopsys translate_off
+defparam \pixelRowCounter[2]~14 .lut_mask = 16'hA50A;
+defparam \pixelRowCounter[2]~14 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[2] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[2]~14_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[2]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[2] .is_wysiwyg = "true";
+defparam \pixelRowCounter[2] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[3]~16 (
+// Equation(s):
+// \pixelRowCounter[3]~16_combout  = (pixelRowCounter[3] & (!\pixelRowCounter[2]~15 )) # (!pixelRowCounter[3] & ((\pixelRowCounter[2]~15 ) # (GND)))
+// \pixelRowCounter[3]~17  = CARRY((!\pixelRowCounter[2]~15 ) # (!pixelRowCounter[3]))
+
+	.dataa(pixelRowCounter[3]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[2]~15 ),
+	.combout(\pixelRowCounter[3]~16_combout ),
+	.cout(\pixelRowCounter[3]~17 ));
+// synopsys translate_off
+defparam \pixelRowCounter[3]~16 .lut_mask = 16'h5A5F;
+defparam \pixelRowCounter[3]~16 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[3] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[3]~16_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[3]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[3] .is_wysiwyg = "true";
+defparam \pixelRowCounter[3] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[4]~18 (
+// Equation(s):
+// \pixelRowCounter[4]~18_combout  = (pixelRowCounter[4] & (\pixelRowCounter[3]~17  $ (GND))) # (!pixelRowCounter[4] & (!\pixelRowCounter[3]~17  & VCC))
+// \pixelRowCounter[4]~19  = CARRY((pixelRowCounter[4] & !\pixelRowCounter[3]~17 ))
+
+	.dataa(pixelRowCounter[4]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[3]~17 ),
+	.combout(\pixelRowCounter[4]~18_combout ),
+	.cout(\pixelRowCounter[4]~19 ));
+// synopsys translate_off
+defparam \pixelRowCounter[4]~18 .lut_mask = 16'hA50A;
+defparam \pixelRowCounter[4]~18 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[4] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[4]~18_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[4]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[4] .is_wysiwyg = "true";
+defparam \pixelRowCounter[4] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[5]~21 (
+// Equation(s):
+// \pixelRowCounter[5]~21_combout  = (pixelRowCounter[5] & (!\pixelRowCounter[4]~19 )) # (!pixelRowCounter[5] & ((\pixelRowCounter[4]~19 ) # (GND)))
+// \pixelRowCounter[5]~22  = CARRY((!\pixelRowCounter[4]~19 ) # (!pixelRowCounter[5]))
+
+	.dataa(pixelRowCounter[5]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[4]~19 ),
+	.combout(\pixelRowCounter[5]~21_combout ),
+	.cout(\pixelRowCounter[5]~22 ));
+// synopsys translate_off
+defparam \pixelRowCounter[5]~21 .lut_mask = 16'h5A5F;
+defparam \pixelRowCounter[5]~21 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[5] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[5]~21_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[5]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[5] .is_wysiwyg = "true";
+defparam \pixelRowCounter[5] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[6]~23 (
+// Equation(s):
+// \pixelRowCounter[6]~23_combout  = (pixelRowCounter[6] & (\pixelRowCounter[5]~22  $ (GND))) # (!pixelRowCounter[6] & (!\pixelRowCounter[5]~22  & VCC))
+// \pixelRowCounter[6]~24  = CARRY((pixelRowCounter[6] & !\pixelRowCounter[5]~22 ))
+
+	.dataa(pixelRowCounter[6]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[5]~22 ),
+	.combout(\pixelRowCounter[6]~23_combout ),
+	.cout(\pixelRowCounter[6]~24 ));
+// synopsys translate_off
+defparam \pixelRowCounter[6]~23 .lut_mask = 16'hA50A;
+defparam \pixelRowCounter[6]~23 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[6] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[6]~23_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[6]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[6] .is_wysiwyg = "true";
+defparam \pixelRowCounter[6] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[7]~25 (
+// Equation(s):
+// \pixelRowCounter[7]~25_combout  = (pixelRowCounter[7] & (!\pixelRowCounter[6]~24 )) # (!pixelRowCounter[7] & ((\pixelRowCounter[6]~24 ) # (GND)))
+// \pixelRowCounter[7]~26  = CARRY((!\pixelRowCounter[6]~24 ) # (!pixelRowCounter[7]))
+
+	.dataa(pixelRowCounter[7]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[6]~24 ),
+	.combout(\pixelRowCounter[7]~25_combout ),
+	.cout(\pixelRowCounter[7]~26 ));
+// synopsys translate_off
+defparam \pixelRowCounter[7]~25 .lut_mask = 16'h5A5F;
+defparam \pixelRowCounter[7]~25 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[7] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[7]~25_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[7]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[7] .is_wysiwyg = "true";
+defparam \pixelRowCounter[7] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal5~0 (
+// Equation(s):
+// \Equal5~0_combout  = (!pixelRowCounter[4] & (!pixelRowCounter[5] & (!pixelRowCounter[6] & !pixelRowCounter[7])))
+
+	.dataa(pixelRowCounter[4]),
+	.datab(pixelRowCounter[5]),
+	.datac(pixelRowCounter[6]),
+	.datad(pixelRowCounter[7]),
+	.cin(gnd),
+	.combout(\Equal5~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal5~0 .lut_mask = 16'h0001;
+defparam \Equal5~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal5~1 (
+// Equation(s):
+// \Equal5~1_combout  = (pixelRowCounter[3] & (!pixelRowCounter[1] & (!pixelRowCounter[2] & !pixelRowCounter[0])))
+
+	.dataa(pixelRowCounter[3]),
+	.datab(pixelRowCounter[1]),
+	.datac(pixelRowCounter[2]),
+	.datad(pixelRowCounter[0]),
+	.cin(gnd),
+	.combout(\Equal5~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal5~1 .lut_mask = 16'h0002;
+defparam \Equal5~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[8]~27 (
+// Equation(s):
+// \pixelRowCounter[8]~27_combout  = (pixelRowCounter[8] & (\pixelRowCounter[7]~26  $ (GND))) # (!pixelRowCounter[8] & (!\pixelRowCounter[7]~26  & VCC))
+// \pixelRowCounter[8]~28  = CARRY((pixelRowCounter[8] & !\pixelRowCounter[7]~26 ))
+
+	.dataa(pixelRowCounter[8]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelRowCounter[7]~26 ),
+	.combout(\pixelRowCounter[8]~27_combout ),
+	.cout(\pixelRowCounter[8]~28 ));
+// synopsys translate_off
+defparam \pixelRowCounter[8]~27 .lut_mask = 16'hA50A;
+defparam \pixelRowCounter[8]~27 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[8] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[8]~27_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[8]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[8] .is_wysiwyg = "true";
+defparam \pixelRowCounter[8] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelRowCounter[9]~29 (
+// Equation(s):
+// \pixelRowCounter[9]~29_combout  = pixelRowCounter[9] $ (\pixelRowCounter[8]~28 )
+
+	.dataa(pixelRowCounter[9]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(gnd),
+	.cin(\pixelRowCounter[8]~28 ),
+	.combout(\pixelRowCounter[9]~29_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelRowCounter[9]~29 .lut_mask = 16'h5A5A;
+defparam \pixelRowCounter[9]~29 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelRowCounter[9] (
+	.clk(\clk~input_o ),
+	.d(\pixelRowCounter[9]~29_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always2~0_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelRowCounter[9]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelRowCounter[9] .is_wysiwyg = "true";
+defparam \pixelRowCounter[9] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \Equal5~2 (
+// Equation(s):
+// \Equal5~2_combout  = (\Equal5~0_combout  & (\Equal5~1_combout  & (!pixelRowCounter[8] & !pixelRowCounter[9])))
+
+	.dataa(\Equal5~0_combout ),
+	.datab(\Equal5~1_combout ),
+	.datac(pixelRowCounter[8]),
+	.datad(pixelRowCounter[9]),
+	.cin(gnd),
+	.combout(\Equal5~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Equal5~2 .lut_mask = 16'h0008;
+defparam \Equal5~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[0]~19 (
+// Equation(s):
+// \pixelCounter[0]~19_combout  = pixelCounter[0] $ (VCC)
+// \pixelCounter[0]~20  = CARRY(pixelCounter[0])
+
+	.dataa(pixelCounter[0]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(gnd),
+	.combout(\pixelCounter[0]~19_combout ),
+	.cout(\pixelCounter[0]~20 ));
+// synopsys translate_off
+defparam \pixelCounter[0]~19 .lut_mask = 16'h55AA;
+defparam \pixelCounter[0]~19 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[3]~25 (
+// Equation(s):
+// \pixelCounter[3]~25_combout  = (pixelCounter[3] & (!\pixelCounter[2]~24 )) # (!pixelCounter[3] & ((\pixelCounter[2]~24 ) # (GND)))
+// \pixelCounter[3]~26  = CARRY((!\pixelCounter[2]~24 ) # (!pixelCounter[3]))
+
+	.dataa(pixelCounter[3]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[2]~24 ),
+	.combout(\pixelCounter[3]~25_combout ),
+	.cout(\pixelCounter[3]~26 ));
+// synopsys translate_off
+defparam \pixelCounter[3]~25 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[3]~25 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[4]~27 (
+// Equation(s):
+// \pixelCounter[4]~27_combout  = (pixelCounter[4] & (\pixelCounter[3]~26  $ (GND))) # (!pixelCounter[4] & (!\pixelCounter[3]~26  & VCC))
+// \pixelCounter[4]~28  = CARRY((pixelCounter[4] & !\pixelCounter[3]~26 ))
+
+	.dataa(pixelCounter[4]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[3]~26 ),
+	.combout(\pixelCounter[4]~27_combout ),
+	.cout(\pixelCounter[4]~28 ));
+// synopsys translate_off
+defparam \pixelCounter[4]~27 .lut_mask = 16'hA50A;
+defparam \pixelCounter[4]~27 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[4] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[4]~27_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[4]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[4] .is_wysiwyg = "true";
+defparam \pixelCounter[4] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[5]~29 (
+// Equation(s):
+// \pixelCounter[5]~29_combout  = (pixelCounter[5] & (!\pixelCounter[4]~28 )) # (!pixelCounter[5] & ((\pixelCounter[4]~28 ) # (GND)))
+// \pixelCounter[5]~30  = CARRY((!\pixelCounter[4]~28 ) # (!pixelCounter[5]))
+
+	.dataa(pixelCounter[5]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[4]~28 ),
+	.combout(\pixelCounter[5]~29_combout ),
+	.cout(\pixelCounter[5]~30 ));
+// synopsys translate_off
+defparam \pixelCounter[5]~29 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[5]~29 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[5] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[5]~29_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[5]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[5] .is_wysiwyg = "true";
+defparam \pixelCounter[5] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[6]~31 (
+// Equation(s):
+// \pixelCounter[6]~31_combout  = (pixelCounter[6] & (\pixelCounter[5]~30  $ (GND))) # (!pixelCounter[6] & (!\pixelCounter[5]~30  & VCC))
+// \pixelCounter[6]~32  = CARRY((pixelCounter[6] & !\pixelCounter[5]~30 ))
+
+	.dataa(pixelCounter[6]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[5]~30 ),
+	.combout(\pixelCounter[6]~31_combout ),
+	.cout(\pixelCounter[6]~32 ));
+// synopsys translate_off
+defparam \pixelCounter[6]~31 .lut_mask = 16'hA50A;
+defparam \pixelCounter[6]~31 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[6] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[6]~31_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[6]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[6] .is_wysiwyg = "true";
+defparam \pixelCounter[6] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[7]~33 (
+// Equation(s):
+// \pixelCounter[7]~33_combout  = (pixelCounter[7] & (!\pixelCounter[6]~32 )) # (!pixelCounter[7] & ((\pixelCounter[6]~32 ) # (GND)))
+// \pixelCounter[7]~34  = CARRY((!\pixelCounter[6]~32 ) # (!pixelCounter[7]))
+
+	.dataa(pixelCounter[7]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[6]~32 ),
+	.combout(\pixelCounter[7]~33_combout ),
+	.cout(\pixelCounter[7]~34 ));
+// synopsys translate_off
+defparam \pixelCounter[7]~33 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[7]~33 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[7] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[7]~33_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[7]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[7] .is_wysiwyg = "true";
+defparam \pixelCounter[7] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[8]~35 (
+// Equation(s):
+// \pixelCounter[8]~35_combout  = (pixelCounter[8] & (\pixelCounter[7]~34  $ (GND))) # (!pixelCounter[8] & (!\pixelCounter[7]~34  & VCC))
+// \pixelCounter[8]~36  = CARRY((pixelCounter[8] & !\pixelCounter[7]~34 ))
+
+	.dataa(pixelCounter[8]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[7]~34 ),
+	.combout(\pixelCounter[8]~35_combout ),
+	.cout(\pixelCounter[8]~36 ));
+// synopsys translate_off
+defparam \pixelCounter[8]~35 .lut_mask = 16'hA50A;
+defparam \pixelCounter[8]~35 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[8] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[8]~35_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[8]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[8] .is_wysiwyg = "true";
+defparam \pixelCounter[8] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[9]~37 (
+// Equation(s):
+// \pixelCounter[9]~37_combout  = (pixelCounter[9] & (!\pixelCounter[8]~36 )) # (!pixelCounter[9] & ((\pixelCounter[8]~36 ) # (GND)))
+// \pixelCounter[9]~38  = CARRY((!\pixelCounter[8]~36 ) # (!pixelCounter[9]))
+
+	.dataa(pixelCounter[9]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[8]~36 ),
+	.combout(\pixelCounter[9]~37_combout ),
+	.cout(\pixelCounter[9]~38 ));
+// synopsys translate_off
+defparam \pixelCounter[9]~37 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[9]~37 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[9] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[9]~37_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[9]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[9] .is_wysiwyg = "true";
+defparam \pixelCounter[9] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~2 (
+// Equation(s):
+// \pixelEnable~2_combout  = (!pixelCounter[6] & (!pixelCounter[7] & (!pixelCounter[8] & !pixelCounter[9])))
+
+	.dataa(pixelCounter[6]),
+	.datab(pixelCounter[7]),
+	.datac(pixelCounter[8]),
+	.datad(pixelCounter[9]),
+	.cin(gnd),
+	.combout(\pixelEnable~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~2 .lut_mask = 16'h0001;
+defparam \pixelEnable~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[10]~39 (
+// Equation(s):
+// \pixelCounter[10]~39_combout  = (pixelCounter[10] & (\pixelCounter[9]~38  $ (GND))) # (!pixelCounter[10] & (!\pixelCounter[9]~38  & VCC))
+// \pixelCounter[10]~40  = CARRY((pixelCounter[10] & !\pixelCounter[9]~38 ))
+
+	.dataa(pixelCounter[10]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[9]~38 ),
+	.combout(\pixelCounter[10]~39_combout ),
+	.cout(\pixelCounter[10]~40 ));
+// synopsys translate_off
+defparam \pixelCounter[10]~39 .lut_mask = 16'hA50A;
+defparam \pixelCounter[10]~39 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[10] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[10]~39_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[10]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[10] .is_wysiwyg = "true";
+defparam \pixelCounter[10] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[11]~41 (
+// Equation(s):
+// \pixelCounter[11]~41_combout  = (pixelCounter[11] & (!\pixelCounter[10]~40 )) # (!pixelCounter[11] & ((\pixelCounter[10]~40 ) # (GND)))
+// \pixelCounter[11]~42  = CARRY((!\pixelCounter[10]~40 ) # (!pixelCounter[11]))
+
+	.dataa(pixelCounter[11]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[10]~40 ),
+	.combout(\pixelCounter[11]~41_combout ),
+	.cout(\pixelCounter[11]~42 ));
+// synopsys translate_off
+defparam \pixelCounter[11]~41 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[11]~41 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[11] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[11]~41_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[11]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[11] .is_wysiwyg = "true";
+defparam \pixelCounter[11] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[12]~43 (
+// Equation(s):
+// \pixelCounter[12]~43_combout  = (pixelCounter[12] & (\pixelCounter[11]~42  $ (GND))) # (!pixelCounter[12] & (!\pixelCounter[11]~42  & VCC))
+// \pixelCounter[12]~44  = CARRY((pixelCounter[12] & !\pixelCounter[11]~42 ))
+
+	.dataa(pixelCounter[12]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[11]~42 ),
+	.combout(\pixelCounter[12]~43_combout ),
+	.cout(\pixelCounter[12]~44 ));
+// synopsys translate_off
+defparam \pixelCounter[12]~43 .lut_mask = 16'hA50A;
+defparam \pixelCounter[12]~43 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[12] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[12]~43_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[12]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[12] .is_wysiwyg = "true";
+defparam \pixelCounter[12] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[13]~45 (
+// Equation(s):
+// \pixelCounter[13]~45_combout  = (pixelCounter[13] & (!\pixelCounter[12]~44 )) # (!pixelCounter[13] & ((\pixelCounter[12]~44 ) # (GND)))
+// \pixelCounter[13]~46  = CARRY((!\pixelCounter[12]~44 ) # (!pixelCounter[13]))
+
+	.dataa(pixelCounter[13]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[12]~44 ),
+	.combout(\pixelCounter[13]~45_combout ),
+	.cout(\pixelCounter[13]~46 ));
+// synopsys translate_off
+defparam \pixelCounter[13]~45 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[13]~45 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[13] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[13]~45_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[13]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[13] .is_wysiwyg = "true";
+defparam \pixelCounter[13] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~3 (
+// Equation(s):
+// \pixelEnable~3_combout  = (!pixelCounter[10] & (!pixelCounter[11] & (!pixelCounter[12] & !pixelCounter[13])))
+
+	.dataa(pixelCounter[10]),
+	.datab(pixelCounter[11]),
+	.datac(pixelCounter[12]),
+	.datad(pixelCounter[13]),
+	.cin(gnd),
+	.combout(\pixelEnable~3_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~3 .lut_mask = 16'h0001;
+defparam \pixelEnable~3 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[14]~47 (
+// Equation(s):
+// \pixelCounter[14]~47_combout  = (pixelCounter[14] & (\pixelCounter[13]~46  $ (GND))) # (!pixelCounter[14] & (!\pixelCounter[13]~46  & VCC))
+// \pixelCounter[14]~48  = CARRY((pixelCounter[14] & !\pixelCounter[13]~46 ))
+
+	.dataa(pixelCounter[14]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[13]~46 ),
+	.combout(\pixelCounter[14]~47_combout ),
+	.cout(\pixelCounter[14]~48 ));
+// synopsys translate_off
+defparam \pixelCounter[14]~47 .lut_mask = 16'hA50A;
+defparam \pixelCounter[14]~47 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[14] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[14]~47_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[14]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[14] .is_wysiwyg = "true";
+defparam \pixelCounter[14] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[15]~49 (
+// Equation(s):
+// \pixelCounter[15]~49_combout  = (pixelCounter[15] & (!\pixelCounter[14]~48 )) # (!pixelCounter[15] & ((\pixelCounter[14]~48 ) # (GND)))
+// \pixelCounter[15]~50  = CARRY((!\pixelCounter[14]~48 ) # (!pixelCounter[15]))
+
+	.dataa(pixelCounter[15]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[14]~48 ),
+	.combout(\pixelCounter[15]~49_combout ),
+	.cout(\pixelCounter[15]~50 ));
+// synopsys translate_off
+defparam \pixelCounter[15]~49 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[15]~49 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[15] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[15]~49_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[15]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[15] .is_wysiwyg = "true";
+defparam \pixelCounter[15] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[16]~51 (
+// Equation(s):
+// \pixelCounter[16]~51_combout  = (pixelCounter[16] & (\pixelCounter[15]~50  $ (GND))) # (!pixelCounter[16] & (!\pixelCounter[15]~50  & VCC))
+// \pixelCounter[16]~52  = CARRY((pixelCounter[16] & !\pixelCounter[15]~50 ))
+
+	.dataa(pixelCounter[16]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[15]~50 ),
+	.combout(\pixelCounter[16]~51_combout ),
+	.cout(\pixelCounter[16]~52 ));
+// synopsys translate_off
+defparam \pixelCounter[16]~51 .lut_mask = 16'hA50A;
+defparam \pixelCounter[16]~51 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[16] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[16]~51_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[16]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[16] .is_wysiwyg = "true";
+defparam \pixelCounter[16] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[17]~53 (
+// Equation(s):
+// \pixelCounter[17]~53_combout  = (pixelCounter[17] & (!\pixelCounter[16]~52 )) # (!pixelCounter[17] & ((\pixelCounter[16]~52 ) # (GND)))
+// \pixelCounter[17]~54  = CARRY((!\pixelCounter[16]~52 ) # (!pixelCounter[17]))
+
+	.dataa(pixelCounter[17]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[16]~52 ),
+	.combout(\pixelCounter[17]~53_combout ),
+	.cout(\pixelCounter[17]~54 ));
+// synopsys translate_off
+defparam \pixelCounter[17]~53 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[17]~53 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[17] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[17]~53_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[17]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[17] .is_wysiwyg = "true";
+defparam \pixelCounter[17] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~4 (
+// Equation(s):
+// \pixelEnable~4_combout  = (!pixelCounter[14] & (!pixelCounter[15] & (!pixelCounter[16] & !pixelCounter[17])))
+
+	.dataa(pixelCounter[14]),
+	.datab(pixelCounter[15]),
+	.datac(pixelCounter[16]),
+	.datad(pixelCounter[17]),
+	.cin(gnd),
+	.combout(\pixelEnable~4_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~4 .lut_mask = 16'h0001;
+defparam \pixelEnable~4 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[18]~55 (
+// Equation(s):
+// \pixelCounter[18]~55_combout  = pixelCounter[18] $ (!\pixelCounter[17]~54 )
+
+	.dataa(pixelCounter[18]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(gnd),
+	.cin(\pixelCounter[17]~54 ),
+	.combout(\pixelCounter[18]~55_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelCounter[18]~55 .lut_mask = 16'hA5A5;
+defparam \pixelCounter[18]~55 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[18] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[18]~55_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[18]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[18] .is_wysiwyg = "true";
+defparam \pixelCounter[18] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~5 (
+// Equation(s):
+// \pixelEnable~5_combout  = (\pixelEnable~2_combout  & (\pixelEnable~3_combout  & (\pixelEnable~4_combout  & !pixelCounter[18])))
+
+	.dataa(\pixelEnable~2_combout ),
+	.datab(\pixelEnable~3_combout ),
+	.datac(\pixelEnable~4_combout ),
+	.datad(pixelCounter[18]),
+	.cin(gnd),
+	.combout(\pixelEnable~5_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~5 .lut_mask = 16'h0080;
+defparam \pixelEnable~5 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \always1~0 (
+// Equation(s):
+// \always1~0_combout  = (pixelCounter[5] & (pixelCounter[2] & (pixelCounter[0] & !pixelCounter[1])))
+
+	.dataa(pixelCounter[5]),
+	.datab(pixelCounter[2]),
+	.datac(pixelCounter[0]),
+	.datad(pixelCounter[1]),
+	.cin(gnd),
+	.combout(\always1~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \always1~0 .lut_mask = 16'h0080;
+defparam \always1~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \always1~1 (
+// Equation(s):
+// \always1~1_combout  = (pixelCounter[4] & (\pixelEnable~5_combout  & (\always1~0_combout  & !pixelCounter[3])))
+
+	.dataa(pixelCounter[4]),
+	.datab(\pixelEnable~5_combout ),
+	.datac(\always1~0_combout ),
+	.datad(pixelCounter[3]),
+	.cin(gnd),
+	.combout(\always1~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \always1~1 .lut_mask = 16'h0080;
+defparam \always1~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \always1~2 (
+// Equation(s):
+// \always1~2_combout  = ((\i_pixel_valid~input_o  & ((\always1~1_combout ) # (!\data_ready~q )))) # (!\rst_n~input_o )
+
+	.dataa(\i_pixel_valid~input_o ),
+	.datab(\always1~1_combout ),
+	.datac(\data_ready~q ),
+	.datad(\rst_n~input_o ),
+	.cin(gnd),
+	.combout(\always1~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \always1~2 .lut_mask = 16'h8AFF;
+defparam \always1~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+dffeas \pixelCounter[0] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[0]~19_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[0]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[0] .is_wysiwyg = "true";
+defparam \pixelCounter[0] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[1]~21 (
+// Equation(s):
+// \pixelCounter[1]~21_combout  = (pixelCounter[1] & (!\pixelCounter[0]~20 )) # (!pixelCounter[1] & ((\pixelCounter[0]~20 ) # (GND)))
+// \pixelCounter[1]~22  = CARRY((!\pixelCounter[0]~20 ) # (!pixelCounter[1]))
+
+	.dataa(pixelCounter[1]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[0]~20 ),
+	.combout(\pixelCounter[1]~21_combout ),
+	.cout(\pixelCounter[1]~22 ));
+// synopsys translate_off
+defparam \pixelCounter[1]~21 .lut_mask = 16'h5A5F;
+defparam \pixelCounter[1]~21 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[1] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[1]~21_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[1]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[1] .is_wysiwyg = "true";
+defparam \pixelCounter[1] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelCounter[2]~23 (
+// Equation(s):
+// \pixelCounter[2]~23_combout  = (pixelCounter[2] & (\pixelCounter[1]~22  $ (GND))) # (!pixelCounter[2] & (!\pixelCounter[1]~22  & VCC))
+// \pixelCounter[2]~24  = CARRY((pixelCounter[2] & !\pixelCounter[1]~22 ))
+
+	.dataa(pixelCounter[2]),
+	.datab(gnd),
+	.datac(gnd),
+	.datad(vcc),
+	.cin(\pixelCounter[1]~22 ),
+	.combout(\pixelCounter[2]~23_combout ),
+	.cout(\pixelCounter[2]~24 ));
+// synopsys translate_off
+defparam \pixelCounter[2]~23 .lut_mask = 16'hA50A;
+defparam \pixelCounter[2]~23 .sum_lutc_input = "cin";
+// synopsys translate_on
+
+dffeas \pixelCounter[2] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[2]~23_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[2]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[2] .is_wysiwyg = "true";
+defparam \pixelCounter[2] .power_up = "low";
+// synopsys translate_on
+
+dffeas \pixelCounter[3] (
+	.clk(\clk~input_o ),
+	.d(\pixelCounter[3]~25_combout ),
+	.asdata(vcc),
+	.clrn(vcc),
+	.aload(gnd),
+	.sclr(\always1~2_combout ),
+	.sload(gnd),
+	.ena(\pixelRowCounter[6]~20_combout ),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.q(pixelCounter[3]),
+	.prn(vcc));
+// synopsys translate_off
+defparam \pixelCounter[3] .is_wysiwyg = "true";
+defparam \pixelCounter[3] .power_up = "low";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~0 (
+// Equation(s):
+// \pixelEnable~0_combout  = (pixelCounter[1] & ((pixelCounter[2]) # ((pixelCounter[0] & !pixelCounter[5])))) # (!pixelCounter[1] & (pixelCounter[2] & ((!pixelCounter[5]))))
+
+	.dataa(pixelCounter[1]),
+	.datab(pixelCounter[2]),
+	.datac(pixelCounter[0]),
+	.datad(pixelCounter[5]),
+	.cin(gnd),
+	.combout(\pixelEnable~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~0 .lut_mask = 16'h88EC;
+defparam \pixelEnable~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~1 (
+// Equation(s):
+// \pixelEnable~1_combout  = pixelCounter[5] $ (((pixelCounter[4] & ((pixelCounter[3]) # (\pixelEnable~0_combout )))))
+
+	.dataa(pixelCounter[3]),
+	.datab(pixelCounter[4]),
+	.datac(pixelCounter[5]),
+	.datad(\pixelEnable~0_combout ),
+	.cin(gnd),
+	.combout(\pixelEnable~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~1 .lut_mask = 16'h3C78;
+defparam \pixelEnable~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~6 (
+// Equation(s):
+// \pixelEnable~6_combout  = (pixelRowCounter[1] & (pixelRowCounter[0] & pixelRowCounter[2])) # (!pixelRowCounter[1] & ((!pixelRowCounter[2])))
+
+	.dataa(pixelRowCounter[0]),
+	.datab(pixelRowCounter[1]),
+	.datac(pixelRowCounter[2]),
+	.datad(gnd),
+	.cin(gnd),
+	.combout(\pixelEnable~6_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~6 .lut_mask = 16'h8383;
+defparam \pixelEnable~6 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~7 (
+// Equation(s):
+// \pixelEnable~7_combout  = (\Equal5~0_combout  & (\pixelEnable~6_combout  & (!pixelRowCounter[8] & !pixelRowCounter[9])))
+
+	.dataa(\Equal5~0_combout ),
+	.datab(\pixelEnable~6_combout ),
+	.datac(pixelRowCounter[8]),
+	.datad(pixelRowCounter[9]),
+	.cin(gnd),
+	.combout(\pixelEnable~7_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~7 .lut_mask = 16'h0008;
+defparam \pixelEnable~7 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~8 (
+// Equation(s):
+// \pixelEnable~8_combout  = (\pixelEnable~1_combout  & ((\pixelEnable~5_combout ) # ((\pixelEnable~7_combout  & !pixelRowCounter[3])))) # (!\pixelEnable~1_combout  & (((\pixelEnable~7_combout  & !pixelRowCounter[3]))))
+
+	.dataa(\pixelEnable~1_combout ),
+	.datab(\pixelEnable~5_combout ),
+	.datac(\pixelEnable~7_combout ),
+	.datad(pixelRowCounter[3]),
+	.cin(gnd),
+	.combout(\pixelEnable~8_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~8 .lut_mask = 16'h88F8;
+defparam \pixelEnable~8 .sum_lutc_input = "datac";
+// synopsys translate_on
+
 fiftyfivenm_lcell_comb \Add4~0 (
 // Equation(s):
 // \Add4~0_combout  = (\lbuff3|ALTSHIFT_TAPS_component|auto_generated|altsyncram2|q_b [9] & (\lbuff3|ALTSHIFT_TAPS_component|auto_generated|altsyncram2|q_b [8] $ (VCC))) # (!\lbuff3|ALTSHIFT_TAPS_component|auto_generated|altsyncram2|q_b [9] & 
@@ -6351,1904 +8219,20 @@ defparam \Add12~8 .lut_mask = 16'h698E;
 defparam \Add12~8 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \pixelRowCounter[0]~10 (
+fiftyfivenm_lcell_comb \o_pixel~16 (
 // Equation(s):
-// \pixelRowCounter[0]~10_combout  = pixelRowCounter[0] $ (VCC)
-// \pixelRowCounter[0]~11  = CARRY(pixelRowCounter[0])
+// \o_pixel~16_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~8_combout )))
 
-	.dataa(pixelRowCounter[0]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(gnd),
-	.combout(\pixelRowCounter[0]~10_combout ),
-	.cout(\pixelRowCounter[0]~11 ));
-// synopsys translate_off
-defparam \pixelRowCounter[0]~10 .lut_mask = 16'h55AA;
-defparam \pixelRowCounter[0]~10 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[0]~12 (
-// Equation(s):
-// \pixelStartUpCounter[0]~12_combout  = pixelStartUpCounter[0] $ (VCC)
-// \pixelStartUpCounter[0]~13  = CARRY(pixelStartUpCounter[0])
-
-	.dataa(pixelStartUpCounter[0]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(gnd),
-	.combout(\pixelStartUpCounter[0]~12_combout ),
-	.cout(\pixelStartUpCounter[0]~13 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[0]~12 .lut_mask = 16'h55AA;
-defparam \pixelStartUpCounter[0]~12 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[3]~20 (
-// Equation(s):
-// \pixelStartUpCounter[3]~20_combout  = (pixelStartUpCounter[3] & (!\pixelStartUpCounter[2]~19 )) # (!pixelStartUpCounter[3] & ((\pixelStartUpCounter[2]~19 ) # (GND)))
-// \pixelStartUpCounter[3]~21  = CARRY((!\pixelStartUpCounter[2]~19 ) # (!pixelStartUpCounter[3]))
-
-	.dataa(pixelStartUpCounter[3]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[2]~19 ),
-	.combout(\pixelStartUpCounter[3]~20_combout ),
-	.cout(\pixelStartUpCounter[3]~21 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[3]~20 .lut_mask = 16'h5A5F;
-defparam \pixelStartUpCounter[3]~20 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[4]~22 (
-// Equation(s):
-// \pixelStartUpCounter[4]~22_combout  = (pixelStartUpCounter[4] & (\pixelStartUpCounter[3]~21  $ (GND))) # (!pixelStartUpCounter[4] & (!\pixelStartUpCounter[3]~21  & VCC))
-// \pixelStartUpCounter[4]~23  = CARRY((pixelStartUpCounter[4] & !\pixelStartUpCounter[3]~21 ))
-
-	.dataa(pixelStartUpCounter[4]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[3]~21 ),
-	.combout(\pixelStartUpCounter[4]~22_combout ),
-	.cout(\pixelStartUpCounter[4]~23 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[4]~22 .lut_mask = 16'hA50A;
-defparam \pixelStartUpCounter[4]~22 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~15 (
-// Equation(s):
-// \pixelStartUpCounter[5]~15_combout  = ((!\state.FILTER_ON~q  & ((\i_pixel_valid~input_o ) # (!\Equal0~3_combout )))) # (!\rst_n~input_o )
-
-	.dataa(\rst_n~input_o ),
-	.datab(\state.FILTER_ON~q ),
-	.datac(\Equal0~3_combout ),
-	.datad(\i_pixel_valid~input_o ),
-	.cin(gnd),
-	.combout(\pixelStartUpCounter[5]~15_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelStartUpCounter[5]~15 .lut_mask = 16'h7757;
-defparam \pixelStartUpCounter[5]~15 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[4] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[4]~22_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[4]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[4] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[4] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~24 (
-// Equation(s):
-// \pixelStartUpCounter[5]~24_combout  = (pixelStartUpCounter[5] & (!\pixelStartUpCounter[4]~23 )) # (!pixelStartUpCounter[5] & ((\pixelStartUpCounter[4]~23 ) # (GND)))
-// \pixelStartUpCounter[5]~25  = CARRY((!\pixelStartUpCounter[4]~23 ) # (!pixelStartUpCounter[5]))
-
-	.dataa(pixelStartUpCounter[5]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[4]~23 ),
-	.combout(\pixelStartUpCounter[5]~24_combout ),
-	.cout(\pixelStartUpCounter[5]~25 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[5]~24 .lut_mask = 16'h5A5F;
-defparam \pixelStartUpCounter[5]~24 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[5] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[5]~24_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[5]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[5] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[5] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[6]~26 (
-// Equation(s):
-// \pixelStartUpCounter[6]~26_combout  = (pixelStartUpCounter[6] & (\pixelStartUpCounter[5]~25  $ (GND))) # (!pixelStartUpCounter[6] & (!\pixelStartUpCounter[5]~25  & VCC))
-// \pixelStartUpCounter[6]~27  = CARRY((pixelStartUpCounter[6] & !\pixelStartUpCounter[5]~25 ))
-
-	.dataa(pixelStartUpCounter[6]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[5]~25 ),
-	.combout(\pixelStartUpCounter[6]~26_combout ),
-	.cout(\pixelStartUpCounter[6]~27 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[6]~26 .lut_mask = 16'hA50A;
-defparam \pixelStartUpCounter[6]~26 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[6] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[6]~26_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[6]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[6] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[6] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[7]~28 (
-// Equation(s):
-// \pixelStartUpCounter[7]~28_combout  = (pixelStartUpCounter[7] & (!\pixelStartUpCounter[6]~27 )) # (!pixelStartUpCounter[7] & ((\pixelStartUpCounter[6]~27 ) # (GND)))
-// \pixelStartUpCounter[7]~29  = CARRY((!\pixelStartUpCounter[6]~27 ) # (!pixelStartUpCounter[7]))
-
-	.dataa(pixelStartUpCounter[7]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[6]~27 ),
-	.combout(\pixelStartUpCounter[7]~28_combout ),
-	.cout(\pixelStartUpCounter[7]~29 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[7]~28 .lut_mask = 16'h5A5F;
-defparam \pixelStartUpCounter[7]~28 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[7] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[7]~28_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[7]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[7] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[7] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal0~1 (
-// Equation(s):
-// \Equal0~1_combout  = (pixelStartUpCounter[4]) # ((pixelStartUpCounter[6]) # ((pixelStartUpCounter[7]) # (!pixelStartUpCounter[5])))
-
-	.dataa(pixelStartUpCounter[4]),
-	.datab(pixelStartUpCounter[6]),
-	.datac(pixelStartUpCounter[7]),
-	.datad(pixelStartUpCounter[5]),
-	.cin(gnd),
-	.combout(\Equal0~1_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal0~1 .lut_mask = 16'hFEFF;
-defparam \Equal0~1 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[8]~30 (
-// Equation(s):
-// \pixelStartUpCounter[8]~30_combout  = (pixelStartUpCounter[8] & (\pixelStartUpCounter[7]~29  $ (GND))) # (!pixelStartUpCounter[8] & (!\pixelStartUpCounter[7]~29  & VCC))
-// \pixelStartUpCounter[8]~31  = CARRY((pixelStartUpCounter[8] & !\pixelStartUpCounter[7]~29 ))
-
-	.dataa(pixelStartUpCounter[8]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[7]~29 ),
-	.combout(\pixelStartUpCounter[8]~30_combout ),
-	.cout(\pixelStartUpCounter[8]~31 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[8]~30 .lut_mask = 16'hA50A;
-defparam \pixelStartUpCounter[8]~30 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[8] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[8]~30_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[8]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[8] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[8] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[9]~32 (
-// Equation(s):
-// \pixelStartUpCounter[9]~32_combout  = (pixelStartUpCounter[9] & (!\pixelStartUpCounter[8]~31 )) # (!pixelStartUpCounter[9] & ((\pixelStartUpCounter[8]~31 ) # (GND)))
-// \pixelStartUpCounter[9]~33  = CARRY((!\pixelStartUpCounter[8]~31 ) # (!pixelStartUpCounter[9]))
-
-	.dataa(pixelStartUpCounter[9]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[8]~31 ),
-	.combout(\pixelStartUpCounter[9]~32_combout ),
-	.cout(\pixelStartUpCounter[9]~33 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[9]~32 .lut_mask = 16'h5A5F;
-defparam \pixelStartUpCounter[9]~32 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[9] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[9]~32_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[9]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[9] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[9] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[10]~34 (
-// Equation(s):
-// \pixelStartUpCounter[10]~34_combout  = (pixelStartUpCounter[10] & (\pixelStartUpCounter[9]~33  $ (GND))) # (!pixelStartUpCounter[10] & (!\pixelStartUpCounter[9]~33  & VCC))
-// \pixelStartUpCounter[10]~35  = CARRY((pixelStartUpCounter[10] & !\pixelStartUpCounter[9]~33 ))
-
-	.dataa(pixelStartUpCounter[10]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[9]~33 ),
-	.combout(\pixelStartUpCounter[10]~34_combout ),
-	.cout(\pixelStartUpCounter[10]~35 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[10]~34 .lut_mask = 16'hA50A;
-defparam \pixelStartUpCounter[10]~34 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[10] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[10]~34_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[10]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[10] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[10] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[11]~36 (
-// Equation(s):
-// \pixelStartUpCounter[11]~36_combout  = pixelStartUpCounter[11] $ (\pixelStartUpCounter[10]~35 )
-
-	.dataa(pixelStartUpCounter[11]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(gnd),
-	.cin(\pixelStartUpCounter[10]~35 ),
-	.combout(\pixelStartUpCounter[11]~36_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelStartUpCounter[11]~36 .lut_mask = 16'h5A5A;
-defparam \pixelStartUpCounter[11]~36 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[11] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[11]~36_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[11]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[11] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[11] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal0~2 (
-// Equation(s):
-// \Equal0~2_combout  = (pixelStartUpCounter[8]) # ((pixelStartUpCounter[9]) # ((pixelStartUpCounter[10]) # (pixelStartUpCounter[11])))
-
-	.dataa(pixelStartUpCounter[8]),
-	.datab(pixelStartUpCounter[9]),
-	.datac(pixelStartUpCounter[10]),
-	.datad(pixelStartUpCounter[11]),
-	.cin(gnd),
-	.combout(\Equal0~2_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal0~2 .lut_mask = 16'hFFFE;
-defparam \Equal0~2 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[5]~14 (
-// Equation(s):
-// \pixelStartUpCounter[5]~14_combout  = ((!\Equal0~0_combout  & (!\Equal0~1_combout  & !\Equal0~2_combout ))) # (!\rst_n~input_o )
-
-	.dataa(\rst_n~input_o ),
-	.datab(\Equal0~0_combout ),
-	.datac(\Equal0~1_combout ),
-	.datad(\Equal0~2_combout ),
-	.cin(gnd),
-	.combout(\pixelStartUpCounter[5]~14_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelStartUpCounter[5]~14 .lut_mask = 16'h5557;
-defparam \pixelStartUpCounter[5]~14 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[0] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[0]~12_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[0]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[0] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[0] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[1]~16 (
-// Equation(s):
-// \pixelStartUpCounter[1]~16_combout  = (pixelStartUpCounter[1] & (!\pixelStartUpCounter[0]~13 )) # (!pixelStartUpCounter[1] & ((\pixelStartUpCounter[0]~13 ) # (GND)))
-// \pixelStartUpCounter[1]~17  = CARRY((!\pixelStartUpCounter[0]~13 ) # (!pixelStartUpCounter[1]))
-
-	.dataa(pixelStartUpCounter[1]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[0]~13 ),
-	.combout(\pixelStartUpCounter[1]~16_combout ),
-	.cout(\pixelStartUpCounter[1]~17 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[1]~16 .lut_mask = 16'h5A5F;
-defparam \pixelStartUpCounter[1]~16 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[1] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[1]~16_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[1]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[1] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[1] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelStartUpCounter[2]~18 (
-// Equation(s):
-// \pixelStartUpCounter[2]~18_combout  = (pixelStartUpCounter[2] & (\pixelStartUpCounter[1]~17  $ (GND))) # (!pixelStartUpCounter[2] & (!\pixelStartUpCounter[1]~17  & VCC))
-// \pixelStartUpCounter[2]~19  = CARRY((pixelStartUpCounter[2] & !\pixelStartUpCounter[1]~17 ))
-
-	.dataa(pixelStartUpCounter[2]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelStartUpCounter[1]~17 ),
-	.combout(\pixelStartUpCounter[2]~18_combout ),
-	.cout(\pixelStartUpCounter[2]~19 ));
-// synopsys translate_off
-defparam \pixelStartUpCounter[2]~18 .lut_mask = 16'hA50A;
-defparam \pixelStartUpCounter[2]~18 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[2] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[2]~18_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[2]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[2] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[2] .power_up = "low";
-// synopsys translate_on
-
-dffeas \pixelStartUpCounter[3] (
-	.clk(\clk~input_o ),
-	.d(\pixelStartUpCounter[3]~20_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\pixelStartUpCounter[5]~14_combout ),
-	.sload(gnd),
-	.ena(\pixelStartUpCounter[5]~15_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelStartUpCounter[3]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelStartUpCounter[3] .is_wysiwyg = "true";
-defparam \pixelStartUpCounter[3] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal0~0 (
-// Equation(s):
-// \Equal0~0_combout  = (pixelStartUpCounter[3]) # (((!pixelStartUpCounter[2]) # (!pixelStartUpCounter[1])) # (!pixelStartUpCounter[0]))
-
-	.dataa(pixelStartUpCounter[3]),
-	.datab(pixelStartUpCounter[0]),
-	.datac(pixelStartUpCounter[1]),
-	.datad(pixelStartUpCounter[2]),
-	.cin(gnd),
-	.combout(\Equal0~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal0~0 .lut_mask = 16'hBFFF;
-defparam \Equal0~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal0~3 (
-// Equation(s):
-// \Equal0~3_combout  = (\Equal0~0_combout ) # ((\Equal0~1_combout ) # (\Equal0~2_combout ))
-
-	.dataa(\Equal0~0_combout ),
-	.datab(\Equal0~1_combout ),
-	.datac(\Equal0~2_combout ),
-	.datad(gnd),
-	.cin(gnd),
-	.combout(\Equal0~3_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal0~3 .lut_mask = 16'hFEFE;
-defparam \Equal0~3 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \state~6 (
-// Equation(s):
-// \state~6_combout  = (\rst_n~input_o  & ((\state.FILTER_ON~q ) # (!\Equal0~3_combout )))
-
-	.dataa(\rst_n~input_o ),
-	.datab(\state.FILTER_ON~q ),
-	.datac(gnd),
-	.datad(\Equal0~3_combout ),
-	.cin(gnd),
-	.combout(\state~6_combout ),
-	.cout());
-// synopsys translate_off
-defparam \state~6 .lut_mask = 16'h88AA;
-defparam \state~6 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas \state.FILTER_ON (
-	.clk(\clk~input_o ),
-	.d(\state~6_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(\state.FILTER_ON~q ),
-	.prn(vcc));
-// synopsys translate_off
-defparam \state.FILTER_ON .is_wysiwyg = "true";
-defparam \state.FILTER_ON .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \data_ready~0 (
-// Equation(s):
-// \data_ready~0_combout  = (\rst_n~input_o  & ((\data_ready~q ) # ((!\state.FILTER_ON~q  & !\Equal0~3_combout ))))
-
-	.dataa(\state.FILTER_ON~q ),
-	.datab(\Equal0~3_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
 	.datac(\data_ready~q ),
-	.datad(\rst_n~input_o ),
+	.datad(\Add12~8_combout ),
 	.cin(gnd),
-	.combout(\data_ready~0_combout ),
+	.combout(\o_pixel~16_combout ),
 	.cout());
 // synopsys translate_off
-defparam \data_ready~0 .lut_mask = 16'hF100;
-defparam \data_ready~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas data_ready(
-	.clk(\clk~input_o ),
-	.d(\data_ready~0_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(\data_ready~q ),
-	.prn(vcc));
-// synopsys translate_off
-defparam data_ready.is_wysiwyg = "true";
-defparam data_ready.power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal5~2 (
-// Equation(s):
-// \Equal5~2_combout  = (pixelRowCounter[3] & (!pixelRowCounter[1] & (!pixelRowCounter[2] & !pixelRowCounter[0])))
-
-	.dataa(pixelRowCounter[3]),
-	.datab(pixelRowCounter[1]),
-	.datac(pixelRowCounter[2]),
-	.datad(pixelRowCounter[0]),
-	.cin(gnd),
-	.combout(\Equal5~2_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal5~2 .lut_mask = 16'h0002;
-defparam \Equal5~2 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~1 (
-// Equation(s):
-// \pixelEnable~1_combout  = (\data_ready~q  & ((!\Equal5~2_combout ) # (!\Equal5~1_combout )))
-
-	.dataa(\data_ready~q ),
-	.datab(gnd),
-	.datac(\Equal5~1_combout ),
-	.datad(\Equal5~2_combout ),
-	.cin(gnd),
-	.combout(\pixelEnable~1_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~1 .lut_mask = 16'h0AAA;
-defparam \pixelEnable~1 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \always2~0 (
-// Equation(s):
-// \always2~0_combout  = ((\i_pixel_valid~input_o  & !\pixelEnable~1_combout )) # (!\rst_n~input_o )
-
-	.dataa(\i_pixel_valid~input_o ),
-	.datab(gnd),
-	.datac(\pixelEnable~1_combout ),
-	.datad(\rst_n~input_o ),
-	.cin(gnd),
-	.combout(\always2~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \always2~0 .lut_mask = 16'h0AFF;
-defparam \always2~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[6]~20 (
-// Equation(s):
-// \pixelRowCounter[6]~20_combout  = (\i_pixel_valid~input_o ) # (!\rst_n~input_o )
-
-	.dataa(\rst_n~input_o ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\i_pixel_valid~input_o ),
-	.cin(gnd),
-	.combout(\pixelRowCounter[6]~20_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelRowCounter[6]~20 .lut_mask = 16'hFF55;
-defparam \pixelRowCounter[6]~20 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[0] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[0]~10_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[0]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[0] .is_wysiwyg = "true";
-defparam \pixelRowCounter[0] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[1]~12 (
-// Equation(s):
-// \pixelRowCounter[1]~12_combout  = (pixelRowCounter[1] & (!\pixelRowCounter[0]~11 )) # (!pixelRowCounter[1] & ((\pixelRowCounter[0]~11 ) # (GND)))
-// \pixelRowCounter[1]~13  = CARRY((!\pixelRowCounter[0]~11 ) # (!pixelRowCounter[1]))
-
-	.dataa(pixelRowCounter[1]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[0]~11 ),
-	.combout(\pixelRowCounter[1]~12_combout ),
-	.cout(\pixelRowCounter[1]~13 ));
-// synopsys translate_off
-defparam \pixelRowCounter[1]~12 .lut_mask = 16'h5A5F;
-defparam \pixelRowCounter[1]~12 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[1] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[1]~12_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[1]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[1] .is_wysiwyg = "true";
-defparam \pixelRowCounter[1] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[2]~14 (
-// Equation(s):
-// \pixelRowCounter[2]~14_combout  = (pixelRowCounter[2] & (\pixelRowCounter[1]~13  $ (GND))) # (!pixelRowCounter[2] & (!\pixelRowCounter[1]~13  & VCC))
-// \pixelRowCounter[2]~15  = CARRY((pixelRowCounter[2] & !\pixelRowCounter[1]~13 ))
-
-	.dataa(pixelRowCounter[2]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[1]~13 ),
-	.combout(\pixelRowCounter[2]~14_combout ),
-	.cout(\pixelRowCounter[2]~15 ));
-// synopsys translate_off
-defparam \pixelRowCounter[2]~14 .lut_mask = 16'hA50A;
-defparam \pixelRowCounter[2]~14 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[2] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[2]~14_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[2]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[2] .is_wysiwyg = "true";
-defparam \pixelRowCounter[2] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[3]~16 (
-// Equation(s):
-// \pixelRowCounter[3]~16_combout  = (pixelRowCounter[3] & (!\pixelRowCounter[2]~15 )) # (!pixelRowCounter[3] & ((\pixelRowCounter[2]~15 ) # (GND)))
-// \pixelRowCounter[3]~17  = CARRY((!\pixelRowCounter[2]~15 ) # (!pixelRowCounter[3]))
-
-	.dataa(pixelRowCounter[3]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[2]~15 ),
-	.combout(\pixelRowCounter[3]~16_combout ),
-	.cout(\pixelRowCounter[3]~17 ));
-// synopsys translate_off
-defparam \pixelRowCounter[3]~16 .lut_mask = 16'h5A5F;
-defparam \pixelRowCounter[3]~16 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[3] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[3]~16_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[3]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[3] .is_wysiwyg = "true";
-defparam \pixelRowCounter[3] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[4]~18 (
-// Equation(s):
-// \pixelRowCounter[4]~18_combout  = (pixelRowCounter[4] & (\pixelRowCounter[3]~17  $ (GND))) # (!pixelRowCounter[4] & (!\pixelRowCounter[3]~17  & VCC))
-// \pixelRowCounter[4]~19  = CARRY((pixelRowCounter[4] & !\pixelRowCounter[3]~17 ))
-
-	.dataa(pixelRowCounter[4]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[3]~17 ),
-	.combout(\pixelRowCounter[4]~18_combout ),
-	.cout(\pixelRowCounter[4]~19 ));
-// synopsys translate_off
-defparam \pixelRowCounter[4]~18 .lut_mask = 16'hA50A;
-defparam \pixelRowCounter[4]~18 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[4] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[4]~18_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[4]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[4] .is_wysiwyg = "true";
-defparam \pixelRowCounter[4] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[5]~21 (
-// Equation(s):
-// \pixelRowCounter[5]~21_combout  = (pixelRowCounter[5] & (!\pixelRowCounter[4]~19 )) # (!pixelRowCounter[5] & ((\pixelRowCounter[4]~19 ) # (GND)))
-// \pixelRowCounter[5]~22  = CARRY((!\pixelRowCounter[4]~19 ) # (!pixelRowCounter[5]))
-
-	.dataa(pixelRowCounter[5]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[4]~19 ),
-	.combout(\pixelRowCounter[5]~21_combout ),
-	.cout(\pixelRowCounter[5]~22 ));
-// synopsys translate_off
-defparam \pixelRowCounter[5]~21 .lut_mask = 16'h5A5F;
-defparam \pixelRowCounter[5]~21 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[5] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[5]~21_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[5]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[5] .is_wysiwyg = "true";
-defparam \pixelRowCounter[5] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[6]~23 (
-// Equation(s):
-// \pixelRowCounter[6]~23_combout  = (pixelRowCounter[6] & (\pixelRowCounter[5]~22  $ (GND))) # (!pixelRowCounter[6] & (!\pixelRowCounter[5]~22  & VCC))
-// \pixelRowCounter[6]~24  = CARRY((pixelRowCounter[6] & !\pixelRowCounter[5]~22 ))
-
-	.dataa(pixelRowCounter[6]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[5]~22 ),
-	.combout(\pixelRowCounter[6]~23_combout ),
-	.cout(\pixelRowCounter[6]~24 ));
-// synopsys translate_off
-defparam \pixelRowCounter[6]~23 .lut_mask = 16'hA50A;
-defparam \pixelRowCounter[6]~23 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[6] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[6]~23_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[6]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[6] .is_wysiwyg = "true";
-defparam \pixelRowCounter[6] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[7]~25 (
-// Equation(s):
-// \pixelRowCounter[7]~25_combout  = (pixelRowCounter[7] & (!\pixelRowCounter[6]~24 )) # (!pixelRowCounter[7] & ((\pixelRowCounter[6]~24 ) # (GND)))
-// \pixelRowCounter[7]~26  = CARRY((!\pixelRowCounter[6]~24 ) # (!pixelRowCounter[7]))
-
-	.dataa(pixelRowCounter[7]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[6]~24 ),
-	.combout(\pixelRowCounter[7]~25_combout ),
-	.cout(\pixelRowCounter[7]~26 ));
-// synopsys translate_off
-defparam \pixelRowCounter[7]~25 .lut_mask = 16'h5A5F;
-defparam \pixelRowCounter[7]~25 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[7] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[7]~25_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[7]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[7] .is_wysiwyg = "true";
-defparam \pixelRowCounter[7] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal5~0 (
-// Equation(s):
-// \Equal5~0_combout  = (!pixelRowCounter[4] & (!pixelRowCounter[5] & (!pixelRowCounter[6] & !pixelRowCounter[7])))
-
-	.dataa(pixelRowCounter[4]),
-	.datab(pixelRowCounter[5]),
-	.datac(pixelRowCounter[6]),
-	.datad(pixelRowCounter[7]),
-	.cin(gnd),
-	.combout(\Equal5~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal5~0 .lut_mask = 16'h0001;
-defparam \Equal5~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[8]~27 (
-// Equation(s):
-// \pixelRowCounter[8]~27_combout  = (pixelRowCounter[8] & (\pixelRowCounter[7]~26  $ (GND))) # (!pixelRowCounter[8] & (!\pixelRowCounter[7]~26  & VCC))
-// \pixelRowCounter[8]~28  = CARRY((pixelRowCounter[8] & !\pixelRowCounter[7]~26 ))
-
-	.dataa(pixelRowCounter[8]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelRowCounter[7]~26 ),
-	.combout(\pixelRowCounter[8]~27_combout ),
-	.cout(\pixelRowCounter[8]~28 ));
-// synopsys translate_off
-defparam \pixelRowCounter[8]~27 .lut_mask = 16'hA50A;
-defparam \pixelRowCounter[8]~27 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[8] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[8]~27_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[8]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[8] .is_wysiwyg = "true";
-defparam \pixelRowCounter[8] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelRowCounter[9]~29 (
-// Equation(s):
-// \pixelRowCounter[9]~29_combout  = pixelRowCounter[9] $ (\pixelRowCounter[8]~28 )
-
-	.dataa(pixelRowCounter[9]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(gnd),
-	.cin(\pixelRowCounter[8]~28 ),
-	.combout(\pixelRowCounter[9]~29_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelRowCounter[9]~29 .lut_mask = 16'h5A5A;
-defparam \pixelRowCounter[9]~29 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelRowCounter[9] (
-	.clk(\clk~input_o ),
-	.d(\pixelRowCounter[9]~29_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always2~0_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelRowCounter[9]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelRowCounter[9] .is_wysiwyg = "true";
-defparam \pixelRowCounter[9] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \Equal5~1 (
-// Equation(s):
-// \Equal5~1_combout  = (\Equal5~0_combout  & (!pixelRowCounter[8] & !pixelRowCounter[9]))
-
-	.dataa(\Equal5~0_combout ),
-	.datab(gnd),
-	.datac(pixelRowCounter[8]),
-	.datad(pixelRowCounter[9]),
-	.cin(gnd),
-	.combout(\Equal5~1_combout ),
-	.cout());
-// synopsys translate_off
-defparam \Equal5~1 .lut_mask = 16'h000A;
-defparam \Equal5~1 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~0 (
-// Equation(s):
-// \pixelEnable~0_combout  = (\Equal5~1_combout  & ((pixelRowCounter[1] & (pixelRowCounter[0] & pixelRowCounter[2])) # (!pixelRowCounter[1] & ((!pixelRowCounter[2])))))
-
-	.dataa(\Equal5~1_combout ),
-	.datab(pixelRowCounter[0]),
-	.datac(pixelRowCounter[1]),
-	.datad(pixelRowCounter[2]),
-	.cin(gnd),
-	.combout(\pixelEnable~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~0 .lut_mask = 16'h800A;
-defparam \pixelEnable~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[0]~19 (
-// Equation(s):
-// \pixelCounter[0]~19_combout  = pixelCounter[0] $ (VCC)
-// \pixelCounter[0]~20  = CARRY(pixelCounter[0])
-
-	.dataa(pixelCounter[0]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(gnd),
-	.combout(\pixelCounter[0]~19_combout ),
-	.cout(\pixelCounter[0]~20 ));
-// synopsys translate_off
-defparam \pixelCounter[0]~19 .lut_mask = 16'h55AA;
-defparam \pixelCounter[0]~19 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[3]~25 (
-// Equation(s):
-// \pixelCounter[3]~25_combout  = (pixelCounter[3] & (!\pixelCounter[2]~24 )) # (!pixelCounter[3] & ((\pixelCounter[2]~24 ) # (GND)))
-// \pixelCounter[3]~26  = CARRY((!\pixelCounter[2]~24 ) # (!pixelCounter[3]))
-
-	.dataa(pixelCounter[3]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[2]~24 ),
-	.combout(\pixelCounter[3]~25_combout ),
-	.cout(\pixelCounter[3]~26 ));
-// synopsys translate_off
-defparam \pixelCounter[3]~25 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[3]~25 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[4]~27 (
-// Equation(s):
-// \pixelCounter[4]~27_combout  = (pixelCounter[4] & (\pixelCounter[3]~26  $ (GND))) # (!pixelCounter[4] & (!\pixelCounter[3]~26  & VCC))
-// \pixelCounter[4]~28  = CARRY((pixelCounter[4] & !\pixelCounter[3]~26 ))
-
-	.dataa(pixelCounter[4]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[3]~26 ),
-	.combout(\pixelCounter[4]~27_combout ),
-	.cout(\pixelCounter[4]~28 ));
-// synopsys translate_off
-defparam \pixelCounter[4]~27 .lut_mask = 16'hA50A;
-defparam \pixelCounter[4]~27 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[4] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[4]~27_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[4]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[4] .is_wysiwyg = "true";
-defparam \pixelCounter[4] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[5]~29 (
-// Equation(s):
-// \pixelCounter[5]~29_combout  = (pixelCounter[5] & (!\pixelCounter[4]~28 )) # (!pixelCounter[5] & ((\pixelCounter[4]~28 ) # (GND)))
-// \pixelCounter[5]~30  = CARRY((!\pixelCounter[4]~28 ) # (!pixelCounter[5]))
-
-	.dataa(pixelCounter[5]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[4]~28 ),
-	.combout(\pixelCounter[5]~29_combout ),
-	.cout(\pixelCounter[5]~30 ));
-// synopsys translate_off
-defparam \pixelCounter[5]~29 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[5]~29 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[5] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[5]~29_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[5]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[5] .is_wysiwyg = "true";
-defparam \pixelCounter[5] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[6]~31 (
-// Equation(s):
-// \pixelCounter[6]~31_combout  = (pixelCounter[6] & (\pixelCounter[5]~30  $ (GND))) # (!pixelCounter[6] & (!\pixelCounter[5]~30  & VCC))
-// \pixelCounter[6]~32  = CARRY((pixelCounter[6] & !\pixelCounter[5]~30 ))
-
-	.dataa(pixelCounter[6]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[5]~30 ),
-	.combout(\pixelCounter[6]~31_combout ),
-	.cout(\pixelCounter[6]~32 ));
-// synopsys translate_off
-defparam \pixelCounter[6]~31 .lut_mask = 16'hA50A;
-defparam \pixelCounter[6]~31 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[6] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[6]~31_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[6]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[6] .is_wysiwyg = "true";
-defparam \pixelCounter[6] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[7]~33 (
-// Equation(s):
-// \pixelCounter[7]~33_combout  = (pixelCounter[7] & (!\pixelCounter[6]~32 )) # (!pixelCounter[7] & ((\pixelCounter[6]~32 ) # (GND)))
-// \pixelCounter[7]~34  = CARRY((!\pixelCounter[6]~32 ) # (!pixelCounter[7]))
-
-	.dataa(pixelCounter[7]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[6]~32 ),
-	.combout(\pixelCounter[7]~33_combout ),
-	.cout(\pixelCounter[7]~34 ));
-// synopsys translate_off
-defparam \pixelCounter[7]~33 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[7]~33 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[7] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[7]~33_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[7]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[7] .is_wysiwyg = "true";
-defparam \pixelCounter[7] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[8]~35 (
-// Equation(s):
-// \pixelCounter[8]~35_combout  = (pixelCounter[8] & (\pixelCounter[7]~34  $ (GND))) # (!pixelCounter[8] & (!\pixelCounter[7]~34  & VCC))
-// \pixelCounter[8]~36  = CARRY((pixelCounter[8] & !\pixelCounter[7]~34 ))
-
-	.dataa(pixelCounter[8]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[7]~34 ),
-	.combout(\pixelCounter[8]~35_combout ),
-	.cout(\pixelCounter[8]~36 ));
-// synopsys translate_off
-defparam \pixelCounter[8]~35 .lut_mask = 16'hA50A;
-defparam \pixelCounter[8]~35 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[8] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[8]~35_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[8]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[8] .is_wysiwyg = "true";
-defparam \pixelCounter[8] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~2 (
-// Equation(s):
-// \pixelEnable~2_combout  = (pixelCounter[5] & (!pixelCounter[6] & (!pixelCounter[7] & !pixelCounter[8])))
-
-	.dataa(pixelCounter[5]),
-	.datab(pixelCounter[6]),
-	.datac(pixelCounter[7]),
-	.datad(pixelCounter[8]),
-	.cin(gnd),
-	.combout(\pixelEnable~2_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~2 .lut_mask = 16'h0002;
-defparam \pixelEnable~2 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[9]~37 (
-// Equation(s):
-// \pixelCounter[9]~37_combout  = (pixelCounter[9] & (!\pixelCounter[8]~36 )) # (!pixelCounter[9] & ((\pixelCounter[8]~36 ) # (GND)))
-// \pixelCounter[9]~38  = CARRY((!\pixelCounter[8]~36 ) # (!pixelCounter[9]))
-
-	.dataa(pixelCounter[9]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[8]~36 ),
-	.combout(\pixelCounter[9]~37_combout ),
-	.cout(\pixelCounter[9]~38 ));
-// synopsys translate_off
-defparam \pixelCounter[9]~37 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[9]~37 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[9] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[9]~37_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[9]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[9] .is_wysiwyg = "true";
-defparam \pixelCounter[9] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[10]~39 (
-// Equation(s):
-// \pixelCounter[10]~39_combout  = (pixelCounter[10] & (\pixelCounter[9]~38  $ (GND))) # (!pixelCounter[10] & (!\pixelCounter[9]~38  & VCC))
-// \pixelCounter[10]~40  = CARRY((pixelCounter[10] & !\pixelCounter[9]~38 ))
-
-	.dataa(pixelCounter[10]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[9]~38 ),
-	.combout(\pixelCounter[10]~39_combout ),
-	.cout(\pixelCounter[10]~40 ));
-// synopsys translate_off
-defparam \pixelCounter[10]~39 .lut_mask = 16'hA50A;
-defparam \pixelCounter[10]~39 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[10] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[10]~39_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[10]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[10] .is_wysiwyg = "true";
-defparam \pixelCounter[10] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[11]~41 (
-// Equation(s):
-// \pixelCounter[11]~41_combout  = (pixelCounter[11] & (!\pixelCounter[10]~40 )) # (!pixelCounter[11] & ((\pixelCounter[10]~40 ) # (GND)))
-// \pixelCounter[11]~42  = CARRY((!\pixelCounter[10]~40 ) # (!pixelCounter[11]))
-
-	.dataa(pixelCounter[11]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[10]~40 ),
-	.combout(\pixelCounter[11]~41_combout ),
-	.cout(\pixelCounter[11]~42 ));
-// synopsys translate_off
-defparam \pixelCounter[11]~41 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[11]~41 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[11] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[11]~41_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[11]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[11] .is_wysiwyg = "true";
-defparam \pixelCounter[11] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[12]~43 (
-// Equation(s):
-// \pixelCounter[12]~43_combout  = (pixelCounter[12] & (\pixelCounter[11]~42  $ (GND))) # (!pixelCounter[12] & (!\pixelCounter[11]~42  & VCC))
-// \pixelCounter[12]~44  = CARRY((pixelCounter[12] & !\pixelCounter[11]~42 ))
-
-	.dataa(pixelCounter[12]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[11]~42 ),
-	.combout(\pixelCounter[12]~43_combout ),
-	.cout(\pixelCounter[12]~44 ));
-// synopsys translate_off
-defparam \pixelCounter[12]~43 .lut_mask = 16'hA50A;
-defparam \pixelCounter[12]~43 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[12] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[12]~43_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[12]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[12] .is_wysiwyg = "true";
-defparam \pixelCounter[12] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~3 (
-// Equation(s):
-// \pixelEnable~3_combout  = (!pixelCounter[9] & (!pixelCounter[10] & (!pixelCounter[11] & !pixelCounter[12])))
-
-	.dataa(pixelCounter[9]),
-	.datab(pixelCounter[10]),
-	.datac(pixelCounter[11]),
-	.datad(pixelCounter[12]),
-	.cin(gnd),
-	.combout(\pixelEnable~3_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~3 .lut_mask = 16'h0001;
-defparam \pixelEnable~3 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[13]~45 (
-// Equation(s):
-// \pixelCounter[13]~45_combout  = (pixelCounter[13] & (!\pixelCounter[12]~44 )) # (!pixelCounter[13] & ((\pixelCounter[12]~44 ) # (GND)))
-// \pixelCounter[13]~46  = CARRY((!\pixelCounter[12]~44 ) # (!pixelCounter[13]))
-
-	.dataa(pixelCounter[13]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[12]~44 ),
-	.combout(\pixelCounter[13]~45_combout ),
-	.cout(\pixelCounter[13]~46 ));
-// synopsys translate_off
-defparam \pixelCounter[13]~45 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[13]~45 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[13] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[13]~45_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[13]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[13] .is_wysiwyg = "true";
-defparam \pixelCounter[13] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[14]~47 (
-// Equation(s):
-// \pixelCounter[14]~47_combout  = (pixelCounter[14] & (\pixelCounter[13]~46  $ (GND))) # (!pixelCounter[14] & (!\pixelCounter[13]~46  & VCC))
-// \pixelCounter[14]~48  = CARRY((pixelCounter[14] & !\pixelCounter[13]~46 ))
-
-	.dataa(pixelCounter[14]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[13]~46 ),
-	.combout(\pixelCounter[14]~47_combout ),
-	.cout(\pixelCounter[14]~48 ));
-// synopsys translate_off
-defparam \pixelCounter[14]~47 .lut_mask = 16'hA50A;
-defparam \pixelCounter[14]~47 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[14] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[14]~47_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[14]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[14] .is_wysiwyg = "true";
-defparam \pixelCounter[14] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[15]~49 (
-// Equation(s):
-// \pixelCounter[15]~49_combout  = (pixelCounter[15] & (!\pixelCounter[14]~48 )) # (!pixelCounter[15] & ((\pixelCounter[14]~48 ) # (GND)))
-// \pixelCounter[15]~50  = CARRY((!\pixelCounter[14]~48 ) # (!pixelCounter[15]))
-
-	.dataa(pixelCounter[15]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[14]~48 ),
-	.combout(\pixelCounter[15]~49_combout ),
-	.cout(\pixelCounter[15]~50 ));
-// synopsys translate_off
-defparam \pixelCounter[15]~49 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[15]~49 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[15] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[15]~49_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[15]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[15] .is_wysiwyg = "true";
-defparam \pixelCounter[15] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[16]~51 (
-// Equation(s):
-// \pixelCounter[16]~51_combout  = (pixelCounter[16] & (\pixelCounter[15]~50  $ (GND))) # (!pixelCounter[16] & (!\pixelCounter[15]~50  & VCC))
-// \pixelCounter[16]~52  = CARRY((pixelCounter[16] & !\pixelCounter[15]~50 ))
-
-	.dataa(pixelCounter[16]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[15]~50 ),
-	.combout(\pixelCounter[16]~51_combout ),
-	.cout(\pixelCounter[16]~52 ));
-// synopsys translate_off
-defparam \pixelCounter[16]~51 .lut_mask = 16'hA50A;
-defparam \pixelCounter[16]~51 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[16] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[16]~51_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[16]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[16] .is_wysiwyg = "true";
-defparam \pixelCounter[16] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~4 (
-// Equation(s):
-// \pixelEnable~4_combout  = (!pixelCounter[13] & (!pixelCounter[14] & (!pixelCounter[15] & !pixelCounter[16])))
-
-	.dataa(pixelCounter[13]),
-	.datab(pixelCounter[14]),
-	.datac(pixelCounter[15]),
-	.datad(pixelCounter[16]),
-	.cin(gnd),
-	.combout(\pixelEnable~4_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~4 .lut_mask = 16'h0001;
-defparam \pixelEnable~4 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[17]~53 (
-// Equation(s):
-// \pixelCounter[17]~53_combout  = (pixelCounter[17] & (!\pixelCounter[16]~52 )) # (!pixelCounter[17] & ((\pixelCounter[16]~52 ) # (GND)))
-// \pixelCounter[17]~54  = CARRY((!\pixelCounter[16]~52 ) # (!pixelCounter[17]))
-
-	.dataa(pixelCounter[17]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[16]~52 ),
-	.combout(\pixelCounter[17]~53_combout ),
-	.cout(\pixelCounter[17]~54 ));
-// synopsys translate_off
-defparam \pixelCounter[17]~53 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[17]~53 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[17] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[17]~53_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[17]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[17] .is_wysiwyg = "true";
-defparam \pixelCounter[17] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[18]~55 (
-// Equation(s):
-// \pixelCounter[18]~55_combout  = pixelCounter[18] $ (!\pixelCounter[17]~54 )
-
-	.dataa(pixelCounter[18]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(gnd),
-	.cin(\pixelCounter[17]~54 ),
-	.combout(\pixelCounter[18]~55_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelCounter[18]~55 .lut_mask = 16'hA5A5;
-defparam \pixelCounter[18]~55 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[18] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[18]~55_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[18]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[18] .is_wysiwyg = "true";
-defparam \pixelCounter[18] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~5 (
-// Equation(s):
-// \pixelEnable~5_combout  = (!pixelCounter[17] & !pixelCounter[18])
-
-	.dataa(gnd),
-	.datab(gnd),
-	.datac(pixelCounter[17]),
-	.datad(pixelCounter[18]),
-	.cin(gnd),
-	.combout(\pixelEnable~5_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~5 .lut_mask = 16'h000F;
-defparam \pixelEnable~5 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~6 (
-// Equation(s):
-// \pixelEnable~6_combout  = (\pixelEnable~2_combout  & (\pixelEnable~3_combout  & (\pixelEnable~4_combout  & \pixelEnable~5_combout )))
-
-	.dataa(\pixelEnable~2_combout ),
-	.datab(\pixelEnable~3_combout ),
-	.datac(\pixelEnable~4_combout ),
-	.datad(\pixelEnable~5_combout ),
-	.cin(gnd),
-	.combout(\pixelEnable~6_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~6 .lut_mask = 16'h8000;
-defparam \pixelEnable~6 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \always1~0 (
-// Equation(s):
-// \always1~0_combout  = (pixelCounter[2] & (pixelCounter[4] & (pixelCounter[0] & !pixelCounter[3])))
-
-	.dataa(pixelCounter[2]),
-	.datab(pixelCounter[4]),
-	.datac(pixelCounter[0]),
-	.datad(pixelCounter[3]),
-	.cin(gnd),
-	.combout(\always1~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \always1~0 .lut_mask = 16'h0080;
-defparam \always1~0 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \always1~1 (
-// Equation(s):
-// \always1~1_combout  = ((\pixelEnable~6_combout  & (\always1~0_combout  & !pixelCounter[1]))) # (!\data_ready~q )
-
-	.dataa(\pixelEnable~6_combout ),
-	.datab(\always1~0_combout ),
-	.datac(pixelCounter[1]),
-	.datad(\data_ready~q ),
-	.cin(gnd),
-	.combout(\always1~1_combout ),
-	.cout());
-// synopsys translate_off
-defparam \always1~1 .lut_mask = 16'h08FF;
-defparam \always1~1 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \always1~2 (
-// Equation(s):
-// \always1~2_combout  = ((\i_pixel_valid~input_o  & \always1~1_combout )) # (!\rst_n~input_o )
-
-	.dataa(\i_pixel_valid~input_o ),
-	.datab(\always1~1_combout ),
-	.datac(gnd),
-	.datad(\rst_n~input_o ),
-	.cin(gnd),
-	.combout(\always1~2_combout ),
-	.cout());
-// synopsys translate_off
-defparam \always1~2 .lut_mask = 16'h88FF;
-defparam \always1~2 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-dffeas \pixelCounter[0] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[0]~19_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[0]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[0] .is_wysiwyg = "true";
-defparam \pixelCounter[0] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[1]~21 (
-// Equation(s):
-// \pixelCounter[1]~21_combout  = (pixelCounter[1] & (!\pixelCounter[0]~20 )) # (!pixelCounter[1] & ((\pixelCounter[0]~20 ) # (GND)))
-// \pixelCounter[1]~22  = CARRY((!\pixelCounter[0]~20 ) # (!pixelCounter[1]))
-
-	.dataa(pixelCounter[1]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[0]~20 ),
-	.combout(\pixelCounter[1]~21_combout ),
-	.cout(\pixelCounter[1]~22 ));
-// synopsys translate_off
-defparam \pixelCounter[1]~21 .lut_mask = 16'h5A5F;
-defparam \pixelCounter[1]~21 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[1] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[1]~21_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[1]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[1] .is_wysiwyg = "true";
-defparam \pixelCounter[1] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelCounter[2]~23 (
-// Equation(s):
-// \pixelCounter[2]~23_combout  = (pixelCounter[2] & (\pixelCounter[1]~22  $ (GND))) # (!pixelCounter[2] & (!\pixelCounter[1]~22  & VCC))
-// \pixelCounter[2]~24  = CARRY((pixelCounter[2] & !\pixelCounter[1]~22 ))
-
-	.dataa(pixelCounter[2]),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(vcc),
-	.cin(\pixelCounter[1]~22 ),
-	.combout(\pixelCounter[2]~23_combout ),
-	.cout(\pixelCounter[2]~24 ));
-// synopsys translate_off
-defparam \pixelCounter[2]~23 .lut_mask = 16'hA50A;
-defparam \pixelCounter[2]~23 .sum_lutc_input = "cin";
-// synopsys translate_on
-
-dffeas \pixelCounter[2] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[2]~23_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[2]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[2] .is_wysiwyg = "true";
-defparam \pixelCounter[2] .power_up = "low";
-// synopsys translate_on
-
-dffeas \pixelCounter[3] (
-	.clk(\clk~input_o ),
-	.d(\pixelCounter[3]~25_combout ),
-	.asdata(vcc),
-	.clrn(vcc),
-	.aload(gnd),
-	.sclr(\always1~2_combout ),
-	.sload(gnd),
-	.ena(\pixelRowCounter[6]~20_combout ),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.q(pixelCounter[3]),
-	.prn(vcc));
-// synopsys translate_off
-defparam \pixelCounter[3] .is_wysiwyg = "true";
-defparam \pixelCounter[3] .power_up = "low";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~7 (
-// Equation(s):
-// \pixelEnable~7_combout  = (pixelCounter[2] & ((pixelCounter[1]) # ((!pixelCounter[4] & pixelCounter[0]))))
-
-	.dataa(pixelCounter[4]),
-	.datab(pixelCounter[2]),
-	.datac(pixelCounter[1]),
-	.datad(pixelCounter[0]),
-	.cin(gnd),
-	.combout(\pixelEnable~7_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~7 .lut_mask = 16'hC4C0;
-defparam \pixelEnable~7 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~8 (
-// Equation(s):
-// \pixelEnable~8_combout  = (\pixelEnable~6_combout  & (pixelCounter[4] $ (((pixelCounter[3]) # (\pixelEnable~7_combout )))))
-
-	.dataa(pixelCounter[3]),
-	.datab(\pixelEnable~6_combout ),
-	.datac(pixelCounter[4]),
-	.datad(\pixelEnable~7_combout ),
-	.cin(gnd),
-	.combout(\pixelEnable~8_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~8 .lut_mask = 16'h0C48;
-defparam \pixelEnable~8 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \pixelEnable~9 (
-// Equation(s):
-// \pixelEnable~9_combout  = ((\pixelEnable~8_combout ) # ((\pixelEnable~0_combout  & !pixelRowCounter[3]))) # (!\pixelEnable~1_combout )
-
-	.dataa(\pixelEnable~0_combout ),
-	.datab(pixelRowCounter[3]),
-	.datac(\pixelEnable~1_combout ),
-	.datad(\pixelEnable~8_combout ),
-	.cin(gnd),
-	.combout(\pixelEnable~9_combout ),
-	.cout());
-// synopsys translate_off
-defparam \pixelEnable~9 .lut_mask = 16'hFF2F;
-defparam \pixelEnable~9 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-fiftyfivenm_lcell_comb \o_pixel~0 (
-// Equation(s):
-// \o_pixel~0_combout  = (\Add12~8_combout  & !\pixelEnable~9_combout )
-
-	.dataa(\Add12~8_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
-	.cin(gnd),
-	.combout(\o_pixel~0_combout ),
-	.cout());
-// synopsys translate_off
-defparam \o_pixel~0 .lut_mask = 16'h00AA;
-defparam \o_pixel~0 .sum_lutc_input = "datac";
+defparam \o_pixel~16 .lut_mask = 16'h1000;
+defparam \o_pixel~16 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~6 (
@@ -8530,20 +8514,20 @@ defparam \Add12~10 .lut_mask = 16'h9617;
 defparam \Add12~10 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~1 (
+fiftyfivenm_lcell_comb \o_pixel~17 (
 // Equation(s):
-// \o_pixel~1_combout  = (\Add12~10_combout  & !\pixelEnable~9_combout )
+// \o_pixel~17_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~10_combout )))
 
-	.dataa(\Add12~10_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~10_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~1_combout ),
+	.combout(\o_pixel~17_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~1 .lut_mask = 16'h00AA;
-defparam \o_pixel~1 .sum_lutc_input = "datac";
+defparam \o_pixel~17 .lut_mask = 16'h1000;
+defparam \o_pixel~17 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~8 (
@@ -8822,20 +8806,20 @@ defparam \Add12~12 .lut_mask = 16'h698E;
 defparam \Add12~12 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~2 (
+fiftyfivenm_lcell_comb \o_pixel~18 (
 // Equation(s):
-// \o_pixel~2_combout  = (\Add12~12_combout  & !\pixelEnable~9_combout )
+// \o_pixel~18_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~12_combout )))
 
-	.dataa(\Add12~12_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~12_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~2_combout ),
+	.combout(\o_pixel~18_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~2 .lut_mask = 16'h00AA;
-defparam \o_pixel~2 .sum_lutc_input = "datac";
+defparam \o_pixel~18 .lut_mask = 16'h1000;
+defparam \o_pixel~18 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~10 (
@@ -9079,20 +9063,20 @@ defparam \Add12~14 .lut_mask = 16'h9617;
 defparam \Add12~14 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~3 (
+fiftyfivenm_lcell_comb \o_pixel~19 (
 // Equation(s):
-// \o_pixel~3_combout  = (\Add12~14_combout  & !\pixelEnable~9_combout )
+// \o_pixel~19_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~14_combout )))
 
-	.dataa(\Add12~14_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~14_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~3_combout ),
+	.combout(\o_pixel~19_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~3 .lut_mask = 16'h00AA;
-defparam \o_pixel~3 .sum_lutc_input = "datac";
+defparam \o_pixel~19 .lut_mask = 16'h1000;
+defparam \o_pixel~19 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~12 (
@@ -9180,20 +9164,20 @@ defparam \Add12~16 .lut_mask = 16'hA50A;
 defparam \Add12~16 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~4 (
+fiftyfivenm_lcell_comb \o_pixel~20 (
 // Equation(s):
-// \o_pixel~4_combout  = (\Add12~16_combout  & !\pixelEnable~9_combout )
+// \o_pixel~20_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~16_combout )))
 
-	.dataa(\Add12~16_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~16_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~4_combout ),
+	.combout(\o_pixel~20_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~4 .lut_mask = 16'h00AA;
-defparam \o_pixel~4 .sum_lutc_input = "datac";
+defparam \o_pixel~20 .lut_mask = 16'h1000;
+defparam \o_pixel~20 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~14 (
@@ -9281,20 +9265,20 @@ defparam \Add12~18 .lut_mask = 16'h5A5F;
 defparam \Add12~18 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~5 (
+fiftyfivenm_lcell_comb \o_pixel~21 (
 // Equation(s):
-// \o_pixel~5_combout  = (\Add12~18_combout  & !\pixelEnable~9_combout )
+// \o_pixel~21_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~18_combout )))
 
-	.dataa(\Add12~18_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~18_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~5_combout ),
+	.combout(\o_pixel~21_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~5 .lut_mask = 16'h00AA;
-defparam \o_pixel~5 .sum_lutc_input = "datac";
+defparam \o_pixel~21 .lut_mask = 16'h1000;
+defparam \o_pixel~21 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add9~16 (
@@ -9380,20 +9364,20 @@ defparam \Add12~20 .lut_mask = 16'hA50A;
 defparam \Add12~20 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~6 (
+fiftyfivenm_lcell_comb \o_pixel~22 (
 // Equation(s):
-// \o_pixel~6_combout  = (\Add12~20_combout  & !\pixelEnable~9_combout )
+// \o_pixel~22_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~20_combout )))
 
-	.dataa(\Add12~20_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~20_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~6_combout ),
+	.combout(\o_pixel~22_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~6 .lut_mask = 16'h00AA;
-defparam \o_pixel~6 .sum_lutc_input = "datac";
+defparam \o_pixel~22 .lut_mask = 16'h1000;
+defparam \o_pixel~22 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 fiftyfivenm_lcell_comb \Add10~20 (
@@ -9444,20 +9428,36 @@ defparam \Add12~22 .lut_mask = 16'h5A5A;
 defparam \Add12~22 .sum_lutc_input = "cin";
 // synopsys translate_on
 
-fiftyfivenm_lcell_comb \o_pixel~7 (
+fiftyfivenm_lcell_comb \o_pixel~23 (
 // Equation(s):
-// \o_pixel~7_combout  = (\Add12~22_combout  & !\pixelEnable~9_combout )
+// \o_pixel~23_combout  = (!\Equal5~2_combout  & (!\pixelEnable~8_combout  & (\data_ready~q  & \Add12~22_combout )))
 
-	.dataa(\Add12~22_combout ),
-	.datab(gnd),
-	.datac(gnd),
-	.datad(\pixelEnable~9_combout ),
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(\data_ready~q ),
+	.datad(\Add12~22_combout ),
 	.cin(gnd),
-	.combout(\o_pixel~7_combout ),
+	.combout(\o_pixel~23_combout ),
 	.cout());
 // synopsys translate_off
-defparam \o_pixel~7 .lut_mask = 16'h00AA;
-defparam \o_pixel~7 .sum_lutc_input = "datac";
+defparam \o_pixel~23 .lut_mask = 16'h1000;
+defparam \o_pixel~23 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+fiftyfivenm_lcell_comb \pixelEnable~9 (
+// Equation(s):
+// \pixelEnable~9_combout  = (\Equal5~2_combout ) # ((\pixelEnable~8_combout ) # (!\data_ready~q ))
+
+	.dataa(\Equal5~2_combout ),
+	.datab(\pixelEnable~8_combout ),
+	.datac(gnd),
+	.datad(\data_ready~q ),
+	.cin(gnd),
+	.combout(\pixelEnable~9_combout ),
+	.cout());
+// synopsys translate_off
+defparam \pixelEnable~9 .lut_mask = 16'hEEFF;
+defparam \pixelEnable~9 .sum_lutc_input = "datac";
 // synopsys translate_on
 
 assign tap0[0] = \tap0[0]~output_o ;

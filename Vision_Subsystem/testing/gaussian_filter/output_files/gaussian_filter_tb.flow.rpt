@@ -1,5 +1,5 @@
 Flow report for gaussian_filter_tb
-Mon Jun 14 01:28:13 2021
+Tue Jun 15 19:55:53 2021
 Quartus Prime Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition
 
 
@@ -41,7 +41,7 @@ agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Mon Jun 14 01:28:13 2021       ;
+; Flow Status                        ; Successful - Tue Jun 15 19:55:53 2021       ;
 ; Quartus Prime Version              ; 16.1.0 Build 196 10/24/2016 SJ Lite Edition ;
 ; Revision Name                      ; gaussian_filter_tb                          ;
 ; Top-level Entity Name              ; separableconvolution5x5_gaussian            ;
@@ -107,7 +107,9 @@ agreement for further details.
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Analysis & Synthesis ; 00:00:15     ; 1.0                     ; 4768 MB             ; 00:00:35                           ;
-; Total                ; 00:00:15     ; --                      ; --                  ; 00:00:35                           ;
+; EDA Netlist Writer   ; 00:00:01     ; 1.0                     ; 4619 MB             ; 00:00:01                           ;
+; EDA Netlist Writer   ; 00:00:01     ; 1.0                     ; 4637 MB             ; 00:00:01                           ;
+; Total                ; 00:00:17     ; --                      ; --                  ; 00:00:37                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -117,6 +119,8 @@ agreement for further details.
 ; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
 +----------------------+------------------+------------+------------+----------------+
 ; Analysis & Synthesis ; LAPTOP-ANNF63CS  ; Windows 10 ; 10.0       ; x86_64         ;
+; EDA Netlist Writer   ; LAPTOP-ANNF63CS  ; Windows 10 ; 10.0       ; x86_64         ;
+; EDA Netlist Writer   ; LAPTOP-ANNF63CS  ; Windows 10 ; 10.0       ; x86_64         ;
 +----------------------+------------------+------------+------------+----------------+
 
 
@@ -124,6 +128,8 @@ agreement for further details.
 ; Flow Log ;
 ------------
 quartus_map --read_settings_files=on --write_settings_files=off gaussian_filter_tb -c gaussian_filter_tb
+quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off gaussian_filter_tb -c gaussian_filter_tb --vector_source=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/gaussian_filter/Waveform.vwf --testbench_file=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/gaussian_filter/simulation/qsim/Waveform.vwf.vt
+quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory=C:/Users/tansi/Documents/Imperial_College_London/Year2_Project/Group7_design_project/Vision_Subsystem/testing/gaussian_filter/simulation/qsim/ gaussian_filter_tb -c gaussian_filter_tb
 
 
 
