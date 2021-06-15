@@ -1,5 +1,39 @@
 # Command Subsystem
-## Setting up the MQTT broker (without authentication)
+
+## Folder Structure
+```
+Command_Subsystem
+│   └───README.md
+│   └───server               
+│   |   └───authen       
+|   |   |   |   └───mosquitto.conf  
+|   |   |   |   |   ...
+|   |   └───database.py
+|   |   └───mqtt_server.py
+|   |   └───requirements.txt
+|   |   └───start_server.sh
+|   |   |   |    ... 
+|   └───client      
+|   |   └───src  
+|   |   |   └───assets
+|   |   |   |   └───home.svg
+|   |   |   |   |   ...
+|   |   |   └───components
+|   |   |   |   └───Battery.js
+|   |   |   |   |   ...
+|   |   |   └───hooks
+|   |   |   |   └───useToken.js
+|   |   |   |   |   ...
+|   |   |   └───pages
+|   |   |   |   └───DiscretePage.js
+|   |   |   |   |   ...
+|   |   |   └───App.js
+|   |   |   └───index.js
+|   |   |   |   ...            
+|   |   ...
+
+```
+## How to setup up the MQTT broker locally (without authentication)
 - If you're running MQTT broker on AWS you can skip this step
 1. Install the mosquitto broker using your local package manager
 2. In the `mosquitto.conf` file, add the following lines:
