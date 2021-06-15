@@ -5,8 +5,8 @@ This folder contains the main control program along with the control interface A
 
 The control program requires a config.h file with the credentials and settings for the WiFi network and MQTT broker (elaborated on later)
 
-### Folders
-##### Control_program
+## Folders
+### Control_program
 This folder contains the Arduino project for the ESP32. The main file is called control_program.ino and the project folder comes with all the custom libraries required. Compile and install this program onto the rover's ESP32 with the following settings:  
 
 Board Settings:
@@ -19,14 +19,14 @@ Required External Library Dependencies:
 * PubSubClient (https://github.com/knolleary/pubsubclient)
 * ArduinoJson (https://arduinojson.org/)
 
-##### Arduino-ESP32 Interface
+#### Arduino-ESP32 Interface
 * arduino_code: control interface libraries for the Drive Arduino. Copy these to the same project folder as the Drive program
 * esp32_code: drive interface libraries for the Control ESP32. These are already updated in the control_program project folder 
 
 Library files for Drive Arduino: ControlInterface.h and ControlInterface.cpp
 Library files for Control ESP32: DriveInterface.h and DriveInterface.cpp
 
-##### Energy-ESP32 Interface
+#### Energy-ESP32 Interface
 This folder contains the libraries for the interface between Energy and Control subsystems
 * arduino_code: libraries and ecample code for the Energy Arduino. Copy these to the same project folder as the Drive program 
 * The EnergyInterface library files for the Control ESP32 are in this folder. These are already updated in the control_program project folder
@@ -34,7 +34,7 @@ This folder contains the libraries for the interface between Energy and Control 
 Library files for Energy Arduino: ControlInterface.h and ControlInterface.cpp
 Library files for Control ESP32: EnergyInterface.h and EnergyInterface.cpp<br >
 
-##### FPGA-ESP32 Interface
+#### FPGA-ESP32 Interface
 This folder contains the library files for the ESP32 to interface with the FPGA's DMA. These are already updated in the control_program project folder
 
 Library files for Control ESP32: FPGAInterface.h and FPGAInterface.cpp
@@ -49,7 +49,7 @@ The local "config.h" file can be created using the "config_template.h" file prov
 5) MQTT_USER: username for MQTT broker (can leave as default)
 6) MQTT_PASSWORD: password for MQTT broker (can leave as default)
 
-##### FPGA LED Indicators
+### FPGA LED Indicators
 The FPGA LEDs indicate various rover statuses: 
 * LEDR 9: WiFi Connected
 * LEDR 8: MQTT Broker Connected
