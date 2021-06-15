@@ -3,9 +3,11 @@ The control program runs on the rover's ESP32 and is the bridge between Vision, 
 
 This folder contains the main control program along with the control interface APIs for the Drive and Energy subsystems. 
 
+The control program requires a config.h file with the credentials and settings for the WiFi network and MQTT broker (elaborated on later)
+
 ### Folders
 ##### Control_program
-This folder contains the Arduino project for the ESP32. The main file is called control_program.ino and the project folder comes with all the custom libraries required. Compile and install this program onto the rover's ESP32. 
+This folder contains the Arduino project for the ESP32. The main file is called control_program.ino and the project folder comes with all the custom libraries required. Compile and install this program onto the rover's ESP32 with the following settings:  
 
 Board Settings:
 * Board: ESP32 Dev Module
@@ -19,15 +21,26 @@ Required External Library Dependencies:
 <br>
 ##### Arduino-ESP32 Interface
 * arduino_code: control interface libraries for the Drive Arduino. Copy these to the same project folder as the Drive program
-* esp32_code: drive interface libraries for the Control ESP32. These 
+* esp32_code: drive interface libraries for the Control ESP32. These are already updated in the control_program project folder 
+<br>
+Library files for Drive Arduino: ControlInterface.h and ControlInterface.cpp<br>
+Library files for Control ESP32: DriveInterface.h and DriveInterface.cpp
+<br>
+##### Energy-ESP32 Interface
+This folder contains the libraries for the interface between Energy and Control subsystems
+* arduino_code: libraries and ecample code for the Energy Arduino. Copy these to the same project folder as the Drive program 
+* The EnergyInterface library files for the Control ESP32 are in this folder. These are already updated in the control_program project folder
+<br>
+Library files for Energy Arduino: ControlInterface.h and ControlInterface.cpp<br>
+Library files for Control ESP32: EnergyInterface.h and EnergyInterface.cpp
+<br>
 
-
-/////////////////////////////////////////////////////
-The main program for the ESP32 is located in "Control_program/control_program". This code integrates the communication with all sub-modules together into a single program
-
-The folder contains the arduino .ino file along with all the library dependencies. These libraries are the latest versions
-
-To install the ESP32 code, compile and upload the "control_program.ino" to the ESP32
+<br>
+##### FPGA-ESP32 Interface
+This folder contains the library files for the ESP32 to interface with the FPGA's DMA. These are already updated in the control_program project folder
+<br>
+Library files for Control ESP32: FPGAInterface.h and FPGAInterface.cpp
+<br>
 
 ### config.h file
 The control program requires settings for the WiFi network SSID and password as well as IP Address/Domain and credentials for the MQTT broker. These are defined in the "config.h" file which every user needs their own local copy of. 
