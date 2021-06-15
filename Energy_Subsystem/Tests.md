@@ -28,13 +28,13 @@ Miscellaneous:
 # 1. Instructions
 
 1. Pin assignments are defined at the top of each `.ino` file.
-2. Run the file using the SMPS libraries included in the sketch folders. They are simplified versions of the SMPS folder.
+2. Run the file using the SMPS libraries included in the sketch folders. They are simplified versions of the SMPS class.
 
 # 2. Tests
 
 ## 2.1. Charging and discharging one cell
 
-Relevant sketch: `Single_Cell_SoC_OOP`
+Relevant sketch: [`Single_Cell_SoC_OOP`](Test%20Scripts/Single_Cell_SoC_OOP)
 
 ![Original Config](Images/Circuit_Diagrams/Original_Config.jpg)
 
@@ -46,7 +46,7 @@ This test has also been modified to include constant voltage charging. The impli
 
 ## 2.2. Discharging series cells
 
-Relevant sketch: `Wall_Discharge`
+Relevant sketch: [`Wall_Discharge`](Test%20Scripts/Wall_Discharge)
 
 At this point, the SoC estimation is on the Arduino.
 
@@ -63,7 +63,7 @@ Despite the fact that moving average is only used during OCV measurement (and no
 
 ## 2.3. Charging series cells
 
-Relevant Sketch: `Wall_Charge`
+Relevant Sketch: [`Wall_Charge`](Test%20Scripts/Wall_Charge)
 
 ![Multicell Wall Charging](Images/Circuit_Diagrams/Multicell_Wall_Charging.jpeg)
 
@@ -71,15 +71,15 @@ The main aim of this test is to test cell balancing during charging, similar to 
 
 ## 2.4. Characterising one PV panel
 
-Relevant sketches: `PnO_Sweep_Duty` and `PV_PnO_resistors`
+Relevant sketches: [`PnO_Sweep_Duty`](Test%20Scripts/PnO_Sweep_Duty) and [`PV_PnO_resistors`](Test%20Scripts/PV_PnO_Resistors)
 
 ![Multicell Wall Charging](Images/Circuit_Diagrams/PV_Characterisation.jpeg)
 
-The 2 sketches utilise the same circuit configuration. The former sweeps the duty cycle to obtain the power and current against voltage plots, whereas the later utilises the P&O algorithm to charge the resistor.
+The 2 sketches utilise the same circuit configuration. The former sweeps the duty cycle to obtain the power and current against voltage plots, whereas the later utilises the P&O algorithm to charge the resistor. The results for this test are detailed in the report.
 
 ## 2.5. Characterising the charging of one cell with one PV panel
 
-Relevant sketches: `Single_Cell_PV_Panel_Charge` and `PnO_1PV_1Cell`
+Relevant sketches: [`Single_Cell_PV_Panel_Charge`](Test%20Scripts/Single_Cell_PV_Panel_Charge) and [`PnO_1PV_1Cell`](Test%20Scripts/PnO_1PV_1Cell)
 
 ![One PV to one cell](Images/Circuit_Diagrams/SingleCell_SinglePV_Charging.jpeg)
 
@@ -87,7 +87,7 @@ The 2 sketches utilise the same circuit configuration. Similar to the previous 2
 
 ## 2.6. Characterising the charging of 3s1p battery pack with series PV panels
 
-Relevant sketch: `SeriesCell_SeriesPV_Panel_Charge`
+Relevant sketch: [`SeriesCell_SeriesPV_Panel_Charge`](Test%20Scripts/SeriesCell_SeriesPV_Panel_Charge)
 
 ![Multicell charging](Images/Circuit_Diagrams/MultiCell_MultiPV_Charging.jpeg)
 
@@ -95,7 +95,7 @@ This test was not attempted.
 
 ## 2.7. Recalibration
 
-Relevant sketches: `Recalibrate_SoC_SingleCell` and `Recalibrate_SoC_Last_Step`
+Relevant sketches: [`Recalibrate_SoC_SingleCell`](Test%20Scripts/Recalibrate_SoC_SingleCell) and [`Recalibrate_SoC_Last_Step`](Test%20Scripts/Recalibrate_SoC_Last_Step)
 
 `Recalibrate_SoC_SingleCell` test is a slightly rebuilt version of `Single_Cell_SoC_OOP`, but tasked with identifying the start and ends of the discharge and charge cycle. 
 
